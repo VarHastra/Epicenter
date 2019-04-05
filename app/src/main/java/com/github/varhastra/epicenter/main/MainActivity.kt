@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import butterknife.BindView
@@ -13,13 +13,14 @@ import com.github.varhastra.epicenter.main.map.MapFragment
 import com.github.varhastra.epicenter.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.main.search.SearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.jetbrains.anko.AnkoLogger
 
 /**
  * Primary activity of the app that holds
  * the bottom navigation and hosts [FeedFragment],
  * [MapFragment], [NotificationsFragment] and [SearchFragment].
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AnkoLogger {
 
     @BindView(R.id.tb_main)
     lateinit var toolbar: Toolbar

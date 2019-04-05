@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_05x">4dp</dimen>
+    <dimen name="spacing_1x">8dp</dimen>
+    <dimen name="spacing_2x">16dp</dimen>
+    <dimen name="spacing_3x">24dp</dimen>
+    <dimen name="spacing_4x">32dp</dimen>
+    <dimen name="spacing_8x">64dp</dimen>
+
+    <dimen name="elevation_toolbar">4dp</dimen>
+</resources>

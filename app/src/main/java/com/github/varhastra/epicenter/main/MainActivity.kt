@@ -36,7 +36,21 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbar)
 
         bottomNavigation.setOnNavigationItemSelectedListener(BottomNavListener())
+        if (savedInstanceState != null) {
+            savedInstanceState.apply {
+                bottomNavigation.selectedItemId = getInt(STATE_SELECTED_PAGE, R.id.navigation_feed)
+            }
+        } else {
+            bottomNavigation.selectedItemId = R.id.navigation_feed
+        }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.apply {
+            putInt(STATE_SELECTED_PAGE, bottomNavigation.selectedItemId)
+        }
     }
 
     private fun navigateTo(fragment: Fragment) {
@@ -67,5 +81,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 else -> false
             }
         }
+    }
+
+    companion object {
+        private const val STATE_SELECTED_PAGE = "STATE_SEL_PAGE"
     }
 }

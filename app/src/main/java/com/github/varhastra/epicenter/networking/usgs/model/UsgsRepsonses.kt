@@ -1,12 +1,19 @@
 package com.github.varhastra.epicenter.networking.usgs.model
 
+import com.github.varhastra.epicenter.model.Event
+import com.github.varhastra.epicenter.networking.EventServiceResponse
+
 
 data class UsgsResponse(
         val type: String,
         val metadata: Metadata,
         val features: List<Feature>,
         val bbox: List<Double>
-)
+) : EventServiceResponse {
+    override fun mapToModel(): List<Event> {
+        return UsgsResponseMapper().mapToModel(this)
+    }
+}
 
 data class Metadata(
         /**
@@ -76,6 +83,7 @@ data class Geometry(
 data class Properties(
         /**
          * The magnitude for the event. See also magType.
+         * Note: it can be negative.
          */
         val mag: Double,
 

@@ -12,6 +12,7 @@ data class Event(
 
         /**
          * Magnitude of the event.
+         * Note: can be negative for very small earthquakes.
          */
         val magnitude: Double,
 

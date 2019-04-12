@@ -10,7 +10,7 @@
     <dimen name="size_min_touch_target">48dp</dimen>
 
     <dimen name="size_icon_normal">24dp</dimen>
-    <dimen name="size_icon_empty_view">256dp</dimen>
+    <dimen name="size_icon_empty_view">128dp</dimen>
 
     <dimen name="elevation_toolbar">4dp</dimen>
 

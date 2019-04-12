@@ -5,4 +5,10 @@
         <attr name="dropDownText" format="string" />
         <attr name="displayDropdown" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="EmptyView">
+        <attr name="text" format="string" />
+        <attr name="captionText" format="string" />
+        <attr name="image" format="reference" />
+    </declare-styleable>
 </resources>

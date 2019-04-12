@@ -1,6 +1,8 @@
 package com.github.varhastra.epicenter.main
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -43,6 +45,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         } else {
             bottomNavigation.selectedItemId = R.id.navigation_feed
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

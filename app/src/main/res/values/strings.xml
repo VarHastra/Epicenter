@@ -6,6 +6,11 @@
     <string name="app_map">Map</string>
     <string name="app_feed">Feed</string>
 
+    <string name="app_refresh">Refresh</string>
+    <string name="app_sort">Sort</string>
+    <string name="app_filter">Filter</string>
+    <string name="app_settings">Settings</string>
+
     <string name="feed_filters_magnitude">Magnitude</string>
     <string name="feed_filters_chip_mag_0">0+</string>
     <string name="feed_filters_chip_mag_2">2.0+</string>
@@ -16,6 +21,7 @@
     <string name="feed_filters_chip_sorting_data">Date</string>
     <string name="feed_filters_chip_sorting_mag">Magnitude</string>
     <string name="feed_filters_radius">Radius</string>
-    <string name="empty_view_connection_title">Ooops... something went wrong</string>
+
+    <string name="empty_view_connection_title">Ooops… something went wrong</string>
     <string name="empty_view_connection_body">Can\'t connect to the server</string>
 </resources>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sheet_feed"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorSurface"
+    android:elevation="@dimen/elevation_bottom_sheet"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="@dimen/height_bottom_sheet_peek"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_2x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:text="@string/feed_filters_sort_by" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/cg_feed_filters_sort_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_1x"
+            android:paddingStart="@dimen/spacing_2x"
+            android:paddingEnd="@dimen/spacing_2x"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sorting_date"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_sorting_data" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sorting_mag"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_sorting_mag" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_2x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:text="@string/feed_filters_magnitude" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_feed_filters_magnitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_1x"
+            android:paddingStart="@dimen/spacing_2x"
+            android:paddingEnd="@dimen/spacing_2x"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_0"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_0"
+                app:chipBackgroundColor="@color/bg_chip_alert_0" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_2"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_2"
+                app:chipBackgroundColor="@color/bg_chip_alert_2" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_4"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_4"
+                app:chipBackgroundColor="@color/bg_chip_alert_2" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_6"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_6"
+                app:chipBackgroundColor="@color/bg_chip_alert_4" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_8"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_8"
+                app:chipBackgroundColor="@color/bg_chip_alert_8" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_2x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:text="@string/feed_filters_radius" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_min_touch_target"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/size_icon_normal"
+            android:layout_height="@dimen/size_icon_normal"
+            android:src="@drawable/ic_outline_location_24px"
+            android:tint="@color/colorIconDisabled" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/sb_feed_filters_radius"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="@dimen/size_icon_normal"
+            android:layout_height="@dimen/size_icon_normal"
+            android:src="@drawable/ic_outline_radius_24px"
+            android:tint="@color/colorIconDisabled" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_feed_filters_min_radius"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="0mi" />
+
+        <TextView
+            android:id="@+id/tv_feed_filters_radius"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            tools:text="2500mi" />
+
+        <TextView
+            android:id="@+id/tv_feed_filters_max_radius"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="6000mi" />
+    </LinearLayout>
+
+</LinearLayout>

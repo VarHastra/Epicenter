@@ -12,4 +12,19 @@
     <color name="colorOnBackground">#8affffff</color>
     <color name="colorSurface">#303030</color>
     <color name="colorOnSurface">#8affffff</color>
+
+    <color name="colorIconActive">#ffffff</color>
+    <color name="colorIconInactive">#89ffffff</color>
+    <color name="colorIconDisabled">#60ffffff</color>
+
+    <color name="colorChipSelected">#FFFFFF</color>
+    <color name="colorChip">#1FFFFFFF</color>
+    <color name="colorChipTextSelected">?colorSurface</color>
+    <color name="colorChipText">@color/mtrl_on_surface_emphasis_medium</color>
+
+    <color name="colorAlert0">#F4E0A5</color>
+    <color name="colorAlert2">#EED177</color>
+    <color name="colorAlert4">#E8C14A</color>
+    <color name="colorAlert6">#E48B50</color>
+    <color name="colorAlert8">#E15555</color>
 </resources>

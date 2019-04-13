@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/feed_filters_chip_mag_4"
-                app:chipBackgroundColor="@color/bg_chip_alert_2" />
+                app:chipBackgroundColor="@color/bg_chip_alert_4" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_mag_6"
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/feed_filters_chip_mag_6"
-                app:chipBackgroundColor="@color/bg_chip_alert_4" />
+                app:chipBackgroundColor="@color/bg_chip_alert_6" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_mag_8"

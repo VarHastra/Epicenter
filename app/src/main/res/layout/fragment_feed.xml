@@ -13,6 +13,7 @@
         android:gravity="center" />
 
     <com.github.varhastra.epicenter.views.EmptyView
+        android:id="@+id/emptv_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

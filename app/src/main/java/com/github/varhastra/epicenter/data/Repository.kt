@@ -9,16 +9,16 @@ import com.github.varhastra.epicenter.networking.usgs.UsgsServiceProvider
 import org.jetbrains.anko.AnkoLogger
 
 class Repository private constructor(
-        private val serviceProvider: EventServiceProvider
+    private val serviceProvider: EventServiceProvider
 ) {
 
     val logger = AnkoLogger(this.javaClass)
 
-    fun getWeekFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.DEFAULT) {
+    fun getWeekFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.WORLD) {
         serviceProvider.getWeekFeed(object : EventServiceProvider.ResponseCallback {
             override fun onResult(response: EventServiceResponse) {
                 val list = response.mapToModel()
-                callback.onResult(filter.applyTo(list, place.coordinates))
+                callback.onResult(filter(list, filter, place))
             }
 
             override fun onFailure(t: Throwable?) {
@@ -27,17 +27,22 @@ class Repository private constructor(
         })
     }
 
-    fun getDayFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.DEFAULT) {
+    fun getDayFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.WORLD) {
         serviceProvider.getDayFeed(object : EventServiceProvider.ResponseCallback {
             override fun onResult(response: EventServiceResponse) {
                 val list = response.mapToModel()
-                callback.onResult(filter.applyTo(list, place.coordinates))
+                callback.onResult(filter(list, filter, place))
             }
 
             override fun onFailure(t: Throwable?) {
                 onFailure(t)
             }
         })
+    }
+
+    private fun filter(events: List<Event>, filter: FeedFilter, place: Place): List<Event> {
+        val result = events.filter { place.checkCoordinates(it.coordinates) }
+        return filter.applyTo(result)
     }
 
 
@@ -51,7 +56,7 @@ class Repository private constructor(
         private var instance: Repository? = null
 
         fun getInstance(
-                serviceProvider: EventServiceProvider = UsgsServiceProvider()
+            serviceProvider: EventServiceProvider = UsgsServiceProvider()
         ): Repository {
             return instance ?: Repository(serviceProvider)
         }

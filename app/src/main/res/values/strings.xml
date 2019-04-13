@@ -24,4 +24,20 @@
 
     <string name="empty_view_connection_title">Ooops… something went wrong</string>
     <string name="empty_view_connection_body">Can\'t connect to the server</string>
+
+
+    <string name="pref_general">General</string>
+
+    <string name="pref_units">Units</string>
+    <string-array name="pref_units_entries">
+        <item>Auto</item>
+        <item>Metric (kilometers)</item>
+        <item>Imperial (miles)</item>
+    </string-array>
+
+    <string-array name="pref_units_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

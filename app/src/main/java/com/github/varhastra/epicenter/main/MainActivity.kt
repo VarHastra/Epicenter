@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,9 +14,12 @@ import com.github.varhastra.epicenter.main.feed.FeedFragment
 import com.github.varhastra.epicenter.main.map.MapFragment
 import com.github.varhastra.epicenter.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.main.search.SearchFragment
+import com.github.varhastra.epicenter.settings.Prefs
+import com.github.varhastra.epicenter.settings.SettingsActivity
 import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
 /**
  * Primary activity of the app that holds
@@ -45,11 +49,23 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         } else {
             bottomNavigation.selectedItemId = R.id.navigation_feed
         }
+
+        info(Prefs.getPreferredUnits())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -62,8 +78,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     private fun navigateTo(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_content_main, fragment)
-                .commit()
+            .replace(R.id.frame_content_main, fragment)
+            .commit()
     }
 
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {

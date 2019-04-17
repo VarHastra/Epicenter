@@ -8,7 +8,7 @@ import com.github.varhastra.epicenter.networking.EventServiceResponse
 import com.github.varhastra.epicenter.networking.usgs.UsgsServiceProvider
 import org.jetbrains.anko.AnkoLogger
 
-class Repository private constructor(
+class EventsRepository private constructor(
     private val serviceProvider: EventServiceProvider
 ) {
 
@@ -53,12 +53,12 @@ class Repository private constructor(
     }
 
     companion object {
-        private var instance: Repository? = null
+        private var instance: EventsRepository? = null
 
         fun getInstance(
             serviceProvider: EventServiceProvider = UsgsServiceProvider()
-        ): Repository {
-            return instance ?: Repository(serviceProvider)
+        ): EventsRepository {
+            return instance ?: EventsRepository(serviceProvider)
         }
     }
 }

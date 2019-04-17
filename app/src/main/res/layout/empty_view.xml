@@ -29,4 +29,13 @@
         android:gravity="center_horizontal"
         tools:text="@string/empty_view_connection_body" />
 
+    <Button
+        android:id="@+id/btn_empty_view"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:visibility="gone"
+        tools:text="Retry"
+        tools:visibility="visible" />
 </LinearLayout>

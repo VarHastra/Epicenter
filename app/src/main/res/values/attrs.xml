@@ -10,5 +10,7 @@
         <attr name="text" format="string" />
         <attr name="captionText" format="string" />
         <attr name="image" format="reference" />
+        <attr name="buttonVisibility" format="boolean" />
+        <attr name="buttonText" format="string" />
     </declare-styleable>
 </resources>

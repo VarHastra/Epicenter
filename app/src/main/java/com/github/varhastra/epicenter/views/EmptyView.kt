@@ -10,12 +10,14 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.github.varhastra.epicenter.R
+import com.google.android.material.button.MaterialButton
 
 class EmptyView : FrameLayout {
 
     private lateinit var titleTextView: TextView
     private lateinit var captionTextView: TextView
     private lateinit var imageView: ImageView
+    private lateinit var button: MaterialButton
 
     constructor(context: Context) : super(context) {
         init(context, null)
@@ -36,16 +38,21 @@ class EmptyView : FrameLayout {
         titleTextView = findViewById(R.id.tv_empty_view_title)
         captionTextView = findViewById(R.id.tv_empty_view_caption)
         imageView = findViewById(R.id.iv_empty_view)
+        button = findViewById(R.id.btn_empty_view);
 
         val styleAttrs = context.obtainStyledAttributes(attrs, R.styleable.EmptyView)
         styleAttrs.apply {
             val title = getString(R.styleable.EmptyView_text)
             val caption = getString(R.styleable.EmptyView_captionText)
             val drawable = getDrawable(R.styleable.EmptyView_image)
+            val buttonText = getString(R.styleable.EmptyView_buttonText)
+            val buttonVisibility = getBoolean(R.styleable.EmptyView_buttonVisibility, false)
 
-            titleTextView.text = title ?: ""
-            captionTextView.text = caption ?: ""
-            imageView.setImageDrawable(drawable)
+            setTitle(title ?: "")
+            setCaption(caption ?: "")
+            setImageDrawable(drawable)
+            setButtonText(buttonText ?: "")
+            setButtonVisibility(buttonVisibility)
         }
 
         styleAttrs.recycle()
@@ -71,7 +78,23 @@ class EmptyView : FrameLayout {
         imageView.setImageResource(drawableRes)
     }
 
-    fun setImageDrawable(drawable: Drawable) {
+    fun setImageDrawable(drawable: Drawable?) {
         imageView.setImageDrawable(drawable)
+    }
+
+    fun setButtonText(text: String) {
+        button.text = text
+    }
+
+    fun setButtonText(@StringRes stringRes: Int) {
+        button.setText(stringRes)
+    }
+
+    fun setButtonListener(listener: (View) -> Unit) {
+        button.setOnClickListener(listener)
+    }
+
+    fun setButtonVisibility(visible: Boolean) {
+        button.visibility = if (visible) View.VISIBLE else View.GONE
     }
 }

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.networking
+package com.github.varhastra.epicenter.data.networking
 
 import com.github.varhastra.epicenter.model.Event
 

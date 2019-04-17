@@ -3,9 +3,9 @@ package com.github.varhastra.epicenter.data
 import com.github.varhastra.epicenter.model.Event
 import com.github.varhastra.epicenter.model.FeedFilter
 import com.github.varhastra.epicenter.model.Place
-import com.github.varhastra.epicenter.networking.EventServiceProvider
-import com.github.varhastra.epicenter.networking.EventServiceResponse
-import com.github.varhastra.epicenter.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.data.networking.EventServiceProvider
+import com.github.varhastra.epicenter.data.networking.EventServiceResponse
+import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
 import org.jetbrains.anko.AnkoLogger
 
 class EventsRepository private constructor(

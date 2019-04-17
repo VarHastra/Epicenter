@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.settings
+package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App

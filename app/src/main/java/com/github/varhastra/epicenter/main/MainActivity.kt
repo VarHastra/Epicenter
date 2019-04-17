@@ -3,7 +3,6 @@ package com.github.varhastra.epicenter.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,7 +13,7 @@ import com.github.varhastra.epicenter.main.feed.FeedFragment
 import com.github.varhastra.epicenter.main.map.MapFragment
 import com.github.varhastra.epicenter.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.main.search.SearchFragment
-import com.github.varhastra.epicenter.settings.Prefs
+import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.settings.SettingsActivity
 import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.material.bottomnavigation.BottomNavigationView

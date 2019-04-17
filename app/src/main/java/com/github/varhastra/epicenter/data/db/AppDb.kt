@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.data
+package com.github.varhastra.epicenter.data.db
 
 import android.content.Context
 import androidx.room.*
@@ -22,7 +22,7 @@ abstract class AppDb : RoomDatabase() {
             return instance ?: Room.databaseBuilder(
                 context.applicationContext,
                 AppDb::class.java,
-                DB_NAME
+                    DB_NAME
             )
                 .allowMainThreadQueries()
                 .addCallback(object : Callback() {

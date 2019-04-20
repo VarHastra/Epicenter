@@ -5,7 +5,7 @@ import com.github.varhastra.epicenter.domain.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 
-class PlacesRepository() : PlacesDataSource {
+class PlacesRepository private constructor() : PlacesDataSource {
 
     override fun getPlaces(callback: DataSourceCallback<List<Place>>) {
         // TODO: stub, implement when ready
@@ -32,5 +32,14 @@ class PlacesRepository() : PlacesDataSource {
 
     override fun savePlace(place: Place) {
         TODO("stub, not implemented")
+    }
+
+
+    companion object {
+        private var instance: PlacesRepository? = null
+
+        fun getInstance(): PlacesRepository {
+            return instance ?: PlacesRepository()
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.model
+package com.github.varhastra.epicenter.domain.model
 
 class RemoteEvent(val event: Event, point: Coordinates? = null) {
     var distance: Double? = null

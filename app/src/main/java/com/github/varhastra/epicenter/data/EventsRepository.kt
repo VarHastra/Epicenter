@@ -1,20 +1,22 @@
 package com.github.varhastra.epicenter.data
 
-import com.github.varhastra.epicenter.model.Event
-import com.github.varhastra.epicenter.model.FeedFilter
-import com.github.varhastra.epicenter.model.Place
 import com.github.varhastra.epicenter.data.networking.EventServiceProvider
 import com.github.varhastra.epicenter.data.networking.EventServiceResponse
 import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.domain.DataSourceCallback
+import com.github.varhastra.epicenter.domain.EventsDataSource
+import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.model.Place
 import org.jetbrains.anko.AnkoLogger
 
 class EventsRepository private constructor(
     private val serviceProvider: EventServiceProvider
-) {
+) : EventsDataSource {
 
     val logger = AnkoLogger(this.javaClass)
 
-    fun getWeekFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.WORLD) {
+    override fun getWeekFeed(callback: DataSourceCallback<List<Event>>, filter: FeedFilter, place: Place) {
         serviceProvider.getWeekFeed(object : EventServiceProvider.ResponseCallback {
             override fun onResult(response: EventServiceResponse) {
                 val list = response.mapToModel()
@@ -27,7 +29,7 @@ class EventsRepository private constructor(
         })
     }
 
-    fun getDayFeed(callback: RepositoryCallback, filter: FeedFilter = FeedFilter(), place: Place = Place.WORLD) {
+    override fun getDayFeed(callback: DataSourceCallback<List<Event>>, filter: FeedFilter, place: Place) {
         serviceProvider.getDayFeed(object : EventServiceProvider.ResponseCallback {
             override fun onResult(response: EventServiceResponse) {
                 val list = response.mapToModel()
@@ -45,12 +47,6 @@ class EventsRepository private constructor(
         return filter.applyTo(result)
     }
 
-
-    interface RepositoryCallback {
-        fun onResult(events: List<Event>)
-
-        fun onFailure(t: Throwable?)
-    }
 
     companion object {
         private var instance: EventsRepository? = null

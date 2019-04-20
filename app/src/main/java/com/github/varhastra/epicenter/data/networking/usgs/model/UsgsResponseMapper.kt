@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.data.networking.usgs.model
 
-import com.github.varhastra.epicenter.model.Coordinates
-import com.github.varhastra.epicenter.model.Event
+import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Event
 import org.threeten.bp.Instant
 
 /**

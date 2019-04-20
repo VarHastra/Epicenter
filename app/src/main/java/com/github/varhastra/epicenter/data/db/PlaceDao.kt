@@ -2,7 +2,7 @@ package com.github.varhastra.epicenter.data.db
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.github.varhastra.epicenter.model.Place
+import com.github.varhastra.epicenter.domain.model.Place
 
 @Dao
 interface PlaceDao {

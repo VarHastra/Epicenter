@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.model.Coordinates
-import com.github.varhastra.epicenter.model.Place
+import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Place
 
 @Database(entities = [Place::class], version = 1)
 @TypeConverters(AppDb.Converters::class)

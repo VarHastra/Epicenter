@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.model
+package com.github.varhastra.epicenter.domain.model
 
 import com.github.varhastra.epicenter.utils.toLocalDateTime
 import org.threeten.bp.Instant

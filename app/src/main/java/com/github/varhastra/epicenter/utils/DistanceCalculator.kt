@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.utils
 
-import com.github.varhastra.epicenter.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import kotlin.math.atan2
 import kotlin.math.sin
 

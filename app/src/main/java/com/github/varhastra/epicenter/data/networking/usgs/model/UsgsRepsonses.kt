@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.data.networking.usgs.model
 
-import com.github.varhastra.epicenter.model.Event
+import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.data.networking.EventServiceResponse
 
 

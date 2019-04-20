@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.model
+package com.github.varhastra.epicenter.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

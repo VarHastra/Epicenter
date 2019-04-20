@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.model
+package com.github.varhastra.epicenter.domain.model
 
 /**
  * Represents a filter used to filter events in the feed.

@@ -1,0 +1,12 @@
+package com.github.varhastra.epicenter.domain
+
+import com.github.varhastra.epicenter.domain.model.Place
+
+interface PlacesDataSource {
+
+    fun getPlaces(callback: DataSourceCallback<List<Place>>)
+
+    fun getPlace(callback: DataSourceCallback<Place>, placeId: Int)
+
+    fun savePlace(place: Place)
+}

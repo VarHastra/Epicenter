@@ -11,6 +11,14 @@
     <string name="app_filter">Filter</string>
     <string name="app_settings">Settings</string>
 
+    <string name="app_error_no_events">No events found</string>
+    <string name="app_error_no_events_capt">Try another filters.</string>
+    <string name="app_error_no_connection">No network connection</string>
+    <string name="app_error_no_connection_capt">Check your WiFi or cellular network.</string>
+    <string name="app_error_unknown">Ooops… Something went wrong</string>
+    <string name="app_error_unknown_capt">Can\'t connect to the server.</string>
+
+
     <string name="feed_filters_magnitude">Magnitude</string>
     <string name="feed_filters_chip_mag_0">0+</string>
     <string name="feed_filters_chip_mag_2">2.0+</string>

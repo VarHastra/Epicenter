@@ -16,6 +16,7 @@
     <color name="colorIconActive">#ffffff</color>
     <color name="colorIconInactive">#89ffffff</color>
     <color name="colorIconDisabled">#60ffffff</color>
+    <color name="colorIconSheer">#1fffffff</color>
 
     <color name="colorChipSelected">#FFFFFF</color>
     <color name="colorChip">#1FFFFFFF</color>

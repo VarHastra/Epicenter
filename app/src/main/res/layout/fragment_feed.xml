@@ -29,7 +29,7 @@
         android:layout_gravity="center"
         android:visibility="gone"
         app:captionText="@string/empty_view_connection_body"
-        app:image="@drawable/ic_cloud_off_24dp"
+        app:image="@drawable/ic_error_cloud_off_24dp"
         app:text="@string/empty_view_connection_title"
         tools:visibility="visible" />
 

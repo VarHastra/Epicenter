@@ -185,11 +185,24 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showEvents(events: List<Event>) {
+        emptyView.visibility = View.INVISIBLE
+        feedRecyclerView.visibility = View.VISIBLE
         feedAdapter.data = events
     }
 
     override fun showError(reason: FeedContract.View.ErrorReason) {
-        // TODO("stub, not implemented")
-        activity?.toast("Error")
+        val triple = when (reason) {
+            FeedContract.View.ErrorReason.ERR_NO_EVENTS -> Triple(R.string.app_error_no_events, R.string.app_error_no_events_capt, R.drawable.ic_error_earth_24px)
+            FeedContract.View.ErrorReason.ERR_NO_CONNECTION -> Triple(R.string.app_error_no_connection, R.string.app_error_no_connection_capt, R.drawable.ic_error_wifi_off_24px)
+            FeedContract.View.ErrorReason.ERR_UNKNOWN -> Triple(R.string.app_error_unknown, R.string.app_error_unknown_capt, R.drawable.ic_error_cloud_off_24dp)
+        }
+        // TODO: consider showing "retry" button
+        feedRecyclerView.visibility = View.INVISIBLE
+        emptyView.apply {
+            setTitle(triple.first)
+            setCaption(triple.second)
+            setImageDrawable(triple.third)
+            visibility = View.VISIBLE
+        }
     }
 }

@@ -10,13 +10,14 @@
         android:id="@+id/iv_empty_view"
         android:layout_width="@dimen/size_icon_empty_view"
         android:layout_height="@dimen/size_icon_empty_view"
-        tools:src="@drawable/ic_cloud_off_24dp" />
+        tools:src="@drawable/ic_error_cloud_off_24dp" />
 
     <TextView
         android:id="@+id/tv_empty_view_title"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_2x"
         android:gravity="center_horizontal"
         tools:text="@string/empty_view_connection_title" />
 

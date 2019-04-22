@@ -8,14 +8,19 @@ import com.github.varhastra.epicenter.domain.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
+import org.threeten.bp.Instant
+import org.threeten.bp.temporal.ChronoUnit
 
 class FeedPresenter(
-        private val view: FeedContract.View,
-        private val eventsDataSource: EventsDataSource,
-        private val placesDataSource: PlacesDataSource,
-        private val feedStateDataSource: FeedStateDataSource = Prefs
+    private val view: FeedContract.View,
+    private val eventsDataSource: EventsDataSource,
+    private val placesDataSource: PlacesDataSource,
+    private val feedStateDataSource: FeedStateDataSource = Prefs
 ) : FeedContract.Presenter {
 
+    private val logger = AnkoLogger(this.javaClass)
     private lateinit var filter: FeedFilter
     private lateinit var place: Place
 
@@ -55,6 +60,8 @@ class FeedPresenter(
 
     override fun loadEvents() {
         view.showProgress(true)
+        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
+
         eventsDataSource.getWeekFeed(object : DataSourceCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
                 if (!view.isActive()) {
@@ -62,7 +69,11 @@ class FeedPresenter(
                 }
 
                 view.showProgress(false)
-                view.showEvents(result)
+                if (result.isNotEmpty()) {
+                    view.showEvents(result)
+                } else {
+                    view.showError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+                }
             }
 
             override fun onFailure(t: Throwable?) {
@@ -71,9 +82,10 @@ class FeedPresenter(
                 }
 
                 view.showProgress(false)
+                logger.error("onFailure(): $t")
                 TODO("stub, not implemented")
             }
-        }, filter, place)
+        }, filter, place, minsSinceUpd > FORCE_LOAD_RATE_MINS)
     }
 
     override fun setPlaceAndReload(place: Place) {
@@ -116,5 +128,9 @@ class FeedPresenter(
         filter = filter.copy(sorting = sorting)
         feedStateDataSource.saveCurrentFilter(filter)
         loadEvents()
+    }
+
+    companion object {
+        const val FORCE_LOAD_RATE_MINS = 10
     }
 }

@@ -23,6 +23,7 @@ import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import org.jetbrains.anko.toast
 
 /**
  * A [Fragment] subclass that displays a list
@@ -187,6 +188,7 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showError(reason: FeedContract.View.ErrorReason) {
-        TODO("stub, not implemented")
+        // TODO("stub, not implemented")
+        activity?.toast("Error")
     }
 }

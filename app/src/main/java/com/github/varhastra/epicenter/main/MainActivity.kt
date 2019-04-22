@@ -12,7 +12,7 @@ import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsRepository
 import com.github.varhastra.epicenter.data.PlacesRepository
-import com.github.varhastra.epicenter.data.networking.usgs.UsgsMockProvider
+import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.main.feed.FeedFragment
 import com.github.varhastra.epicenter.main.feed.FeedPresenter
@@ -99,8 +99,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     private fun navigateTo(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_content_main, fragment)
-                .commit()
+            .replace(R.id.frame_content_main, fragment)
+            .commit()
     }
 
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {
@@ -109,7 +109,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 R.id.navigation_feed -> {
                     val fragment = FeedFragment()
                     // TODO: replace mock provider with the real one
-                    FeedPresenter(fragment, EventsRepository.getInstance(UsgsMockProvider()), PlacesRepository.getInstance())
+                    FeedPresenter(
+                        fragment,
+                        EventsRepository.getInstance(UsgsServiceProvider()),
+                        PlacesRepository.getInstance()
+                    )
                     navigateTo(fragment)
                     true
                 }

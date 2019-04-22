@@ -68,6 +68,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         setHasOptionsMenu(true)
 
         bottomSheetBehavior = BottomSheetBehavior.from(sheetFeed)
+        bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         feedAdapter = FeedAdapter(activity!!)

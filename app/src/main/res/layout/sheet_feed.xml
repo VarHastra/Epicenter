@@ -4,20 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sheet_feed"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="?colorSurface"
     android:elevation="@dimen/elevation_bottom_sheet"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/spacing_2x"
     app:behavior_hideable="true"
     app:behavior_peekHeight="@dimen/height_bottom_sheet_peek"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:layout_width="24dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:background="@drawable/shape_sheet_drag_handle" />
 
     <TextView
         style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_2x"
-        android:layout_marginTop="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_1x"
         android:layout_marginEnd="@dimen/spacing_2x"
         android:text="@string/feed_filters_sort_by" />
 
@@ -116,75 +124,4 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_8" />
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
-
-    <TextView
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_2x"
-        android:layout_marginTop="@dimen/spacing_2x"
-        android:layout_marginEnd="@dimen/spacing_2x"
-        android:text="@string/feed_filters_radius" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/size_min_touch_target"
-        android:layout_marginStart="@dimen/spacing_2x"
-        android:layout_marginTop="@dimen/spacing_1x"
-        android:layout_marginEnd="@dimen/spacing_2x"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="@dimen/size_icon_normal"
-            android:layout_height="@dimen/size_icon_normal"
-            android:src="@drawable/ic_outline_location_24px"
-            android:tint="@color/colorIconDisabled" />
-
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/sb_feed_filters_radius"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:layout_width="@dimen/size_icon_normal"
-            android:layout_height="@dimen/size_icon_normal"
-            android:src="@drawable/ic_outline_radius_24px"
-            android:tint="@color/colorIconDisabled" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_2x"
-        android:layout_marginTop="@dimen/spacing_1x"
-        android:layout_marginEnd="@dimen/spacing_2x"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_feed_filters_min_radius"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="0mi" />
-
-        <TextView
-            android:id="@+id/tv_feed_filters_radius"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            tools:text="2500mi" />
-
-        <TextView
-            android:id="@+id/tv_feed_filters_max_radius"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="6000mi" />
-    </LinearLayout>
-
 </LinearLayout>

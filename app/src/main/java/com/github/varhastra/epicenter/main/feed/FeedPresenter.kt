@@ -30,7 +30,7 @@ class FeedPresenter(
     override fun start() {
         setPlace(feedStateDataSource.getSelectedPlaceId())
         view.showCurrentPlace(place)
-        filter = feedStateDataSource.getSelectedFilter()
+        filter = feedStateDataSource.getCurrentFilter()
         view.showCurrentFilter(filter)
         // TODO: handle deleted place
         loadPlaces()
@@ -77,8 +77,7 @@ class FeedPresenter(
     }
 
     override fun setPlaceAndReload(place: Place) {
-        this.place = place
-        view.showCurrentPlace(place)
+        setPlace(place.id)
         loadEvents()
     }
 
@@ -89,6 +88,7 @@ class FeedPresenter(
     }
 
     private fun setPlace(placeId: Int) {
+        feedStateDataSource.saveSelectedPlaceId(placeId)
         placesDataSource.getPlace(object : DataSourceCallback<Place> {
             override fun onResult(result: Place) {
                 this@FeedPresenter.place = result
@@ -102,16 +102,19 @@ class FeedPresenter(
 
     override fun setFilterAndReload(filter: FeedFilter) {
         this.filter = filter
+        feedStateDataSource.saveCurrentFilter(filter)
         loadEvents()
     }
 
     override fun setMagnitudeFilterAndReload(minMag: Int) {
         filter = filter.copy(minMagnitude = minMag.toDouble())
+        feedStateDataSource.saveCurrentFilter(filter)
         loadEvents()
     }
 
     override fun setSortingAndReload(sorting: FeedFilter.Sorting) {
         filter = filter.copy(sorting = sorting)
+        feedStateDataSource.saveCurrentFilter(filter)
         loadEvents()
     }
 }

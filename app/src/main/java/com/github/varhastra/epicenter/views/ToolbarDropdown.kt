@@ -12,7 +12,7 @@ import com.github.varhastra.epicenter.R
 
 class ToolbarDropdown : Toolbar {
 
-    private lateinit var dropdownTextView: TextView
+    lateinit var dropdownTextView: TextView
     private lateinit var titleTextView: TextView
 
     private var onClick: (() -> Unit)? = null

@@ -38,6 +38,8 @@ class FeedFilter(
         }
     }
 
+    fun copy(minMagnitude: Double = this.minMagnitude, sorting: Sorting = this.sorting) = FeedFilter(minMagnitude, sorting)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

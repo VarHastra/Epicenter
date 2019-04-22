@@ -1,17 +1,24 @@
 package com.github.varhastra.epicenter.main.feed
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.main.ToolbarProvider
 import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -21,7 +28,10 @@ import com.google.android.material.chip.ChipGroup
  * A [Fragment] subclass that displays a list
  * of recent earthquakes.
  */
-class FeedFragment : Fragment() {
+class FeedFragment : Fragment(), FeedContract.View {
+
+    @BindView(R.id.pb_feed)
+    lateinit var progressBar: ContentLoadingProgressBar
 
     @BindView(R.id.cg_feed_filters_magnitude)
     lateinit var magnitudeChipGroup: ChipGroup
@@ -36,6 +46,14 @@ class FeedFragment : Fragment() {
     @BindView(R.id.emptv_feed)
     lateinit var emptyView: EmptyView
 
+    @BindView(R.id.rv_feed)
+    lateinit var feedRecyclerView: RecyclerView
+
+    private lateinit var presenter: FeedContract.Presenter
+
+    private lateinit var feedAdapter: FeedAdapter
+
+    private var toolbarProvider: ToolbarProvider? = null
 
 
     override fun onCreateView(
@@ -48,12 +66,45 @@ class FeedFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        bottomSheetBehavior = BottomSheetBehavior.from(sheetFeed)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        feedAdapter = FeedAdapter(activity!!)
+        feedRecyclerView.setHasFixedSize(true)
+        feedRecyclerView.layoutManager = LinearLayoutManager(activity)
+        feedRecyclerView.adapter = feedAdapter
+
+        return root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        toolbarProvider = context as? ToolbarProvider
+        toolbarProvider?.attachListener {
+            presenter.setPlaceAndReload(it)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.start()
+
         magnitudeChipGroup.setOnCheckedChangeListener { group, checkedId ->
             group.children.forEach {
                 (it as? Chip)?.apply {
                     isClickable = !isChecked
                 }
             }
+
+            val minMag = when (checkedId) {
+                R.id.chip_mag_0 -> 0
+                R.id.chip_mag_2 -> 2
+                R.id.chip_mag_4 -> 4
+                R.id.chip_mag_6 -> 6
+                R.id.chip_mag_8 -> 8
+                else -> 0
+            }
+            presenter.setMagnitudeFilterAndReload(minMag)
         }
 
         sortingChipGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -62,12 +113,14 @@ class FeedFragment : Fragment() {
                     isClickable = !isChecked
                 }
             }
+
+            val sorting = when (checkedId) {
+                R.id.chip_sorting_date -> FeedFilter.Sorting.DATE
+                R.id.chip_sorting_mag -> FeedFilter.Sorting.MAGNITUDE
+                else -> FeedFilter.Sorting.DATE
+            }
+            presenter.setSortingAndReload(sorting)
         }
-
-        bottomSheetBehavior = BottomSheetBehavior.from(sheetFeed)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        return root
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -83,5 +136,57 @@ class FeedFragment : Fragment() {
             else -> super.onOptionsItemSelected(item)
 
         }
+    }
+
+    override fun attachPresenter(presenter: FeedContract.Presenter) {
+        this.presenter = presenter
+    }
+
+    override fun isActive() = isAdded
+
+
+    override fun showProgress(active: Boolean) {
+        if (active) progressBar.show() else progressBar.hide()
+    }
+
+    override fun showCurrentPlace(place: Place) {
+        toolbarProvider?.setDropdownText(place.name)
+    }
+
+    override fun showCurrentFilter(filter: FeedFilter) {
+        showCurrentMagnitudeFilter(filter.minMagnitude.toInt())
+        showCurrentSorting(filter.sorting)
+    }
+
+    private fun showCurrentMagnitudeFilter(magnitude: Int) {
+        val id = when (magnitude) {
+            in -2 until 2 -> R.id.chip_mag_0
+            in 2 until 4 -> R.id.chip_mag_2
+            in 4 until 6 -> R.id.chip_mag_4
+            in 6 until 8 -> R.id.chip_mag_6
+            in 8..10 -> R.id.chip_mag_8
+            else -> R.id.chip_mag_0
+        }
+        magnitudeChipGroup.check(id)
+    }
+
+    private fun showCurrentSorting(sorting: FeedFilter.Sorting) {
+        val id = when (sorting) {
+            FeedFilter.Sorting.DATE -> R.id.chip_sorting_date
+            FeedFilter.Sorting.MAGNITUDE -> R.id.chip_sorting_mag
+        }
+        sortingChipGroup.check(id)
+    }
+
+    override fun showPlaces(places: List<Place>) {
+        toolbarProvider?.setDropdownData(places)
+    }
+
+    override fun showEvents(events: List<Event>) {
+        feedAdapter.data = events
+    }
+
+    override fun showError(reason: FeedContract.View.ErrorReason) {
+        TODO("stub, not implemented")
     }
 }

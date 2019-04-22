@@ -17,4 +17,6 @@
     <dimen name="height_bottom_sheet_peek">256dp</dimen>
 
     <dimen name="elevation_bottom_sheet">6dp</dimen>
+
+    <dimen name="height_item_three_line">88dp</dimen>
 </resources>

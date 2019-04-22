@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".main.feed.FeedFragment">
 
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/pb_feed"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="-7dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?colorPrimary" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_feed"
         android:layout_width="match_parent"

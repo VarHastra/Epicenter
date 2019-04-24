@@ -13,6 +13,7 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsRepository
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.main.feed.FeedFragment
 import com.github.varhastra.epicenter.main.feed.FeedPresenter
@@ -24,6 +25,12 @@ import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.error
@@ -71,7 +78,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     override fun onResume() {
         super.onResume()
-        checkPlayApiAvailability()
+        if (checkPlayApiAvailability()) {
+            checkLocationPermission()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -108,12 +117,31 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     private fun navigateTo(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_content_main, fragment)
-            .commit()
+                .replace(R.id.frame_content_main, fragment)
+                .commit()
     }
 
+    private fun checkLocationPermission() {
+        Dexter.withActivity(this)
+                .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                        // Do nothing
+                    }
 
-    private fun checkPlayApiAvailability() {
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
+                        token?.continuePermissionRequest()
+                        // TODO: show explanation dialog
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                        onBackPressed()
+                        // TODO: consider better solution
+                    }
+                }).check()
+    }
+
+    private fun checkPlayApiAvailability(): Boolean {
         val api = GoogleApiAvailability.getInstance()
         val availability = api.isGooglePlayServicesAvailable(this)
         when (availability) {
@@ -126,15 +154,18 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     warn("GooglePlayServices are not available. Code: $availability")
                     val dialog = api.getErrorDialog(this, availability, 0)
                     dialog.setOnDismissListener {
-                        onBackPressed()
+                        finish()
                     }
                     dialog.show()
                 } else {
                     error("Unresolvable issue with GooglePlayServices. Code: $availability")
-                    onBackPressed()
+                    finish()
                 }
+                return false
             }
         }
+
+        return true
     }
 
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {
@@ -144,9 +175,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     val fragment = FeedFragment()
                     // TODO: replace mock provider with the real one
                     FeedPresenter(
-                        fragment,
-                        EventsRepository.getInstance(UsgsServiceProvider()),
-                        PlacesRepository.getInstance()
+                            fragment,
+                            EventsRepository.getInstance(UsgsServiceProvider()),
+                            PlacesRepository.getInstance(),
+                            LocationProvider()
                     )
                     navigateTo(fragment)
                     true

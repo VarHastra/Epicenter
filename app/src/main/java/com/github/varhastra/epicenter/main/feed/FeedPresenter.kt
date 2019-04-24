@@ -1,10 +1,7 @@
 package com.github.varhastra.epicenter.main.feed
 
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.EventsDataSource
-import com.github.varhastra.epicenter.domain.FeedStateDataSource
-import com.github.varhastra.epicenter.domain.PlacesDataSource
+import com.github.varhastra.epicenter.domain.*
 import com.github.varhastra.epicenter.domain.model.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
@@ -15,6 +12,7 @@ class FeedPresenter(
         private val view: FeedContract.View,
         private val eventsDataSource: EventsDataSource,
         private val placesDataSource: PlacesDataSource,
+        private val locationDataSource: LocationDataSource,
         private val feedStateDataSource: FeedStateDataSource = Prefs
 ) : FeedContract.Presenter {
 
@@ -57,9 +55,21 @@ class FeedPresenter(
     }
 
     override fun loadEvents() {
+        locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
+            override fun onResult(result: Position) {
+                loadEvents(result.coordinates)
+            }
+
+            override fun onFailure(t: Throwable?) {
+                loadEvents(null)
+                // todo: Report that location is not available
+            }
+        })
+    }
+
+    private fun loadEvents(coordinates: Coordinates?) {
         view.showProgress(true)
         val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
-        val location: Coordinates? = null
 
         eventsDataSource.getWeekFeed(object : DataSourceCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
@@ -69,7 +79,7 @@ class FeedPresenter(
 
                 view.showProgress(false)
                 if (result.isNotEmpty()) {
-                    view.showEvents(RemoteEvent.from(result, location))
+                    view.showEvents(RemoteEvent.from(result, coordinates))
                 } else {
                     view.showError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
                 }

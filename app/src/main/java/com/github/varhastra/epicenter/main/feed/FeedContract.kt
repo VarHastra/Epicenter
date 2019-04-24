@@ -2,9 +2,9 @@ package com.github.varhastra.epicenter.main.feed
 
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView
-import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
 
 interface FeedContract {
 
@@ -25,7 +25,7 @@ interface FeedContract {
 
         fun showPlaces(places: List<Place>)
 
-        fun showEvents(events: List<Event>)
+        fun showEvents(events: List<RemoteEvent>)
 
         fun showError(reason: ErrorReason)
     }

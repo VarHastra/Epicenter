@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
 
 class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.EventHolder>() {
 
-    var data: List<Event> = listOf()
+    var data: List<RemoteEvent> = listOf()
         set (value) {
             field = value
             notifyDataSetChanged()
@@ -36,14 +36,22 @@ class FeedAdapter(val context: Context) : RecyclerView.Adapter<FeedAdapter.Event
         lateinit var magnitudeTextView: TextView
         @BindView(R.id.tv_item_feed_title)
         lateinit var titleTextView: TextView
+        @BindView(R.id.tv_item_feed_distance)
+        lateinit var distanceTextView: TextView
+        @BindView(R.id.tv_item_feed_depth)
+        lateinit var depthTextView: TextView
 
         init {
             ButterKnife.bind(this, itemView)
         }
 
-        fun bind(event: Event) {
-            magnitudeTextView.text = event.magnitude.toString() // TODO: implement formatting
-            titleTextView.text = event.placeName
+        fun bind(remoteEvent: RemoteEvent) {
+            with(remoteEvent) {
+                magnitudeTextView.text = event.magnitude.toString() // TODO: implement formatting
+                titleTextView.text = event.placeName
+                distanceTextView.text = distance.toString()
+                depthTextView.text = event.depth.toString()
+            }
         }
     }
 }

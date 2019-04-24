@@ -11,19 +11,37 @@
         android:layout_width="72dp"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:textSize="30sp"
         tools:text="5.6" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_item_feed_title"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:text="62 mi S of San Francisco Del Mar" />
+
+        <TextView
+            android:id="@+id/tv_item_feed_distance"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mtrl_dark_on_surface_emphasis_medium"
+            tools:text="Distance: 3453 mi" />
+
+        <TextView
+            android:id="@+id/tv_item_feed_depth"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mtrl_dark_on_surface_emphasis_medium"
+            tools:text="Depth: 15 mi" />
 
     </LinearLayout>
 

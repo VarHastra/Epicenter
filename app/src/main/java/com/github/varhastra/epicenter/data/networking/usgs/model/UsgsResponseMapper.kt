@@ -27,7 +27,7 @@ class UsgsResponseMapper {
 
         return with(feature.properties) {
             Event(id, mag, place, Instant.ofEpochMilli(time),
-                    Coordinates(coordinates[0], coordinates[1]),
+                    Coordinates(coordinates[1], coordinates[0]),
                     url,
                     felt ?: 0,
                     tsunami == 1,

@@ -21,9 +21,13 @@ import com.github.varhastra.epicenter.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.main.search.SearchFragment
 import com.github.varhastra.epicenter.settings.SettingsActivity
 import com.github.varhastra.epicenter.views.ToolbarDropdown
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.displayMetrics
+import org.jetbrains.anko.error
+import org.jetbrains.anko.warn
 
 /**
  * Primary activity of the app that holds
@@ -65,6 +69,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkPlayApiAvailability()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -101,6 +110,31 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_content_main, fragment)
             .commit()
+    }
+
+
+    private fun checkPlayApiAvailability() {
+        val api = GoogleApiAvailability.getInstance()
+        val availability = api.isGooglePlayServicesAvailable(this)
+        when (availability) {
+            ConnectionResult.SERVICE_MISSING,
+            ConnectionResult.SERVICE_UPDATING,
+            ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED,
+            ConnectionResult.SERVICE_DISABLED,
+            ConnectionResult.SERVICE_INVALID -> {
+                if (api.isUserResolvableError(availability)) {
+                    warn("GooglePlayServices are not available. Code: $availability")
+                    val dialog = api.getErrorDialog(this, availability, 0)
+                    dialog.setOnDismissListener {
+                        onBackPressed()
+                    }
+                    dialog.show()
+                } else {
+                    error("Unresolvable issue with GooglePlayServices. Code: $availability")
+                    onBackPressed()
+                }
+            }
+        }
     }
 
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {

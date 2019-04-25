@@ -104,7 +104,6 @@ class FeedPresenter(
 
     override fun setPlaceAndReload(placeId: Int) {
         setPlace(placeId)
-        view.showCurrentPlace(place)
         loadEvents()
     }
 
@@ -113,6 +112,7 @@ class FeedPresenter(
         placesDataSource.getPlace(object : DataSourceCallback<Place> {
             override fun onResult(result: Place) {
                 this@FeedPresenter.place = result
+                view.showCurrentPlace(place)
             }
 
             override fun onFailure(t: Throwable?) {

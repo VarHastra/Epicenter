@@ -3,6 +3,7 @@ package com.github.varhastra.epicenter.main.feed
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.*
 import com.github.varhastra.epicenter.domain.model.*
+import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.jetbrains.anko.info

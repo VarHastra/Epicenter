@@ -2,7 +2,7 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.FeedStateDataSource
+import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.getDouble

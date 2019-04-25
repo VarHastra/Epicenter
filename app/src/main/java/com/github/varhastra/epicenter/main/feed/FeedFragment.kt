@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -70,7 +71,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        feedAdapter = FeedAdapter(activity!!)
+        feedAdapter = FeedAdapter(activity!!, Prefs.getPreferredUnits())
         feedRecyclerView.setHasFixedSize(true)
         feedRecyclerView.layoutManager = LinearLayoutManager(activity)
         feedRecyclerView.adapter = feedAdapter

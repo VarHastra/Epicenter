@@ -1,8 +1,12 @@
 package com.github.varhastra.epicenter.main.feed
 
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +28,13 @@ import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
+import org.jetbrains.anko.design.longSnackbar
 
 /**
  * A [Fragment] subclass that displays a list
@@ -190,11 +201,23 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedAdapter.data = events
     }
 
-    override fun showError(reason: FeedContract.View.ErrorReason) {
+    override fun showNoDataError(reason: FeedContract.View.ErrorReason) {
         val triple = when (reason) {
-            FeedContract.View.ErrorReason.ERR_NO_EVENTS -> Triple(R.string.app_error_no_events, R.string.app_error_no_events_capt, R.drawable.ic_error_earth_24px)
-            FeedContract.View.ErrorReason.ERR_NO_CONNECTION -> Triple(R.string.app_error_no_connection, R.string.app_error_no_connection_capt, R.drawable.ic_error_wifi_off_24px)
-            FeedContract.View.ErrorReason.ERR_UNKNOWN -> Triple(R.string.app_error_unknown, R.string.app_error_unknown_capt, R.drawable.ic_error_cloud_off_24dp)
+            FeedContract.View.ErrorReason.ERR_NO_EVENTS -> Triple(
+                    R.string.app_error_no_events,
+                    R.string.app_error_no_events_capt,
+                    R.drawable.ic_error_earth_24px
+            )
+            FeedContract.View.ErrorReason.ERR_NO_CONNECTION -> Triple(
+                    R.string.app_error_no_connection,
+                    R.string.app_error_no_connection_capt,
+                    R.drawable.ic_error_wifi_off_24px
+            )
+            FeedContract.View.ErrorReason.ERR_UNKNOWN -> Triple(
+                    R.string.app_error_unknown,
+                    R.string.app_error_unknown_capt,
+                    R.drawable.ic_error_cloud_off_24dp
+            )
         }
         // TODO: consider showing "retry" button
         feedRecyclerView.visibility = View.INVISIBLE
@@ -204,5 +227,42 @@ class FeedFragment : Fragment(), FeedContract.View {
             setImageDrawable(triple.third)
             visibility = View.VISIBLE
         }
+    }
+
+    override fun showLocationPermissionRequest(callback: FeedContract.View.PermissionRequestCallback) {
+        activity?.apply {
+            Dexter.withActivity(this)
+                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(object : PermissionListener {
+                        override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                            callback.onGranted()
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                                permission: PermissionRequest?,
+                                token: PermissionToken?
+                        ) {
+                            token?.continuePermissionRequest()
+                        }
+
+                        override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                            callback.onDenied()
+                        }
+                    }).check()
+        }
+    }
+
+    override fun showLocationNotAvailableError() {
+        view?.longSnackbar(R.string.feed_error_location_not_avaliable, R.string.app_settings) {
+            showAppSettings()
+        }
+    }
+
+    private fun showAppSettings() {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.fromParts("package", context?.packageName, null)
+        }
+        startActivity(intent)
     }
 }

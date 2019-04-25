@@ -13,6 +13,8 @@
     <color name="colorSurface">#303030</color>
     <color name="colorOnSurface">#8affffff</color>
 
+    <color name="colorSnackbar">#ffffff</color>
+
     <color name="colorIconActive">#ffffff</color>
     <color name="colorIconInactive">#89ffffff</color>
     <color name="colorIconDisabled">#60ffffff</color>

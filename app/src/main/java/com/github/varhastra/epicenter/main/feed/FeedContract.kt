@@ -15,6 +15,12 @@ interface FeedContract {
             ERR_UNKNOWN
         }
 
+        interface PermissionRequestCallback {
+            fun onGranted()
+
+            fun onDenied()
+        }
+
         fun isActive(): Boolean
 
         fun showProgress(active: Boolean)
@@ -27,7 +33,11 @@ interface FeedContract {
 
         fun showEvents(events: List<RemoteEvent>)
 
-        fun showError(reason: ErrorReason)
+        fun showNoDataError(reason: ErrorReason)
+
+        fun showLocationPermissionRequest(callback: PermissionRequestCallback)
+
+        fun showLocationNotAvailableError()
     }
 
     interface Presenter : BasePresenter {

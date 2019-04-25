@@ -10,10 +10,10 @@ import kotlin.math.abs
 
 @Entity(tableName = "place")
 data class Place(
-    @PrimaryKey(autoGenerate = true) val id: Int = 100,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "coordinates") val coordinates: Coordinates,
-    @ColumnInfo(name = "radius") val radius: Int?
+        @PrimaryKey(autoGenerate = true) val id: Int = 100,
+        @ColumnInfo(name = "name") val name: String,
+        @ColumnInfo(name = "coordinates") val coordinates: Coordinates,
+        @ColumnInfo(name = "radius") val radius: Int?
 ) {
     val latitude: Double
         get() = coordinates.latitude
@@ -36,6 +36,8 @@ data class Place(
     }
 
     companion object {
-        val WORLD = Place(name = "San Francisco", coordinates = Coordinates(37.757815, -122.5076402), radius = null)
+        val WORLD = Place(1, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radius = null)
+        val CURRENT_LOCATION =
+                Place(0, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radius = null)
     }
 }

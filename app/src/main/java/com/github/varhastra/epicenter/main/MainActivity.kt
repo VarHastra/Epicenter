@@ -78,9 +78,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     override fun onResume() {
         super.onResume()
-        if (checkPlayApiAvailability()) {
-            checkLocationPermission()
-        }
+        checkPlayApiAvailability()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -119,26 +117,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.frame_content_main, fragment)
                 .commit()
-    }
-
-    private fun checkLocationPermission() {
-        Dexter.withActivity(this)
-                .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                        // Do nothing
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
-                        token?.continuePermissionRequest()
-                        // TODO: show explanation dialog
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                        onBackPressed()
-                        // TODO: consider better solution
-                    }
-                }).check()
     }
 
     private fun checkPlayApiAvailability(): Boolean {

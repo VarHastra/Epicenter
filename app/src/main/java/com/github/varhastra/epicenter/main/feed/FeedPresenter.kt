@@ -5,6 +5,7 @@ import com.github.varhastra.epicenter.domain.*
 import com.github.varhastra.epicenter.domain.model.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
+import org.jetbrains.anko.info
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 
@@ -20,6 +21,24 @@ class FeedPresenter(
     private lateinit var filter: FeedFilter
     private lateinit var place: Place
 
+    private val placeDataSourceCallback = object : DataSourceCallback<Place> {
+        override fun onResult(result: Place) {
+            logger.info("callback.onResult(): $result")
+            this@FeedPresenter.place = result
+            feedStateDataSource.saveSelectedPlaceId(place.id)
+            view.showCurrentPlace(place)
+        }
+
+        override fun onFailure(t: Throwable?) {
+            // We might end up here only if we requested place representing current location
+            // and for some reason current location is not available at the moment
+            logger.info("callback.onFailure(): $t")
+            view.showLocationNotAvailableError()
+            setPlaceAndReload(Place.WORLD)
+        }
+    }
+
+
     init {
         view.attachPresenter(this)
     }
@@ -30,7 +49,6 @@ class FeedPresenter(
 
     override fun start() {
         setPlace(feedStateDataSource.getSelectedPlaceId())
-        view.showCurrentPlace(place)
         filter = feedStateDataSource.getCurrentFilter()
         view.showCurrentFilter(filter)
         // TODO: handle deleted place
@@ -81,7 +99,7 @@ class FeedPresenter(
                 if (result.isNotEmpty()) {
                     view.showEvents(RemoteEvent.from(result, coordinates))
                 } else {
-                    view.showError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+                    view.showNoDataError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
                 }
             }
 
@@ -108,17 +126,20 @@ class FeedPresenter(
     }
 
     private fun setPlace(placeId: Int) {
-        feedStateDataSource.saveSelectedPlaceId(placeId)
-        placesDataSource.getPlace(object : DataSourceCallback<Place> {
-            override fun onResult(result: Place) {
-                this@FeedPresenter.place = result
-                view.showCurrentPlace(place)
-            }
+        if (placeId == Place.CURRENT_LOCATION.id) {
+            view.showLocationPermissionRequest(object : FeedContract.View.PermissionRequestCallback {
+                override fun onGranted() {
+                    placesDataSource.getPlace(placeDataSourceCallback, placeId)
+                }
 
-            override fun onFailure(t: Throwable?) {
-                TODO("stub, not implemented")
-            }
-        }, placeId)
+                override fun onDenied() {
+                    view.showLocationNotAvailableError()
+                    setPlaceAndReload(Place.WORLD)
+                }
+            })
+        } else {
+            placesDataSource.getPlace(placeDataSourceCallback, placeId)
+        }
     }
 
     override fun setFilterAndReload(filter: FeedFilter) {

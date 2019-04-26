@@ -33,11 +33,13 @@ interface FeedContract {
 
         fun showEvents(events: List<RemoteEvent>)
 
-        fun showNoDataError(reason: ErrorReason)
+        fun showErrorNoData(reason: ErrorReason)
 
         fun showLocationPermissionRequest(callback: PermissionRequestCallback)
 
-        fun showLocationNotAvailableError()
+        fun showErrorLocationNotAvailable()
+
+        fun showErrorNoConnection()
     }
 
     interface Presenter : BasePresenter {

@@ -51,6 +51,10 @@ class EventsRepository private constructor(
         return feedLastUpdated
     }
 
+    override fun isCacheAvailable(): Boolean {
+        return !eventsFeedCache.isEmpty()
+    }
+
     private fun updateFeedCache(list: List<Event>) {
         feedLastUpdated = Instant.now()
         eventsFeedCache.clear()

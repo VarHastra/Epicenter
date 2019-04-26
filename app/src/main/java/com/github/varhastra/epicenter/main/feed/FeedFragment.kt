@@ -201,7 +201,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedAdapter.data = events
     }
 
-    override fun showNoDataError(reason: FeedContract.View.ErrorReason) {
+    override fun showErrorNoData(reason: FeedContract.View.ErrorReason) {
         val triple = when (reason) {
             FeedContract.View.ErrorReason.ERR_NO_EVENTS -> Triple(
                     R.string.app_error_no_events,
@@ -252,10 +252,14 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
-    override fun showLocationNotAvailableError() {
+    override fun showErrorLocationNotAvailable() {
         view?.longSnackbar(R.string.feed_error_location_not_avaliable, R.string.app_settings) {
             showAppSettings()
         }
+    }
+
+    override fun showErrorNoConnection() {
+        view?.longSnackbar(R.string.app_error_no_connection)
     }
 
     private fun showAppSettings() {

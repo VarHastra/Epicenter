@@ -13,6 +13,7 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsRepository
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.main.feed.FeedFragment
@@ -25,12 +26,6 @@ import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.error
@@ -156,7 +151,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                             fragment,
                             EventsRepository.getInstance(UsgsServiceProvider()),
                             PlacesRepository.getInstance(),
-                            LocationProvider()
+                            LocationProvider(),
+                            ConnectivityProvider()
                     )
                     navigateTo(fragment)
                     true

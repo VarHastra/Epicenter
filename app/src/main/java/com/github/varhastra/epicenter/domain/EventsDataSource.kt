@@ -11,4 +11,6 @@ interface EventsDataSource {
     )
 
     fun getWeekFeedLastUpdated(): Instant
+
+    fun isCacheAvailable(): Boolean
 }

@@ -71,17 +71,21 @@ class FeedPresenter(
     }
 
     override fun loadEvents() {
-        startLoadingEvents()
+        startLoadingEvents(false)
     }
 
-    private fun startLoadingEvents(forceLoad: Boolean = false) {
+    override fun refreshEvents() {
+        startLoadingEvents(true)
+    }
+
+    private fun startLoadingEvents(forceLoad: Boolean) {
         if (placeId == Place.CURRENT_LOCATION.id) {
             // If the user has selected "Current location", then we first need
             // to check location permission
             view.showLocationPermissionRequest(object : FeedContract.View.PermissionRequestCallback {
                 override fun onGranted() {
                     // Permission is granted, proceed by loading information
-                    getPlaceAndEvents(false)
+                    getPlaceAndEvents(forceLoad)
                 }
 
                 override fun onDenied() {
@@ -93,7 +97,7 @@ class FeedPresenter(
         } else {
             // If we deal with any place other than "Current location"
             // then just load information for that place
-            getPlaceAndEvents(false)
+            getPlaceAndEvents(forceLoad)
         }
     }
 
@@ -117,12 +121,12 @@ class FeedPresenter(
 
     private fun getEvents(place: Place, forceLoadRequested: Boolean) {
         val networkAvailable = connectivityDataSource.isNetworkConnected()
-        if (forceLoadRequested && eventsDataSource.isCacheAvailable()) {
+        if (forceLoadRequested && eventsDataSource.isCacheAvailable() && !networkAvailable) {
             view.showErrorNoConnection()
         }
 
         val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
-        val forceLoad = (forceLoadRequested || minsSinceUpd > FORCE_LOAD_RATE_MINS) && networkAvailable
+        val forceLoad = (forceLoadRequested || (minsSinceUpd > FORCE_LOAD_RATE_MINS)) && networkAvailable
 
         val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, place)
 

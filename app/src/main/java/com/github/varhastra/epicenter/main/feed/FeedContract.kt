@@ -49,6 +49,8 @@ interface FeedContract {
 
         fun loadEvents()
 
+        fun refreshEvents()
+
         fun setPlaceAndReload(place: Place)
 
         fun setFilterAndReload(filter: FeedFilter)

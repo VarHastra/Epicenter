@@ -143,7 +143,7 @@ class FeedFragment : Fragment(), FeedContract.View {
                 true
             }
             R.id.action_refresh -> {
-
+                presenter.refreshEvents()
                 true
             }
             else -> super.onOptionsItemSelected(item)

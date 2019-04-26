@@ -6,8 +6,6 @@ import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.EventsDataSource
 import com.github.varhastra.epicenter.domain.model.Event
-import com.github.varhastra.epicenter.domain.model.FeedFilter
-import com.github.varhastra.epicenter.domain.model.Place
 import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
 
@@ -29,15 +27,10 @@ class EventsRepository private constructor(
     private var feedLastUpdated: Instant = Instant.EPOCH
 
 
-    override fun getWeekFeed(
-        callback: DataSourceCallback<List<Event>>,
-        filter: FeedFilter,
-        place: Place,
-        forceLoad: Boolean
-    ) {
+    override fun getWeekFeed(callback: DataSourceCallback<List<Event>>, forceLoad: Boolean) {
         if (!forceLoad && eventsFeedCache.isNotEmpty()) {
             val list = eventsFeedCache.values.toList()
-            callback.onResult(filter(list, filter, place))
+            callback.onResult(list)
             return
         }
 
@@ -45,7 +38,7 @@ class EventsRepository private constructor(
             override fun onResult(response: EventServiceResponse) {
                 val list = response.mapToModel()
                 updateFeedCache(list)
-                callback.onResult(filter(list, filter, place))
+                callback.onResult(list)
             }
 
             override fun onFailure(t: Throwable?) {
@@ -56,24 +49,6 @@ class EventsRepository private constructor(
 
     override fun getWeekFeedLastUpdated(): Instant {
         return feedLastUpdated
-    }
-
-    //    override fun getDayFeed(callback: DataSourceCallback<List<Event>>, filter: FeedFilter, place: Place) {
-//        serviceProvider.getDayFeed(object : EventServiceProvider.ResponseCallback {
-//            override fun onResult(response: EventServiceResponse) {
-//                val list = response.mapToModel()
-//                callback.onResult(filter(list, filter, place))
-//            }
-//
-//            override fun onFailure(t: Throwable?) {
-//                callback.onFailure(t)
-//            }
-//        })
-//    }
-
-    private fun filter(events: List<Event>, filter: FeedFilter, place: Place): List<Event> {
-        val result = events.filter { place.checkCoordinates(it.coordinates) }
-        return filter.applyTo(result)
     }
 
     private fun updateFeedCache(list: List<Event>) {

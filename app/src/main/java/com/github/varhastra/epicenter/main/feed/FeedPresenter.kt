@@ -1,43 +1,37 @@
 package com.github.varhastra.epicenter.main.feed
 
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.domain.*
-import com.github.varhastra.epicenter.domain.model.*
+import com.github.varhastra.epicenter.domain.DataSourceCallback
+import com.github.varhastra.epicenter.domain.EventsDataSource
+import com.github.varhastra.epicenter.domain.LocationDataSource
+import com.github.varhastra.epicenter.domain.PlacesDataSource
+import com.github.varhastra.epicenter.domain.interactors.FeedLoaderInteractor
+import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
+import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.jetbrains.anko.info
+import org.jetbrains.anko.warn
 import org.threeten.bp.Instant
 import org.threeten.bp.temporal.ChronoUnit
 
 class FeedPresenter(
-        private val view: FeedContract.View,
-        private val eventsDataSource: EventsDataSource,
-        private val placesDataSource: PlacesDataSource,
-        private val locationDataSource: LocationDataSource,
-        private val feedStateDataSource: FeedStateDataSource = Prefs
+    private val view: FeedContract.View,
+    private val eventsDataSource: EventsDataSource,
+    private val placesDataSource: PlacesDataSource,
+    private val locationDataSource: LocationDataSource,
+    private val feedStateDataSource: FeedStateDataSource = Prefs
 ) : FeedContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
+
+    private val feedLoaderInteractor = FeedLoaderInteractor(eventsDataSource, locationDataSource)
+
     private lateinit var filter: FeedFilter
-    private lateinit var place: Place
-
-    private val placeDataSourceCallback = object : DataSourceCallback<Place> {
-        override fun onResult(result: Place) {
-            logger.info("callback.onResult(): $result")
-            this@FeedPresenter.place = result
-            feedStateDataSource.saveSelectedPlaceId(place.id)
-            view.showCurrentPlace(place)
-        }
-
-        override fun onFailure(t: Throwable?) {
-            // We might end up here only if we requested place representing current location
-            // and for some reason current location is not available at the moment
-            logger.info("callback.onFailure(): $t")
-            view.showLocationNotAvailableError()
-            setPlaceAndReload(Place.WORLD)
-        }
-    }
+    private var placeId = Place.WORLD.id
 
 
     init {
@@ -49,14 +43,19 @@ class FeedPresenter(
     }
 
     override fun start() {
-        setPlace(feedStateDataSource.getSelectedPlaceId())
         filter = feedStateDataSource.getCurrentFilter()
         view.showCurrentFilter(filter)
+
+        placeId = feedStateDataSource.getSelectedPlaceId()
         // TODO: handle deleted place
+
         loadPlaces()
         loadEvents()
     }
 
+    /**
+     * Loads a list of places and passes it to the view.
+     */
     override fun loadPlaces() {
         placesDataSource.getPlaces(object : DataSourceCallback<List<Place>> {
             override fun onResult(result: List<Place>) {
@@ -74,73 +73,86 @@ class FeedPresenter(
     }
 
     override fun loadEvents() {
-        locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
-            override fun onResult(result: Position) {
-                loadEvents(result.coordinates)
-            }
-
-            override fun onFailure(t: Throwable?) {
-                loadEvents(null)
-                // todo: Report that location is not available
-            }
-        })
+        startLoadingEvents()
     }
 
-    private fun loadEvents(coordinates: Coordinates?) {
-        view.showProgress(true)
-        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
-
-        eventsDataSource.getWeekFeed(object : DataSourceCallback<List<Event>> {
-            override fun onResult(result: List<Event>) {
-                if (!view.isActive()) {
-                    return
-                }
-
-                view.showProgress(false)
-                if (result.isNotEmpty()) {
-                    view.showEvents(RemoteEvent.from(result, coordinates))
-                } else {
-                    view.showNoDataError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
-                }
-            }
-
-            override fun onFailure(t: Throwable?) {
-                if (!view.isActive()) {
-                    return
-                }
-
-                view.showProgress(false)
-                logger.error("onFailure(): $t")
-                TODO("stub, not implemented")
-            }
-        }, filter, place, minsSinceUpd > FORCE_LOAD_RATE_MINS)
-    }
-
-    override fun setPlaceAndReload(place: Place) {
-        setPlace(place.id)
-        loadEvents()
-    }
-
-    override fun setPlaceAndReload(placeId: Int) {
-        setPlace(placeId)
-        loadEvents()
-    }
-
-    private fun setPlace(placeId: Int) {
+    private fun startLoadingEvents() {
         if (placeId == Place.CURRENT_LOCATION.id) {
+            // If the user has selected "Current location", then we first need
+            // to check location permission
             view.showLocationPermissionRequest(object : FeedContract.View.PermissionRequestCallback {
                 override fun onGranted() {
-                    placesDataSource.getPlace(placeDataSourceCallback, placeId)
+                    // Permission is granted, proceed by loading information
+                    getPlaceAndEvents()
                 }
 
                 override fun onDenied() {
+                    // Permission denied, inform the user and switch to "World"
                     view.showLocationNotAvailableError()
                     setPlaceAndReload(Place.WORLD)
                 }
             })
         } else {
-            placesDataSource.getPlace(placeDataSourceCallback, placeId)
+            // If we deal with any place other than "Current location"
+            // then just load information for that place
+            getPlaceAndEvents()
         }
+    }
+
+    private fun getPlaceAndEvents() {
+        placesDataSource.getPlace(object : DataSourceCallback<Place> {
+            override fun onResult(result: Place) {
+                // Place is loaded, proceed by loading events
+                view.showCurrentPlace(result)
+                getEvents(result)
+            }
+
+            override fun onFailure(t: Throwable?) {
+                // We might end up here only if we requested place representing current location
+                // and for some reason current location is not available at the moment
+                logger.warn("callback.onFailure(): $t")
+                view.showLocationNotAvailableError()
+                setPlaceAndReload(Place.WORLD)
+            }
+        }, placeId)
+    }
+
+    private fun getEvents(place: Place) {
+        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
+        val params = FeedLoaderInteractor.RequestValues(minsSinceUpd > FORCE_LOAD_RATE_MINS, filter, place)
+
+        view.showProgress(true)
+        feedLoaderInteractor.execute(
+            params,
+            object : InteractorCallback<List<RemoteEvent>> {
+                override fun onResult(result: List<RemoteEvent>) {
+                    if (!view.isActive()) {
+                        return
+                    }
+                    view.showProgress(false)
+
+                    if (result.isNotEmpty()) {
+                        view.showEvents(result)
+                    } else {
+                        view.showNoDataError(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+                    }
+                }
+
+                override fun onFailure(t: Throwable?) {
+                    if (!view.isActive()) {
+                        return
+                    }
+                    view.showProgress(false)
+                    logger.error("onFailure(): $t")
+                    TODO("stub, not implemented")
+                }
+            })
+    }
+
+    override fun setPlaceAndReload(place: Place) {
+        placeId = place.id
+        feedStateDataSource.saveSelectedPlaceId(placeId)
+        loadEvents()
     }
 
     override fun setFilterAndReload(filter: FeedFilter) {

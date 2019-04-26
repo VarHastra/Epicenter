@@ -49,8 +49,6 @@ interface FeedContract {
 
         fun setPlaceAndReload(place: Place)
 
-        fun setPlaceAndReload(placeId: Int)
-
         fun setFilterAndReload(filter: FeedFilter)
 
         fun setMagnitudeFilterAndReload(minMag: Int)

@@ -18,27 +18,28 @@ class FeedFilter(
         }
 
 
-    fun applyTo(events: List<Event>): List<Event> {
+    fun applyTo(events: List<RemoteEvent>): List<RemoteEvent> {
         val result = events.filter { filter(it) }
 
         return sort(result)
     }
 
-    private fun filter(event: Event): Boolean {
-        return with(event) {
-            magnitude >= minMagnitude
+    private fun filter(remoteEvent: RemoteEvent): Boolean {
+        return with(remoteEvent) {
+            event.magnitude >= minMagnitude
         }
     }
 
-    private fun sort(events: List<Event>): List<Event> {
+    private fun sort(events: List<RemoteEvent>): List<RemoteEvent> {
         return when (sorting) {
-            Sorting.MAGNITUDE -> events.sortedBy { it.magnitude }
-            Sorting.DATE -> events.sortedByDescending { it.timestamp }
-            else -> events.sortedByDescending { it.timestamp }
+            Sorting.MAGNITUDE -> events.sortedBy { it.event.magnitude }
+            Sorting.DATE -> events.sortedByDescending { it.event.timestamp }
+            else -> events.sortedByDescending { it.event.timestamp }
         }
     }
 
-    fun copy(minMagnitude: Double = this.minMagnitude, sorting: Sorting = this.sorting) = FeedFilter(minMagnitude, sorting)
+    fun copy(minMagnitude: Double = this.minMagnitude, sorting: Sorting = this.sorting) =
+        FeedFilter(minMagnitude, sorting)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

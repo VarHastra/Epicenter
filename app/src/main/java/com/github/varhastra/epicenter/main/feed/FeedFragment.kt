@@ -207,6 +207,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         emptyView.visibility = View.INVISIBLE
         feedRecyclerView.visibility = View.VISIBLE
         feedAdapter.data = events
+        feedRecyclerView.scrollToPosition(0)
         feedRecyclerView.scheduleLayoutAnimation()
     }
 

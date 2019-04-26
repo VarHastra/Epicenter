@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main
+package com.github.varhastra.epicenter.ui.main
 
 import android.content.Context
 import android.view.LayoutInflater

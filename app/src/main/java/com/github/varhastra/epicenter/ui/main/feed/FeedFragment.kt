@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.feed
+package com.github.varhastra.epicenter.ui.main.feed
 
 
 import android.Manifest
@@ -23,7 +23,7 @@ import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
-import com.github.varhastra.epicenter.main.ToolbarProvider
+import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip

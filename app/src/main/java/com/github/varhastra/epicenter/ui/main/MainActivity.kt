@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main
+package com.github.varhastra.epicenter.ui.main
 
 import android.Manifest
 import android.content.Intent
@@ -18,12 +18,12 @@ import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.main.feed.FeedFragment
-import com.github.varhastra.epicenter.main.feed.FeedPresenter
-import com.github.varhastra.epicenter.main.map.MapFragment
-import com.github.varhastra.epicenter.main.notifications.NotificationsFragment
-import com.github.varhastra.epicenter.main.search.SearchFragment
-import com.github.varhastra.epicenter.settings.SettingsActivity
+import com.github.varhastra.epicenter.ui.main.feed.FeedFragment
+import com.github.varhastra.epicenter.ui.main.feed.FeedPresenter
+import com.github.varhastra.epicenter.ui.main.map.MapFragment
+import com.github.varhastra.epicenter.ui.main.notifications.NotificationsFragment
+import com.github.varhastra.epicenter.ui.main.search.SearchFragment
+import com.github.varhastra.epicenter.ui.settings.SettingsActivity
 import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability

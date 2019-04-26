@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main
+package com.github.varhastra.epicenter.ui.main
 
 import com.github.varhastra.epicenter.domain.model.Place
 

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.settings
+package com.github.varhastra.epicenter.ui.settings
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

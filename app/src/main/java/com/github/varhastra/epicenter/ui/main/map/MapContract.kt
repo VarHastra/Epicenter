@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.map
+package com.github.varhastra.epicenter.ui.main.map
 
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView

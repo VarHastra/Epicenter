@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.map
+package com.github.varhastra.epicenter.ui.main.map
 
 class MapPresenter : MapContract.Presenter {
 

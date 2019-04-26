@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.feed
+package com.github.varhastra.epicenter.ui.main.feed
 
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.*

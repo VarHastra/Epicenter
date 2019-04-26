@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.notifications
+package com.github.varhastra.epicenter.ui.main.notifications
 
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView

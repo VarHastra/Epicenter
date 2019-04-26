@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.search
+package com.github.varhastra.epicenter.ui.main.search
 
 class SearchPresenter : SearchContract.Presenter {
 

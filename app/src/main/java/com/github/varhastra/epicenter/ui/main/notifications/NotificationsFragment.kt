@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.main.notifications
+package com.github.varhastra.epicenter.ui.main.notifications
 
 
 import android.os.Bundle

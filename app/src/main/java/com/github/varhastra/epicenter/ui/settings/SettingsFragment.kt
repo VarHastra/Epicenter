@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.settings
+package com.github.varhastra.epicenter.ui.settings
 
 
 import android.os.Bundle

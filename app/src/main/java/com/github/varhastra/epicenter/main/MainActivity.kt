@@ -35,6 +35,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.*
+import kotlin.math.roundToInt
 
 /**
  * Primary activity of the app that holds
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     val placesAdapter = PlacesAdapter(this@MainActivity)
 
     var placesPopupListener: ((Place) -> Unit)? = null
+    var placesEditPopupListener: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -208,12 +210,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     private fun showDropdownPopup() {
         popupWindow = ListPopupWindow(this).apply {
             anchorView = toolbar.dropdownTextView
+            verticalOffset = -dip(32)
             setBackgroundDrawable(getDrawable(R.drawable.bg_popup_window))
-            width = displayMetrics.widthPixels / 2
-            height = displayMetrics.heightPixels / 3
+            width = (displayMetrics.widthPixels / 1.5).roundToInt()
+            height = displayMetrics.heightPixels / 2
             setAdapter(placesAdapter)
             setOnItemClickListener { parent, _, position, _ ->
-                placesPopupListener?.invoke(parent.adapter.getItem(position) as Place)
+                if (position == parent.adapter.count - 1) {
+                    placesEditPopupListener?.invoke()
+                } else {
+                    placesPopupListener?.invoke(parent.adapter.getItem(position) as Place)
+                }
                 this.dismiss()
             }
             setListSelector(getDrawable(R.drawable.bg_transparent))
@@ -223,6 +230,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     override fun attachListener(listener: (Place) -> Unit) {
         placesPopupListener = listener
+    }
+
+    override fun attachOnEditListener(listener: () -> Unit) {
+        placesEditPopupListener = listener
     }
 
     override fun setDropdownData(places: List<Place>) {

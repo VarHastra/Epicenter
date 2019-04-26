@@ -35,6 +35,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.toast
 
 /**
  * A [Fragment] subclass that displays a list
@@ -95,6 +96,9 @@ class FeedFragment : Fragment(), FeedContract.View {
         toolbarProvider = context as? ToolbarProvider
         toolbarProvider?.attachListener {
             presenter.setPlaceAndReload(it)
+        }
+        toolbarProvider?.attachOnEditListener {
+            presenter.openPlacesEditor()
         }
     }
 
@@ -264,6 +268,11 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showErrorNoConnection() {
         view?.longSnackbar(R.string.app_error_no_connection)
+    }
+
+    override fun showPlacesEditor() {
+        // TODO: implement
+        activity?.toast("Stub")
     }
 
     private fun showAppSettings() {

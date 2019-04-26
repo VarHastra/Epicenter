@@ -12,5 +12,7 @@ interface ToolbarProvider {
 
     fun attachListener(listener: (Place) -> Unit)
 
+    fun attachOnEditListener(listener: () -> Unit)
+
     fun setDropdownData(places: List<Place>)
 }

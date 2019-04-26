@@ -40,6 +40,8 @@ interface FeedContract {
         fun showErrorLocationNotAvailable()
 
         fun showErrorNoConnection()
+
+        fun showPlacesEditor()
     }
 
     interface Presenter : BasePresenter {
@@ -58,5 +60,7 @@ interface FeedContract {
         fun setMagnitudeFilterAndReload(minMag: Int)
 
         fun setSortingAndReload(sorting: FeedFilter.Sorting)
+
+        fun openPlacesEditor()
     }
 }

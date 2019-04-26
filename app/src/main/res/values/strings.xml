@@ -42,6 +42,10 @@
     <string name="feed_event_distance">Distance: %1$d %2$s</string>
     <string name="feed_event_depth">Depth: %1$d %2$s</string>
 
+    <string name="feed_edit_places">Edit places</string>
+    <string name="feed_edit_places_desc">Add new or edit existing places</string>
+    <string name="feed_place_infinite">Infinite</string>
+
     <string name="empty_view_connection_title">Ooops… something went wrong</string>
     <string name="empty_view_connection_body">Can\'t connect to the server</string>
 
@@ -50,6 +54,8 @@
 
     <string name="pref_units">Units</string>
     <string name="feed_error_location_not_avaliable">Location services are not available. Showing world</string>
+
+
     <string-array name="pref_units_entries">
         <item>Auto</item>
         <item>Metric (kilometers)</item>

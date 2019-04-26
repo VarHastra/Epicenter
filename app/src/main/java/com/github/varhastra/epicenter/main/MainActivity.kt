@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.main
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -12,6 +13,7 @@ import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsRepository
 import com.github.varhastra.epicenter.data.PlacesRepository
+import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
@@ -26,10 +28,13 @@ import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.displayMetrics
-import org.jetbrains.anko.error
-import org.jetbrains.anko.warn
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
+import org.jetbrains.anko.*
 
 /**
  * Primary activity of the app that holds
@@ -59,6 +64,14 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         setSupportActionBar(toolbar)
         toolbar.setOnDropdownClickListener { showDropdownPopup() }
 
+        info("onCreate")
+
+        if (checkPlayApiAvailability()) {
+            if (Prefs.isFirstLaunch()) {
+                checkLocationPermission()
+            }
+        }
+
         bottomNavigation.setOnNavigationItemSelectedListener(BottomNavListener())
         if (savedInstanceState != null) {
             savedInstanceState.apply {
@@ -67,13 +80,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         } else {
             bottomNavigation.selectedItemId = R.id.navigation_feed
         }
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkPlayApiAvailability()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -139,6 +145,24 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         }
 
         return true
+    }
+
+    private fun checkLocationPermission() {
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                        Prefs.saveFirstLaunchFinished()
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
+                        token?.continuePermissionRequest()
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                        Prefs.saveFirstLaunchFinished()
+                    }
+                }).check()
     }
 
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {

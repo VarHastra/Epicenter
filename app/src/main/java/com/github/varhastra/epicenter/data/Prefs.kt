@@ -11,10 +11,21 @@ import org.jetbrains.anko.defaultSharedPreferences
 
 
 object Prefs : FeedStateDataSource {
+    private const val PREF_FIRST_LAUNCH = "PREF_FIRST_LAUNCH"
     private const val PREF_UNITS = "PREF_UNITS"
     private const val PREF_FEED_PLACE_ID = "PREF_FEED_PLACE_ID"
     private const val PREF_FEED_FILTER_MAG = "PREF_FEED_FILTER_MAG"
     private const val PREF_FEED_FILTER_SORT = "PREF_FEED_FILTER_SORT"
+
+    fun isFirstLaunch(context: Context = App.instance): Boolean {
+        return context.defaultSharedPreferences.getBoolean(PREF_FIRST_LAUNCH, true)
+    }
+
+    fun saveFirstLaunchFinished(context: Context = App.instance) {
+        context.defaultSharedPreferences.edit()
+                .putBoolean(PREF_FIRST_LAUNCH, false)
+                .apply()
+    }
 
     fun getPreferredUnits(context: Context = App.instance): UnitsLocale {
         val prefUnits = context.defaultSharedPreferences.getString(PREF_UNITS, null)

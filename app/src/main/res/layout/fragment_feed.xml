@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".main.feed.FeedFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_feed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" />
+
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/pb_feed"
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
@@ -15,12 +21,6 @@
         android:layout_marginTop="-7dp"
         android:indeterminate="true"
         android:indeterminateTint="?colorPrimary" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_feed"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" />
 
     <com.github.varhastra.epicenter.views.EmptyView
         android:id="@+id/emptv_feed"

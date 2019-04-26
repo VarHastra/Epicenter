@@ -84,6 +84,9 @@ class FeedFragment : Fragment(), FeedContract.View {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         feedAdapter = FeedAdapter(activity!!, Prefs.getPreferredUnits())
+        feedAdapter.onEventClickListener = {remoteEvent, _ ->
+            presenter.openEventDetails(remoteEvent.event.id)
+        }
         feedRecyclerView.setHasFixedSize(true)
         feedRecyclerView.layoutManager = LinearLayoutManager(activity)
         feedRecyclerView.adapter = feedAdapter
@@ -275,6 +278,10 @@ class FeedFragment : Fragment(), FeedContract.View {
     override fun showPlacesEditor() {
         // TODO: implement
         activity?.toast("Stub")
+    }
+
+    override fun showEventDetails(eventId: String) {
+        activity?.toast("Stub. Details for event with id $eventId")
     }
 
     private fun showAppSettings() {

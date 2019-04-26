@@ -76,14 +76,16 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
     @StringRes
     var kilometersAbbreviation: String = ""
 
-    var unitsAbbreviation = ""
+    private var unitsAbbreviation = ""
 
-    val now = LocalDateTime.now()
+    private val now = LocalDateTime.now()
 
-    val magFormatter: DecimalFormat = DecimalFormat("0.0")
-    val largeMagFormatter: DecimalFormat = DecimalFormat("#")
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-    val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+    private val magFormatter: DecimalFormat = DecimalFormat("0.0")
+    private val largeMagFormatter: DecimalFormat = DecimalFormat("#")
+    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+    private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+
+    var onEventClickListener: ((RemoteEvent, Int) -> Unit)? = null
 
 
     var data: List<RemoteEvent> = listOf()
@@ -146,6 +148,8 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
         }
 
         fun bind(remoteEvent: RemoteEvent) {
+            itemView.setOnClickListener { onEventClickListener?.invoke(remoteEvent, adapterPosition) }
+
             with(remoteEvent) {
                 val formatter = if (event.magnitude < 10) magFormatter else largeMagFormatter
                 magnitudeTextView.text = formatter.format(event.magnitude)

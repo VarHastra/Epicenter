@@ -42,6 +42,8 @@ interface FeedContract {
         fun showErrorNoConnection()
 
         fun showPlacesEditor()
+
+        fun showEventDetails(eventId: String)
     }
 
     interface Presenter : BasePresenter {
@@ -62,5 +64,7 @@ interface FeedContract {
         fun setSortingAndReload(sorting: FeedFilter.Sorting)
 
         fun openPlacesEditor()
+
+        fun openEventDetails(eventId: String)
     }
 }

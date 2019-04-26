@@ -191,6 +191,10 @@ class FeedPresenter(
         view.showPlacesEditor()
     }
 
+    override fun openEventDetails(eventId: String) {
+        view.showEventDetails(eventId)
+    }
+
     companion object {
         const val FORCE_LOAD_RATE_MINS = 10
     }

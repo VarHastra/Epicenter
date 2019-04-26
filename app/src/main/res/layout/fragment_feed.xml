@@ -12,7 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layoutAnimation="@anim/animation_layout_feed" />
+        android:layoutAnimation="@anim/animation_layout_feed"
+        android:scrollbars="vertical"
+        android:theme="@style/AppTheme.Gentle" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/pb_feed"

@@ -19,6 +19,11 @@
 
         <item name="android:statusBarColor">?colorSurface</item>
     </style>
+    
+    <style name="AppTheme.Gentle" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryGentle</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryGentleVariant</item>
+    </style>
 
     <style name="SnackbarStyle" parent="@style/Widget.MaterialComponents.Snackbar">
         <item name="actionTextColorAlpha">1.0</item>

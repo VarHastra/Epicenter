@@ -28,6 +28,7 @@
     <style name="SelectableChip" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/bg_chip</item>
         <item name="android:textColor">@color/text_chip</item>
+        <item name="chipIconTint">@color/text_chip</item>
         <item name="checkedIcon">@null</item>
         <item name="android:checkable">true</item>
         <item name="android:clickable">true</item>

@@ -2,8 +2,8 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.getDouble
 import com.github.varhastra.epicenter.utils.putDouble
@@ -49,14 +49,9 @@ object Prefs : FeedStateDataSource {
 
     private fun storeCurrentFilter(filter: FeedFilter, context: Context = App.instance) {
         with(filter) {
-            val sort = when (sorting) {
-                FeedFilter.Sorting.DATE -> 0
-                FeedFilter.Sorting.MAGNITUDE -> 1
-                else -> 0
-            }
             context.defaultSharedPreferences.edit()
                     .putDouble(PREF_FEED_FILTER_MAG, minMagnitude)
-                    .putInt(PREF_FEED_FILTER_SORT, sort)
+                    .putInt(PREF_FEED_FILTER_SORT, filter.sorting.id)
                     .apply()
         }
     }
@@ -64,12 +59,8 @@ object Prefs : FeedStateDataSource {
     private fun retrieveCurrentFilter(context: Context = App.instance): FeedFilter {
         return with(context.defaultSharedPreferences) {
             val mag = getDouble(PREF_FEED_FILTER_MAG, -2.0)
-            val sorting = when (getInt(PREF_FEED_FILTER_SORT, 0)) {
-                0 -> FeedFilter.Sorting.DATE
-                1 -> FeedFilter.Sorting.MAGNITUDE
-                else -> FeedFilter.Sorting.DATE
-            }
-            return FeedFilter(mag, sorting)
+            val sortingId = getInt(PREF_FEED_FILTER_SORT, 0)
+            return FeedFilter(mag, FeedFilter.Sorting.fromId(sortingId))
         }
     }
 }

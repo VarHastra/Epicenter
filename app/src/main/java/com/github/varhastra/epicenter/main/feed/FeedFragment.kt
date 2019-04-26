@@ -129,7 +129,9 @@ class FeedFragment : Fragment(), FeedContract.View {
 
             val sorting = when (checkedId) {
                 R.id.chip_sorting_date -> FeedFilter.Sorting.DATE
-                R.id.chip_sorting_mag -> FeedFilter.Sorting.MAGNITUDE
+                R.id.chip_sorting_mag_asc -> FeedFilter.Sorting.MAGNITUDE_ASC
+                R.id.chip_sorting_mag_desc -> FeedFilter.Sorting.MAGNITUDE_DESC
+                R.id.chip_sorting_distance -> FeedFilter.Sorting.DISTANCE
                 else -> FeedFilter.Sorting.DATE
             }
             presenter.setSortingAndReload(sorting)
@@ -186,7 +188,9 @@ class FeedFragment : Fragment(), FeedContract.View {
     private fun showCurrentSorting(sorting: FeedFilter.Sorting) {
         val id = when (sorting) {
             FeedFilter.Sorting.DATE -> R.id.chip_sorting_date
-            FeedFilter.Sorting.MAGNITUDE -> R.id.chip_sorting_mag
+            FeedFilter.Sorting.MAGNITUDE_ASC -> R.id.chip_sorting_mag_asc
+            FeedFilter.Sorting.MAGNITUDE_DESC -> R.id.chip_sorting_mag_desc
+            FeedFilter.Sorting.DISTANCE -> R.id.chip_sorting_distance
         }
         sortingChipGroup.check(id)
     }

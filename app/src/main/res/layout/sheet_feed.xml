@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sheet_feed"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,10 +30,10 @@
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/cg_feed_filters_sort_by"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,11 +51,27 @@
                 android:text="@string/feed_filters_chip_sorting_data" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_mag"
+                android:id="@+id/chip_sorting_mag_asc"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_filters_chip_sorting_mag" />
+                android:text="@string/feed_filters_chip_sorting_mag_asc"
+                app:chipIconEnabled="true" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sorting_mag_desc"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_sorting_mag_desc"
+                app:chipIconEnabled="true" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sorting_distance"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_sorting_distance" />
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 

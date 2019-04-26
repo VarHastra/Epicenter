@@ -5,8 +5,8 @@ package com.github.varhastra.epicenter.domain.model
  * Instance of this type created with default values represents "World" filter.
  */
 class FeedFilter(
-    minMagnitude: Double = -1.0,
-    val sorting: Sorting = Sorting.DATE
+        minMagnitude: Double = -1.0,
+        val sorting: Sorting = Sorting.DATE
 ) {
 
     var minMagnitude = minMagnitude
@@ -32,14 +32,16 @@ class FeedFilter(
 
     private fun sort(events: List<RemoteEvent>): List<RemoteEvent> {
         return when (sorting) {
-            Sorting.MAGNITUDE -> events.sortedBy { it.event.magnitude }
+            Sorting.MAGNITUDE_ASC -> events.sortedBy { it.event.magnitude }
+            Sorting.MAGNITUDE_DESC -> events.sortedByDescending { it.event.magnitude }
+            Sorting.DISTANCE -> events.sortedBy { it.distance }
             Sorting.DATE -> events.sortedByDescending { it.event.timestamp }
             else -> events.sortedByDescending { it.event.timestamp }
         }
     }
 
     fun copy(minMagnitude: Double = this.minMagnitude, sorting: Sorting = this.sorting) =
-        FeedFilter(minMagnitude, sorting)
+            FeedFilter(minMagnitude, sorting)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -63,9 +65,14 @@ class FeedFilter(
         return "FeedFilter(sorting=$sorting, minMagnitude=$minMagnitude)"
     }
 
-    enum class Sorting {
-        MAGNITUDE(),
-        DATE(),
-//        NEAREST()
+    enum class Sorting(val id: Int) {
+        DATE(0),
+        MAGNITUDE_ASC(1),
+        MAGNITUDE_DESC(2),
+        DISTANCE(3);
+
+        companion object {
+            fun fromId(id: Int) = Sorting.values().first { it.id == id }
+        }
     }
 }

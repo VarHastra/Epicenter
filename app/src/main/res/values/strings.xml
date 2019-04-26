@@ -34,6 +34,9 @@
     <string name="feed_filters_sort_by">Sort by</string>
     <string name="feed_filters_chip_sorting_data">Date</string>
     <string name="feed_filters_chip_sorting_mag">Magnitude</string>
+    <string name="feed_filters_chip_sorting_mag_asc">Magnitude asc</string>
+    <string name="feed_filters_chip_sorting_mag_desc">Magnitude desc</string>
+    <string name="feed_filters_chip_sorting_distance">Distance</string>
     <string name="feed_filters_radius">Radius</string>
 
     <string name="feed_event_distance">Distance: %1$d %2$s</string>

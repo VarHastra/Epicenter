@@ -207,6 +207,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         emptyView.visibility = View.INVISIBLE
         feedRecyclerView.visibility = View.VISIBLE
         feedAdapter.data = events
+        feedRecyclerView.scheduleLayoutAnimation()
     }
 
     override fun showErrorNoData(reason: FeedContract.View.ErrorReason) {

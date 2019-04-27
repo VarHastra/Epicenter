@@ -3,8 +3,6 @@ package com.github.varhastra.epicenter.ui.details
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.model.RemoteEvent
-import com.github.varhastra.epicenter.utils.UnitsLocale
 import org.threeten.bp.LocalDateTime
 
 interface DetailsContract {
@@ -17,7 +15,8 @@ interface DetailsContract {
             ALERT_6,
             ALERT_8
         }
-//        fun showEvent(remoteEvent: RemoteEvent)
+
+        //        fun showEvent(remoteEvent: RemoteEvent)
         fun showEventMagnitude(magnitude: Double, type: String)
 
         fun setAlertColor(alertType: AlertType)
@@ -43,6 +42,8 @@ interface DetailsContract {
         fun isActive(): Boolean
 
         fun showSourceLinkViewer(link: String)
+
+        fun showEventOnMap(coordinates: Coordinates, alertType: AlertType)
     }
 
     interface Presenter : BasePresenter {
@@ -51,5 +52,7 @@ interface DetailsContract {
         fun loadEvent(eventId: String)
 
         fun openSourceLink()
+
+        fun onMapReady()
     }
 }

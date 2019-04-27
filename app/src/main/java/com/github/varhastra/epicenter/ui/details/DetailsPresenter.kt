@@ -7,7 +7,6 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import java.time.temporal.Temporal
 
 class DetailsPresenter(
         private val view: DetailsContract.View,
@@ -22,8 +21,7 @@ class DetailsPresenter(
         view.attachPresenter(this)
     }
 
-    override fun init(eventId: String)
-    {
+    override fun init(eventId: String) {
         this.eventId = eventId
     }
 
@@ -46,6 +44,7 @@ class DetailsPresenter(
                     view.showEventPlace(placeName)
                     view.showEventCoordinates(coordinates)
                     view.showEventDepth(depth)
+                    view.showTsunamiAlert(tsunamiAlert)
                     val days = ChronoUnit.DAYS.between(localDatetime, LocalDateTime.now())
                     view.showEventDate(localDatetime, days.toInt())
                     view.showEventReports(feltReportsCount)
@@ -64,6 +63,33 @@ class DetailsPresenter(
                 view.showErrorNoData()
             }
         })
+    }
+
+    override fun onMapReady() {
+        val ev = event?.event
+        if (ev == null) {
+            val requestVals = EventLoaderInteractor.RequestValues(eventId)
+            eventLoader.execute(requestVals, object : InteractorCallback<RemoteEvent> {
+                override fun onResult(result: RemoteEvent) {
+                    if (!view.isActive()) {
+                        return
+                    }
+
+                    view.showEventOnMap(result.event.coordinates, getAlertType(result.event.magnitude.toInt()))
+                }
+
+                override fun onFailure(t: Throwable?) {
+                    logger.error("Error retrieving event. ${t?.stackTrace}")
+                    if (!view.isActive()) {
+                        return
+                    }
+
+                    view.showErrorNoData()
+                }
+            })
+        } else {
+            view.showEventOnMap(ev.coordinates, getAlertType(ev.magnitude.toInt()))
+        }
     }
 
     override fun openSourceLink() {

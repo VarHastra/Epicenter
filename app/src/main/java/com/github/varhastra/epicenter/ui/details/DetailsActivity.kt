@@ -1,12 +1,13 @@
 package com.github.varhastra.epicenter.ui.details
 
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import butterknife.BindColor
 import butterknife.BindView
@@ -21,13 +22,21 @@ import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.kmToMi
 import com.github.varhastra.epicenter.views.TileTwolineView
 import com.github.varhastra.epicenter.views.TileView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-class DetailsActivity : AppCompatActivity(), DetailsContract.View {
+class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
 
     @JvmField
     @BindColor(R.color.colorAlert0)
@@ -88,6 +97,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View {
     lateinit var tsunamiAlertTextView: TextView
 
     private lateinit var presenter: DetailsContract.Presenter
+    private lateinit var map: GoogleMap
 
     private var alertAccentColor: Int = 0
 
@@ -98,6 +108,9 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
         ButterKnife.bind(this)
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -112,9 +125,28 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View {
         }
     }
 
-    override fun onPostResume() {
-        super.onPostResume()
+    override fun onResume() {
+        super.onResume()
         presenter.start()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        map.uiSettings.isMapToolbarEnabled = false
+        try {
+            val success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style
+                    )
+            )
+
+            if (!success) {
+                error("Error parsing map styles.")
+            }
+        } catch (e: Resources.NotFoundException) {
+            error("Map style resource not found. ${e.stackTrace}.")
+        }
+        presenter.onMapReady()
     }
 
     override fun attachPresenter(presenter: DetailsContract.Presenter) {
@@ -122,6 +154,17 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View {
     }
 
     override fun isActive() = !(isFinishing || isDestroyed)
+
+    override fun showEventOnMap(coordinates: Coordinates, alertType: DetailsContract.View.AlertType) {
+        val markerPos = LatLng(coordinates.latitude, coordinates.longitude)
+
+        val marker = MarkerOptions()
+                .position(markerPos)
+                .icon(BitmapDescriptorFactory.fromResource(getMarkerResource(alertType)))
+
+        map.addMarker(marker)
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPos, 2.4f))
+    }
 
     override fun setAlertColor(alertType: DetailsContract.View.AlertType) {
         alertAccentColor = getAlertColor(alertType)
@@ -190,6 +233,17 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View {
             DetailsContract.View.AlertType.ALERT_6 -> colorAlert6
             DetailsContract.View.AlertType.ALERT_8 -> colorAlert8
             else -> colorAlert0
+        }
+    }
+
+    private fun getMarkerResource(alertType: DetailsContract.View.AlertType): Int {
+        return when (alertType) {
+            DetailsContract.View.AlertType.ALERT_0 -> R.drawable.marker_0
+            DetailsContract.View.AlertType.ALERT_2 -> R.drawable.marker_2
+            DetailsContract.View.AlertType.ALERT_4 -> R.drawable.marker_4
+            DetailsContract.View.AlertType.ALERT_6 -> R.drawable.marker_6
+            DetailsContract.View.AlertType.ALERT_8 -> R.drawable.marker_8
+            else -> R.drawable.marker_0
         }
     }
 

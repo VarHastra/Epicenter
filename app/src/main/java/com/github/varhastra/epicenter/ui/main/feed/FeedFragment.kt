@@ -23,6 +23,7 @@ import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.ui.details.DetailsActivity
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -282,6 +283,10 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showEventDetails(eventId: String) {
         activity?.toast("Stub. Details for event with id $eventId")
+
+        val intent = Intent(activity, DetailsActivity::class.java)
+        intent.putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
+        startActivity(intent)
     }
 
     private fun showAppSettings() {

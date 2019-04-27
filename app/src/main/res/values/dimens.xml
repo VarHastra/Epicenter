@@ -6,6 +6,7 @@
     <dimen name="spacing_3x">24dp</dimen>
     <dimen name="spacing_4x">32dp</dimen>
     <dimen name="spacing_8x">64dp</dimen>
+    <dimen name="spacing_9x">72dp</dimen>
 
     <dimen name="size_min_touch_target">48dp</dimen>
 

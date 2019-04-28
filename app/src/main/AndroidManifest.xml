@@ -33,7 +33,8 @@
             android:label="@string/app_settings" />
         <activity
             android:name=".ui.details.DetailsActivity"
-            android:theme="@style/AppTheme.TranslucentStatus" />
+            android:theme="@style/AppTheme.TranslucentStatus"
+            android:label=""/>
     </application>
 
 </manifest>

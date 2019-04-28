@@ -18,6 +18,9 @@
         <item name="snackbarStyle">@style/SnackbarStyle</item>
 
         <item name="android:statusBarColor">?colorSurface</item>
+        
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
     
     <style name="AppTheme.Gentle" parent="AppTheme">

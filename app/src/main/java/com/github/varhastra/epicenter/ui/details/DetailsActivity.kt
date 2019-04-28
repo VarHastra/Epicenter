@@ -1,14 +1,17 @@
 package com.github.varhastra.epicenter.ui.details
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.NestedScrollView
 import butterknife.BindColor
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -37,6 +41,8 @@ import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
+
+    val logger = AnkoLogger(this.javaClass)
 
     @JvmField
     @BindColor(R.color.colorAlert0)
@@ -65,6 +71,9 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
 
     @BindView(R.id.tb_details)
     lateinit var toolbar: Toolbar
+
+    @BindView(R.id.scrollview_details)
+    lateinit var scrollView: NestedScrollView
 
     @BindView(R.id.tile_details_datetime)
     lateinit var dateTile: TileTwolineView
@@ -108,6 +117,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
         ButterKnife.bind(this)
+        setUpAnimations()
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
@@ -125,9 +135,23 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         }
     }
 
+    private fun setUpAnimations() {
+        val inTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_details_enter)
+        val outTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_details_return)
+        with(window) {
+            enterTransition = inTransition
+            returnTransition = outTransition
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         presenter.start()
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_OK, null)
+        super.onBackPressed()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

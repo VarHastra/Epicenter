@@ -66,5 +66,7 @@ interface FeedContract {
         fun openPlacesEditor()
 
         fun openEventDetails(eventId: String)
+
+        fun ignoreUpcomingStartCall()
     }
 }

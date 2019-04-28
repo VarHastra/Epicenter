@@ -29,6 +29,7 @@ class FeedPresenter(
 
     private lateinit var filter: FeedFilter
     private var placeId = Place.WORLD.id
+    private var ignoreUpcomingStartCall = false
 
 
     init {
@@ -40,6 +41,11 @@ class FeedPresenter(
     }
 
     override fun start() {
+        if (ignoreUpcomingStartCall) {
+            ignoreUpcomingStartCall = false
+            return
+        }
+
         filter = feedStateDataSource.getCurrentFilter()
         view.showCurrentFilter(filter)
 
@@ -193,6 +199,10 @@ class FeedPresenter(
 
     override fun openEventDetails(eventId: String) {
         view.showEventDetails(eventId)
+    }
+
+    override fun ignoreUpcomingStartCall() {
+        ignoreUpcomingStartCall = true
     }
 
     companion object {

@@ -4,13 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorSurface"
+
     android:fitsSystemWindows="true"
     tools:context=".ui.details.DetailsActivity">
 
+    <!-- For some reason if CoordinatorLayout has a background,
+         transitions doesn't work properly. So this is a workaround
+         to add window background.                                  -->
+    <View
+        android:id="@+id/v_details_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorSurface" />
+
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:colorBackground"
         android:fitsSystemWindows="false">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -38,6 +49,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollview_details"
         android:layout_width="match_parent"
+        android:transitionName="target"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

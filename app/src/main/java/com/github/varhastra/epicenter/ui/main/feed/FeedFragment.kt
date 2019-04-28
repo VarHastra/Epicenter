@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.children
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
@@ -85,7 +86,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         feedAdapter = FeedAdapter(activity!!, Prefs.getPreferredUnits())
-        feedAdapter.onEventClickListener = {remoteEvent, _ ->
+        feedAdapter.onEventClickListener = { remoteEvent, _ ->
             presenter.openEventDetails(remoteEvent.event.id)
         }
         feedRecyclerView.setHasFixedSize(true)
@@ -158,6 +159,13 @@ class FeedFragment : Fragment(), FeedContract.View {
             }
             else -> super.onOptionsItemSelected(item)
 
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_DETAILS -> presenter.ignoreUpcomingStartCall()
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -282,11 +290,13 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showEventDetails(eventId: String) {
-        activity?.toast("Stub. Details for event with id $eventId")
-
-        val intent = Intent(activity, DetailsActivity::class.java)
-        intent.putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
-        startActivity(intent)
+        val hostActivity = activity
+        hostActivity?.let {
+            val intent = Intent(hostActivity, DetailsActivity::class.java)
+            intent.putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(hostActivity).toBundle()
+            startActivityForResult(intent, REQUEST_DETAILS, options)
+        }
     }
 
     private fun showAppSettings() {
@@ -295,5 +305,10 @@ class FeedFragment : Fragment(), FeedContract.View {
             data = Uri.fromParts("package", context?.packageName, null)
         }
         startActivity(intent)
+    }
+
+
+    companion object {
+        private const val REQUEST_DETAILS = 100
     }
 }

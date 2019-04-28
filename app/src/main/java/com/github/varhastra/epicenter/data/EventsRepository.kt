@@ -10,7 +10,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
 
 class EventsRepository private constructor(
-    private val serviceProvider: EventServiceProvider
+        private val serviceProvider: EventServiceProvider
 ) : EventsDataSource {
 
     private val logger = AnkoLogger(this.javaClass)
@@ -47,6 +47,16 @@ class EventsRepository private constructor(
         })
     }
 
+    override fun getEvent(eventId: String, callback: DataSourceCallback<Event>) {
+        val event = eventsFeedCache[eventId]
+
+        if (event != null) {
+            callback.onResult(event)
+        } else {
+            callback.onFailure(IllegalStateException("Events cache doesn't contain event with the given id $eventId."))
+        }
+    }
+
     override fun getWeekFeedLastUpdated(): Instant {
         return feedLastUpdated
     }
@@ -66,7 +76,7 @@ class EventsRepository private constructor(
         private var instance: EventsRepository? = null
 
         fun getInstance(
-            serviceProvider: EventServiceProvider = UsgsServiceProvider()
+                serviceProvider: EventServiceProvider = UsgsServiceProvider()
         ): EventsRepository {
             return instance ?: EventsRepository(serviceProvider).apply {
                 instance = this

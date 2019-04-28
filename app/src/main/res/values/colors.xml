@@ -17,10 +17,17 @@
 
     <color name="colorSnackbar">#ffffff</color>
 
+    <color name="colorTextPrimary">#ffffff</color>
+    <color name="colorTextSecondary">#99FFFFFF</color>
+    <color name="colorTextCaption">#08FFFFFF</color>
+    <color name="colorTextLink">#8027BEFF</color>
+
     <color name="colorIconActive">#ffffff</color>
     <color name="colorIconInactive">#89ffffff</color>
     <color name="colorIconDisabled">#60ffffff</color>
     <color name="colorIconSheer">#1fffffff</color>
+
+    <color name="colorDivider">#1F000000</color>
 
     <color name="colorChipSelected">#FFFFFF</color>
     <color name="colorChip">#1FFFFFFF</color>

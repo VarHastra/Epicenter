@@ -56,6 +56,27 @@
     <string name="feed_error_location_not_avaliable">Location services are not available. Showing world</string>
 
 
+    <string name="details_datetime">Date and time</string>
+    <string name="details_depth">Depth</string>
+    <string name="details_dyfi">DYFI reports</string>
+    <string name="details_source_link">Source link</string>
+    <string name="details_tsunami_alert">Tsunami alert</string>
+    <string name="details_event_coordinates">Lat: %1$f Long: %2$f</string>
+    <string name="details_event_distance_km">Distance to your location: %s km</string>
+    <string name="details_event_distance_mi">Distance to your location: %s mi</string>
+    <string name="details_event_depth_km">%s km</string>
+    <string name="details_event_depth_mi">%s mi</string>
+
+    <plurals name="plurals_details_days_ago">
+        <item quantity="zero">%d days ago.</item>
+        <item quantity="one">%d day ago.</item>
+        <item quantity="two">%d days ago</item>
+        <item quantity="few">%d days ago</item>
+        <item quantity="many">%d days ago.</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
+
     <string-array name="pref_units_entries">
         <item>Auto</item>
         <item>Metric (kilometers)</item>

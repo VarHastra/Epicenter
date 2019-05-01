@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sheet_map"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?colorSurface"
+    android:elevation="@dimen/elevation_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/spacing_2x"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="@dimen/height_bottom_sheet_peek"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:layout_width="24dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:background="@drawable/shape_sheet_drag_handle" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:text="@string/map_filters_magnitude" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.Gentle">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_map_filters_magnitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_1x"
+            android:paddingStart="@dimen/spacing_2x"
+            android:paddingEnd="@dimen/spacing_2x"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_0"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_0"
+                app:chipBackgroundColor="@color/bg_chip_alert_0" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_2"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_2"
+                app:chipBackgroundColor="@color/bg_chip_alert_2" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_4"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_4"
+                app:chipBackgroundColor="@color/bg_chip_alert_4" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_6"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_6"
+                app:chipBackgroundColor="@color/bg_chip_alert_6" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_mag_8"
+                style="@style/SelectableChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_filters_chip_mag_8"
+                app:chipBackgroundColor="@color/bg_chip_alert_8" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_2x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:text="@string/map_filters_date" />
+
+
+    <SeekBar
+        android:id="@+id/sb_map_filters_date"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_min_touch_target"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginTop="@dimen/spacing_1x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:max="6"
+        android:rotation="180"
+        android:splitTrack="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_2x"
+        android:layout_marginEnd="@dimen/spacing_2x"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_feed_filters_min_radius"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/map_filters_7_days"
+            android:textColor="?android:textColorSecondary" />
+
+        <TextView
+            android:id="@+id/tv_feed_filters_radius"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="@string/map_filters_4_days"
+            android:textColor="?android:textColorSecondary" />
+
+        <TextView
+            android:id="@+id/tv_feed_filters_max_radius"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/map_filters_1_day"
+            android:textColor="?android:textColorSecondary" />
+    </LinearLayout>
+</LinearLayout>

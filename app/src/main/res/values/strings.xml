@@ -88,4 +88,11 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string name="map_map">Map</string>
+    <string name="map_filters_magnitude">Magnitude</string>
+    <string name="map_filters_date">Date</string>
+    <string name="map_filters_7_days">7 days</string>
+    <string name="map_filters_1_day">1 day</string>
+    <string name="map_filters_4_days">4 days</string>
 </resources>

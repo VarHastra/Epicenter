@@ -31,7 +31,7 @@
 
     <color name="colorChipSelected">#FFFFFF</color>
     <color name="colorChip">#1FFFFFFF</color>
-    <color name="colorChipTextSelected">?colorSurface</color>
+    <color name="colorChipTextSelected">@color/colorSurface</color>
     <color name="colorChipText">@color/mtrl_on_surface_emphasis_medium</color>
 
     <color name="colorAlert0">#F4E0A5</color>

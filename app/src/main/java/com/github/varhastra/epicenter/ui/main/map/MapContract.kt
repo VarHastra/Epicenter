@@ -6,10 +6,20 @@ import com.github.varhastra.epicenter.BaseView
 interface MapContract {
 
     interface View : BaseView<Presenter> {
+        fun showTitle()
 
+        fun showEventMarkers(markers: List<EventMarker>)
+
+        fun isActive(): Boolean
     }
 
-    interface Presenter: BasePresenter {
+    interface Presenter : BasePresenter {
+        fun loadEvents()
 
+        fun setMinMagnitude(minMagnitude: Int)
+
+        fun setPeriod(days: Int)
+
+        fun viewReady()
     }
 }

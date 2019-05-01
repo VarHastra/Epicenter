@@ -12,18 +12,20 @@ import butterknife.BindView
 import butterknife.ButterKnife
 
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.ChipGroup
+import org.jetbrains.anko.toast
 
 /**
  * A [Fragment] subclass that displays a map
  * of recent earthquakes.
  */
-class MapFragment : BaseGmapsFragment(), OnMapReadyCallback {
+class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     @BindView(R.id.sheet_map)
     lateinit var filtersBottomSheet: ViewGroup
@@ -36,7 +38,9 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback {
 
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
 
-    lateinit var map: GoogleMap
+    var map: GoogleMap? = null
+
+    lateinit var presenter: MapContract.Presenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
@@ -53,11 +57,15 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.loadEvents()
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
-        this.map = googleMap
-        map.uiSettings.isMapToolbarEnabled = false
+        googleMap.uiSettings.isMapToolbarEnabled = false
         try {
-            val success = map.setMapStyle(
+            val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             activity, R.raw.map_style
                     )
@@ -69,5 +77,28 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback {
         } catch (e: Resources.NotFoundException) {
             error("Map style resource not found. ${e.stackTrace}.")
         }
+
+        this.map = googleMap
+        presenter.viewReady()
+    }
+
+    override fun attachPresenter(presenter: MapContract.Presenter) {
+        this.presenter = presenter
+    }
+
+    override fun isActive() = isAdded
+
+    override fun showTitle() {
+        activity?.apply {
+            this as ToolbarProvider
+            showDropdown(false)
+            setTitleText(getString(R.string.app_map))
+        }
+    }
+
+    override fun showEventMarkers(markers: List<EventMarker>) {
+        activity?.toast(markers.size.toString())
+
+        map?.apply { }
     }
 }

@@ -21,6 +21,7 @@ import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.ui.main.feed.FeedFragment
 import com.github.varhastra.epicenter.ui.main.feed.FeedPresenter
 import com.github.varhastra.epicenter.ui.main.map.MapFragment
+import com.github.varhastra.epicenter.ui.main.map.MapPresenter
 import com.github.varhastra.epicenter.ui.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.ui.main.search.SearchFragment
 import com.github.varhastra.epicenter.ui.settings.SettingsActivity
@@ -57,6 +58,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     var placesPopupListener: ((Place) -> Unit)? = null
     var placesEditPopupListener: (() -> Unit)? = null
+
+    private val eventsRepository = EventsRepository.getInstance(UsgsServiceProvider())
+    private val placesRepository = PlacesRepository.getInstance()
+    private val locationProvider = LocationProvider()
+    private val connectivityProvider = ConnectivityProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,16 +181,24 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     // TODO: replace mock provider with the real one
                     FeedPresenter(
                             fragment,
-                            EventsRepository.getInstance(UsgsServiceProvider()),
-                            PlacesRepository.getInstance(),
-                            LocationProvider(),
-                            ConnectivityProvider()
+                            eventsRepository,
+                            placesRepository,
+                            locationProvider,
+                            connectivityProvider
                     )
                     navigateTo(fragment)
                     true
                 }
                 R.id.navigation_map -> {
-                    navigateTo(MapFragment())
+                    val fragment = MapFragment()
+                    MapPresenter(
+                            fragment,
+                            Prefs,
+                            eventsRepository,
+                            locationProvider,
+                            connectivityProvider
+                    )
+                    navigateTo(fragment)
                     true
                 }
                 R.id.navigation_search -> {

@@ -2,15 +2,19 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.model.MapFilter
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import com.github.varhastra.epicenter.domain.state.MapState
+import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.getDouble
 import com.github.varhastra.epicenter.utils.putDouble
 import org.jetbrains.anko.defaultSharedPreferences
 
 
-object Prefs : FeedStateDataSource {
+object Prefs : FeedStateDataSource, MapStateDataSource {
     private const val PREF_FIRST_LAUNCH = "PREF_FIRST_LAUNCH"
     private const val PREF_UNITS = "PREF_UNITS"
     private const val PREF_FEED_PLACE_ID = "PREF_FEED_PLACE_ID"
@@ -37,6 +41,11 @@ object Prefs : FeedStateDataSource {
             else -> UnitsLocale.getDefault()
         }
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // FeedStateDataSource methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun saveSelectedPlaceId(id: Int) = storeSelectedPlaceId(id)
 
@@ -73,5 +82,22 @@ object Prefs : FeedStateDataSource {
             val sortingId = getInt(PREF_FEED_FILTER_SORT, 0)
             return FeedFilter(mag, FeedFilter.Sorting.fromId(sortingId))
         }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // MapStateDataSourceMethods
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    override fun saveMapState(mapState: MapState) {
+        // TODO: implement
+    }
+
+    private fun saveMapFilter(mapFilter: MapFilter) {
+        // TODO: implement
+    }
+
+    override fun getMapState(): MapState {
+        // TODO: implement
+        return MapState(MapFilter(), 3.0f, Coordinates(0.0, 0.0))
     }
 }

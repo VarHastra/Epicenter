@@ -9,8 +9,11 @@ import org.threeten.bp.Instant
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import org.threeten.bp.temporal.ChronoUnit
+import java.text.DecimalFormat
+import java.util.*
 
 class EventClusterItem(
+        private val eventId: String,
         private val title: String,
         private val snippet: String,
         lat: Double,
@@ -30,9 +33,15 @@ class EventClusterItem(
     companion object {
         fun from(eventMarker: EventMarker): EventClusterItem {
             val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
+            val magFormatter = DecimalFormat("0.0")
+
+
             return with(eventMarker) {
+                val markerTitle = String.format(Locale.getDefault(), "%s %s", magFormatter.format(magnitude), title)
+
                 EventClusterItem(
-                        title,
+                        eventId,
+                        markerTitle,
                         formatter.format(instant.toLocalDateTime()),
                         coordinates.latitude,
                         coordinates.longitude,

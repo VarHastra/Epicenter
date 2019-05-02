@@ -22,14 +22,15 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.clustering.ClusterManager
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 /**
  * A [Fragment] subclass that displays a map
  * of recent earthquakes.
  */
 class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
+
+    private val logger = AnkoLogger(this.javaClass)
 
     @BindView(R.id.sheet_map)
     lateinit var filtersBottomSheet: ViewGroup
@@ -100,6 +101,8 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun isActive() = isAdded
 
+    override fun isReady() = map != null
+
     override fun showTitle() {
         activity?.apply {
             this as ToolbarProvider
@@ -109,12 +112,16 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventMarkers(markers: List<EventMarker>) {
-        activity?.toast(markers.size.toString())
-
         map?.apply {
-            val clusterItems = markers.map { EventClusterItem.from(it) }
-            clusterManager.clearItems()
-            clusterManager.addItems(clusterItems)
+            doAsync {
+                val clusterItems = markers.map { EventClusterItem.from(it) }
+                uiThread {
+                    logger.info("uiThread ${clusterItems.size}")
+                    clusterManager.clearItems()
+                    clusterManager.addItems(clusterItems)
+                    clusterManager.cluster()
+                }
+            }
         }
     }
 

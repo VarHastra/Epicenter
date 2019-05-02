@@ -24,8 +24,22 @@ class MapPresenter(
         view.attachPresenter(this)
 
         mapEventsLoaderInteractor.onResult = { events ->
-            val markers = events.map { EventMarker.fromRemoteEvent(it) }
-            view.showEventMarkers(markers)
+            if (view.isActive()) {
+                val markers = events.map { EventMarker.fromRemoteEvent(it) }
+                if (view.isReady()) {
+                    view.showEventMarkers(markers)
+                } else {
+                    Runnable {
+                        for (i in 1..3) {
+                            Thread.sleep(1000)
+                            if (view.isReady()) {
+                                view.showEventMarkers(markers)
+                                break
+                            }
+                        }
+                    }.run()
+                }
+            }
         }
 
         mapEventsLoaderInteractor.onFailure = {
@@ -40,7 +54,7 @@ class MapPresenter(
     }
 
     override fun viewReady() {
-        loadEvents()
+        // Do nothing
     }
 
     override fun loadEvents() {

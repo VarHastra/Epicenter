@@ -88,13 +88,13 @@ class MapPresenter(
     }
 
     override fun setMinMagnitude(minMagnitude: Int) {
-        state.filter.copy(minMagnitude = minMagnitude.toDouble())
+        state = state.copy(filter = state.filter.copy(minMagnitude = minMagnitude.toDouble()))
         mapStateDataSource.saveMapState(state)
         loadEvents()
     }
 
     override fun setPeriod(days: Int) {
-        state.filter.copy(periodDays = days)
+        state = state.copy(filter = state.filter.copy(periodDays = days))
         mapStateDataSource.saveMapState(state)
         loadEvents()
     }

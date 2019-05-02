@@ -68,11 +68,11 @@
     <string name="details_event_depth_mi">%s mi</string>
 
     <plurals name="plurals_details_days_ago">
-        <item quantity="zero">%d days ago.</item>
-        <item quantity="one">%d day ago.</item>
+        <item quantity="zero">%d days ago</item>
+        <item quantity="one">%d day ago</item>
         <item quantity="two">%d days ago</item>
         <item quantity="few">%d days ago</item>
-        <item quantity="many">%d days ago.</item>
+        <item quantity="many">%d days ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
 

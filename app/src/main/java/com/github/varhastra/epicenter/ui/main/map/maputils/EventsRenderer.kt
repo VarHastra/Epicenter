@@ -57,6 +57,7 @@ class EventsRenderer(
 
     override fun onBeforeClusterItemRendered(item: EventClusterItem, markerOptions: MarkerOptions) {
         markerOptions.icon(BitmapDescriptorFactory.fromResource(getMarkerResource(item.alertLevel)))
+        markerOptions.zIndex(item.alertLevel.id.toFloat())
         markerOptions.alpha(item.alpha)
     }
 
@@ -74,6 +75,7 @@ class EventsRenderer(
         }
 
         markerOptions.icon(descriptor)
+        markerOptions.zIndex(12.0f)
     }
 
     @ColorInt

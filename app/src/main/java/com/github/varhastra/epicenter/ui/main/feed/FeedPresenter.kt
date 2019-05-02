@@ -45,6 +45,7 @@ class FeedPresenter(
             ignoreUpcomingStartCall = false
             return
         }
+        view.showTitle()
 
         filter = feedStateDataSource.getCurrentFilter()
         view.showCurrentFilter(filter)

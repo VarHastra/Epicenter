@@ -176,6 +176,13 @@ class FeedFragment : Fragment(), FeedContract.View {
     override fun isActive() = isAdded
 
 
+    override fun showTitle() {
+        activity?.apply {
+            this as ToolbarProvider
+            showDropdown(true)
+        }
+    }
+
     override fun showProgress(active: Boolean) {
         if (active) progressBar.show() else progressBar.hide()
     }

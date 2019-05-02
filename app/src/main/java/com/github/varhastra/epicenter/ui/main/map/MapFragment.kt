@@ -13,12 +13,15 @@ import butterknife.ButterKnife
 
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
+import com.github.varhastra.epicenter.ui.main.map.maputils.EventClusterItem
+import com.github.varhastra.epicenter.ui.main.map.maputils.EventsRenderer
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.ChipGroup
+import com.google.maps.android.clustering.ClusterManager
 import org.jetbrains.anko.toast
 
 /**
@@ -39,6 +42,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
 
     var map: GoogleMap? = null
+    lateinit var clusterManager: ClusterManager<EventClusterItem>
 
     lateinit var presenter: MapContract.Presenter
 
@@ -59,7 +63,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun onResume() {
         super.onResume()
-        presenter.loadEvents()
+        presenter.start()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -77,6 +81,11 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
         } catch (e: Resources.NotFoundException) {
             error("Map style resource not found. ${e.stackTrace}.")
         }
+
+        clusterManager = ClusterManager(activity, googleMap)
+        clusterManager.renderer = EventsRenderer(activity!!, googleMap, clusterManager)
+        googleMap.setOnCameraIdleListener(clusterManager)
+        googleMap.setOnMarkerClickListener(clusterManager)
 
         this.map = googleMap
         presenter.viewReady()
@@ -99,6 +108,9 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     override fun showEventMarkers(markers: List<EventMarker>) {
         activity?.toast(markers.size.toString())
 
-        map?.apply { }
+        map?.apply {
+            val clusterItems = markers.map { EventClusterItem.from(it) }
+            clusterManager.addItems(clusterItems)
+        }
     }
 }

@@ -11,6 +11,8 @@ interface MapContract {
         fun showEventMarkers(markers: List<EventMarker>)
 
         fun isActive(): Boolean
+
+        fun showEventDetails(eventId: String)
     }
 
     interface Presenter : BasePresenter {
@@ -21,5 +23,7 @@ interface MapContract {
         fun setPeriod(days: Int)
 
         fun viewReady()
+
+        fun openEventDetails(eventId: String)
     }
 }

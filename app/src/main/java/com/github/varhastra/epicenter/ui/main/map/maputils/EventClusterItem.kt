@@ -13,7 +13,7 @@ import java.text.DecimalFormat
 import java.util.*
 
 class EventClusterItem(
-        private val eventId: String,
+        val eventId: String,
         private val title: String,
         private val snippet: String,
         lat: Double,

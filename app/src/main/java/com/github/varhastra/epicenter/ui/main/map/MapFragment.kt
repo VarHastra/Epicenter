@@ -10,8 +10,8 @@ import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
-
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.ui.details.DetailsActivity
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.github.varhastra.epicenter.ui.main.map.maputils.EventClusterItem
 import com.github.varhastra.epicenter.ui.main.map.maputils.EventsRenderer
@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.clustering.ClusterManager
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 /**
@@ -84,8 +85,10 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
         clusterManager = ClusterManager(activity, googleMap)
         clusterManager.renderer = EventsRenderer(activity!!, googleMap, clusterManager)
+        clusterManager.setOnClusterItemInfoWindowClickListener { onMarkerInfoWindowClick(it) }
         googleMap.setOnCameraIdleListener(clusterManager)
         googleMap.setOnMarkerClickListener(clusterManager)
+        googleMap.setOnInfoWindowClickListener(clusterManager)
 
         this.map = googleMap
         presenter.viewReady()
@@ -110,7 +113,16 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
         map?.apply {
             val clusterItems = markers.map { EventClusterItem.from(it) }
+            clusterManager.clearItems()
             clusterManager.addItems(clusterItems)
         }
+    }
+
+    override fun showEventDetails(eventId: String) {
+        startActivity(activity?.intentFor<DetailsActivity>(DetailsActivity.EXTRA_EVENT_ID to eventId))
+    }
+
+    private fun onMarkerInfoWindowClick(eventsClusterItem: EventClusterItem) {
+        presenter.openEventDetails(eventsClusterItem.eventId)
     }
 }

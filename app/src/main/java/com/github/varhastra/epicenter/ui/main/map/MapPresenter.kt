@@ -34,6 +34,7 @@ class MapPresenter(
     }
 
     override fun start() {
+        view.showTitle()
         state = mapStateDataSource.getMapState()
         loadEvents()
     }
@@ -68,6 +69,10 @@ class MapPresenter(
     override fun setPeriod(days: Int) {
         state.filter.copy(periodDays = days)
         loadEvents()
+    }
+
+    override fun openEventDetails(eventId: String) {
+        view.showEventDetails(eventId)
     }
 
     companion object {

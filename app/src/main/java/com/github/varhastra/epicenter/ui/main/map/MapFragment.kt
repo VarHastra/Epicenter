@@ -13,13 +13,16 @@ import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.ui.details.DetailsActivity
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.github.varhastra.epicenter.ui.main.map.maputils.EventClusterItem
 import com.github.varhastra.epicenter.ui.main.map.maputils.EventsRenderer
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -119,6 +122,14 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
         }
     }
 
+    override fun onPause() {
+        map?.apply {
+            val coordinates = Coordinates(cameraPosition.target.latitude, cameraPosition.target.longitude)
+            presenter.saveCameraPosition(coordinates, cameraPosition.zoom)
+        }
+        super.onPause()
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         googleMap.uiSettings.isMapToolbarEnabled = false
         try {
@@ -144,6 +155,10 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
         this.map = googleMap
         presenter.viewReady()
+    }
+
+    override fun setCameraPosition(coordinates: Coordinates, zoom: Float) {
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
     }
 
     override fun attachPresenter(presenter: MapContract.Presenter) {

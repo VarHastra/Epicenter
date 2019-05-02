@@ -4,6 +4,7 @@ import com.github.varhastra.epicenter.domain.ConnectivityDataSource
 import com.github.varhastra.epicenter.domain.EventsDataSource
 import com.github.varhastra.epicenter.domain.LocationDataSource
 import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import org.threeten.bp.Instant
@@ -58,7 +59,7 @@ class MapPresenter(
     }
 
     override fun viewReady() {
-        // Do nothing
+        view.setCameraPosition(state.cameraPosition, state.zoomLevel)
     }
 
     override fun loadEvents() {
@@ -97,6 +98,11 @@ class MapPresenter(
         state = state.copy(filter = state.filter.copy(periodDays = days))
         mapStateDataSource.saveMapState(state)
         loadEvents()
+    }
+
+    override fun saveCameraPosition(coordinates: Coordinates, zoom: Float) {
+        state = state.copy(cameraPosition = coordinates, zoomLevel = zoom)
+        mapStateDataSource.saveMapState(state)
     }
 
     override fun openEventDetails(eventId: String) {

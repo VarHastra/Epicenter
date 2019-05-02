@@ -2,6 +2,7 @@ package com.github.varhastra.epicenter.ui.main.map
 
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView
+import com.github.varhastra.epicenter.domain.model.Coordinates
 
 interface MapContract {
 
@@ -21,6 +22,8 @@ interface MapContract {
         fun showCurrentMagnitudeFilter(magnitude: Int)
 
         fun showCurrentDaysFilter(days: Int)
+
+        fun setCameraPosition(coordinates: Coordinates, zoom: Float)
     }
 
     interface Presenter : BasePresenter {
@@ -37,5 +40,7 @@ interface MapContract {
         fun viewReady()
 
         fun openEventDetails(eventId: String)
+
+        fun saveCameraPosition(coordinates: Coordinates, zoom: Float)
     }
 }

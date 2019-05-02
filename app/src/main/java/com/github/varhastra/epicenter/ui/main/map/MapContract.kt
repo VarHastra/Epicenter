@@ -15,10 +15,20 @@ interface MapContract {
         fun isReady(): Boolean
 
         fun showEventDetails(eventId: String)
+
+        fun showFilters()
+
+        fun showCurrentMagnitudeFilter(magnitude: Int)
+
+        fun showCurrentDaysFilter(days: Int)
     }
 
     interface Presenter : BasePresenter {
         fun loadEvents()
+
+        fun reloadEvents()
+
+        fun openFilters()
 
         fun setMinMagnitude(minMagnitude: Int)
 

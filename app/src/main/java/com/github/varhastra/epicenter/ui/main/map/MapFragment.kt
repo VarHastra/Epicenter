@@ -4,9 +4,11 @@ package com.github.varhastra.epicenter.ui.main.map
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -20,6 +22,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.clustering.ClusterManager
 import org.jetbrains.anko.*
@@ -52,6 +55,8 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
         ButterKnife.bind(this, view)
 
+        setHasOptionsMenu(true)
+
         val mapView = view.findViewById<MapView>(R.id.map_view)
         onCreatingMapView(mapView, savedInstanceState)
         mapView.getMapAsync(this)
@@ -66,6 +71,52 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     override fun onResume() {
         super.onResume()
         presenter.start()
+
+        magnitudeChipGroup.setOnCheckedChangeListener { group, checkedId ->
+            group.children.forEach {
+                (it as? Chip)?.apply {
+                    isClickable = !isChecked
+                }
+            }
+
+            val minMag = when (checkedId) {
+                R.id.chip_mag_0 -> 0
+                R.id.chip_mag_2 -> 2
+                R.id.chip_mag_4 -> 4
+                R.id.chip_mag_6 -> 6
+                R.id.chip_mag_8 -> 8
+                else -> 0
+            }
+            presenter.setMinMagnitude(minMag)
+        }
+
+        dateSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                // Do nothing
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do nothing
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                presenter.setPeriod(seekBar.progress + 1)
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                presenter.openFilters()
+                true
+            }
+            R.id.action_refresh -> {
+                presenter.reloadEvents()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -109,6 +160,26 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
             showDropdown(false)
             setTitleText(getString(R.string.app_map))
         }
+    }
+
+    override fun showFilters() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    override fun showCurrentMagnitudeFilter(magnitude: Int) {
+        val id = when (magnitude) {
+            in -2 until 2 -> R.id.chip_mag_0
+            in 2 until 4 -> R.id.chip_mag_2
+            in 4 until 6 -> R.id.chip_mag_4
+            in 6 until 8 -> R.id.chip_mag_6
+            in 8..10 -> R.id.chip_mag_8
+            else -> R.id.chip_mag_0
+        }
+        magnitudeChipGroup.check(id)
+    }
+
+    override fun showCurrentDaysFilter(days: Int) {
+        dateSeekBar.progress = days - 1
     }
 
     override fun showEventMarkers(markers: List<EventMarker>) {

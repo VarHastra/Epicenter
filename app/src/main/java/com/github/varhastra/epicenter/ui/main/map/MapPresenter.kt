@@ -50,6 +50,10 @@ class MapPresenter(
     override fun start() {
         view.showTitle()
         state = mapStateDataSource.getMapState()
+        with(state.filter) {
+            view.showCurrentDaysFilter(periodDays)
+            view.showCurrentMagnitudeFilter(minMagnitude.toInt())
+        }
         loadEvents()
     }
 
@@ -59,6 +63,10 @@ class MapPresenter(
 
     override fun loadEvents() {
         getEvents(false)
+    }
+
+    override fun reloadEvents() {
+        getEvents(true)
     }
 
     private fun getEvents(requestForceLoad: Boolean) {
@@ -75,13 +83,19 @@ class MapPresenter(
         mapEventsLoaderInteractor.execute(requestValues)
     }
 
+    override fun openFilters() {
+        view.showFilters()
+    }
+
     override fun setMinMagnitude(minMagnitude: Int) {
         state.filter.copy(minMagnitude = minMagnitude.toDouble())
+        mapStateDataSource.saveMapState(state)
         loadEvents()
     }
 
     override fun setPeriod(days: Int) {
         state.filter.copy(periodDays = days)
+        mapStateDataSource.saveMapState(state)
         loadEvents()
     }
 

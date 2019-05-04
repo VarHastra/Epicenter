@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -147,6 +148,16 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
     override fun onResume() {
         super.onResume()
         presenter.start()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onBackPressed() {

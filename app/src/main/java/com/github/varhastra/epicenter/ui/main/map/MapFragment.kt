@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.view.children
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -46,6 +47,9 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     @BindView(R.id.sb_map_filters_date)
     lateinit var dateSeekBar: SeekBar
+
+    @BindView(R.id.pb_map)
+    lateinit var progressBar: ContentLoadingProgressBar
 
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
 
@@ -175,6 +179,10 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
             showDropdown(false)
             setTitleText(getString(R.string.app_map))
         }
+    }
+
+    override fun showProgress(show: Boolean) {
+        if (show) progressBar.show() else progressBar.hide()
     }
 
     override fun showFilters() {

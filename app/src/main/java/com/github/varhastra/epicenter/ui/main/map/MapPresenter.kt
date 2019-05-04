@@ -27,6 +27,7 @@ class MapPresenter(
         mapEventsLoaderInteractor.onResult = { events ->
             if (view.isActive()) {
                 val markers = events.map { EventMarker.fromRemoteEvent(it) }
+                view.showProgress(false)
                 if (view.isReady()) {
                     view.showEventMarkers(markers)
                 } else {
@@ -44,6 +45,9 @@ class MapPresenter(
         }
 
         mapEventsLoaderInteractor.onFailure = {
+            if (view.isActive()) {
+                view.showProgress(false)
+            }
             // TODO
         }
     }
@@ -76,6 +80,8 @@ class MapPresenter(
             // TODO
 //            view.showErrorNoConnection()
         }
+
+        view.showProgress(true)
 
         val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
         val forceLoad = (requestForceLoad || minsSinceLastUpd > FORCE_LOAD_RATE_MINS) && connectionAvailable

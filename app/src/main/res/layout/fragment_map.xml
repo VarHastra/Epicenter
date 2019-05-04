@@ -15,6 +15,16 @@
         android:layout_height="match_parent"
         tools:context=".ui.main.map.MapFragment" />
 
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/pb_map"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="-7dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?colorPrimary" />
+
     <include layout="@layout/sheet_map" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

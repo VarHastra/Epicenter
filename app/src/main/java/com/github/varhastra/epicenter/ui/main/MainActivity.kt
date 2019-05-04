@@ -237,6 +237,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 }
                 this.dismiss()
             }
+            isModal = true
             setListSelector(getDrawable(R.drawable.bg_transparent))
             show()
         }

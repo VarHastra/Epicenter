@@ -4,7 +4,7 @@
     <color name="colorPrimaryVariant">#6ec5ff</color>
     <color name="colorPrimaryGentle">#858585</color>
     <color name="colorPrimaryGentleVariant">#858585</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnPrimary">#8A000000</color>
     <color name="colorSecondary">#27BEFF</color>
     <color name="colorSecondaryVariant">#6ec5ff</color>
     <color name="colorOnSecondary">#FFFFFF</color>

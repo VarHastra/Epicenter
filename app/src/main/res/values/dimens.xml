@@ -20,5 +20,7 @@
 
     <dimen name="elevation_bottom_sheet">6dp</dimen>
 
+    <dimen name="height_item_one_line">48dp</dimen>
+    <dimen name="height_item_two_line">64dp</dimen>
     <dimen name="height_item_three_line">88dp</dimen>
 </resources>

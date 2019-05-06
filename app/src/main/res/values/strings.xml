@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Epicenter</string>
 
+    <string name="app_add">Add</string>
+
     <string name="app_notifications">Notifications</string>
     <string name="app_search">Search</string>
     <string name="app_map">Map</string>
@@ -12,7 +14,9 @@
     <string name="app_settings">Settings</string>
 
     <string name="app_miles_abbreviation">mi</string>
+    <string name="app_format_miles">%d mi</string>
     <string name="app_kilometers_abbreviation">km</string>
+    <string name="app_format_kilometers">%d km</string>
 
     <string name="app_today">Today</string>
     <string name="app_yesterday">Yesterday</string>
@@ -95,4 +99,7 @@
     <string name="map_filters_7_days">7 days</string>
     <string name="map_filters_1_day">1 day</string>
     <string name="map_filters_4_days">4 days</string>
+
+    <string name="places_title">Places manager</string>
+    <string name="places_infinite">Infinity</string>
 </resources>

@@ -26,6 +26,7 @@ import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.ui.details.DetailsActivity
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
+import com.github.varhastra.epicenter.ui.placesmanager.PlacesManagerActivity
 import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -37,6 +38,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 /**
@@ -292,8 +294,7 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlacesEditor() {
-        // TODO: implement
-        activity?.toast("Stub")
+        activity?.startActivity<PlacesManagerActivity>()
     }
 
     override fun showEventDetails(eventId: String) {

@@ -36,7 +36,8 @@
             android:theme="@style/AppTheme.TranslucentStatus" />
         <activity
             android:name=".ui.placesmanager.PlacesManagerActivity"
-            android:label="@string/places_title"/>
+            android:label="@string/places_title" />
+        <activity android:name=".ui.placeeditor.PlaceEditorActivity"></activity>
     </application>
 
 </manifest>

@@ -9,7 +9,9 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.ui.placeeditor.PlaceEditorActivity
 import kotlinx.android.synthetic.main.activity_places_manager.*
+import org.jetbrains.anko.startActivity
 
 class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
@@ -21,11 +23,11 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_places_manager)
 
+        // Set up toolbar
         setSupportActionBar(toolbar)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
+        // Set up recycler view
         adapter = PlacesAdapter(this, Prefs.getPreferredUnits())
         adapter.onStartDrag = this::onStartDrag
 
@@ -39,6 +41,8 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
         itemTouchHelper = ItemTouchHelper(dragHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        addFab.setOnClickListener { presenter.openEditor(null) }
 
         PlacesManagerPresenter(this, PlacesRepository.getInstance())
     }
@@ -65,8 +69,8 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         adapter.data = places.toMutableList()
     }
 
-    override fun showEditor(placeId: Int) {
-        // TODO
+    override fun showEditor(placeId: Int?) {
+        startActivity<PlaceEditorActivity>()
     }
 
     private fun onStartDrag(holder: RecyclerView.ViewHolder) {

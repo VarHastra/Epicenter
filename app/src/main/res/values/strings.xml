@@ -15,8 +15,12 @@
 
     <string name="app_miles_abbreviation">mi</string>
     <string name="app_format_miles">%d mi</string>
+    <string name="app_format_miles_real">%f mi</string>
+    <string name="app_format_miles_str">%s mi</string>
     <string name="app_kilometers_abbreviation">km</string>
     <string name="app_format_kilometers">%d km</string>
+    <string name="app_format_kilometers_real">%f km</string>
+    <string name="app_format_kilometers_str">%s km</string>
 
     <string name="app_today">Today</string>
     <string name="app_yesterday">Yesterday</string>
@@ -102,4 +106,8 @@
 
     <string name="places_title">Places manager</string>
     <string name="places_infinite">Infinity</string>
+    <string name="place_editor_radius">Radius</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/bottomSheetRootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorSurface"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_2x"
+        android:elevation="@dimen/elevation_bottom_sheet"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_hideable="true"
+        app:behavior_skipCollapsed="true"
+        android:paddingEnd="@dimen/spacing_2x">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_2x"
+            android:orientation="vertical">
+
+        <TextView
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/place_editor_radius"/>
+
+        <TextView
+                android:id="@+id/radiusTextView"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_05x"
+                android:textColor="?colorPrimary"
+                tools:text="2300 mi"/>
+    </LinearLayout>
+
+    <SeekBar
+            android:id="@+id/radiusSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_min_touch_target"
+            android:layout_marginTop="@dimen/spacing_1x"
+            android:layout_marginBottom="@dimen/spacing_2x"
+            android:indeterminateTint="?colorPrimary"
+            android:max="999"
+            android:progressBackgroundTint="?colorPrimary"
+            android:progressTint="?colorPrimary"
+            android:thumbTint="?colorPrimary"/>
+</LinearLayout>

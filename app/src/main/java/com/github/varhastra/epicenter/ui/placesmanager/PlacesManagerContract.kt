@@ -11,13 +11,13 @@ interface PlacesManagerContract {
 
         fun isActive(): Boolean
 
-        fun showEditor(placeId: Int)
+        fun showEditor(placeId: Int?)
     }
 
     interface Presenter : BasePresenter {
         fun loadPlaces()
 
-        fun openEditor(placeId: Int)
+        fun openEditor(placeId: Int?)
 
         fun saveOrder(places: List<Place>)
 

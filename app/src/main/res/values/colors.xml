@@ -40,4 +40,7 @@
     <color name="colorAlert6">#E48B50</color>
     <color name="colorAlert8">#E15555</color>
     <color name="colorTsunami">#27A9F3</color>
+
+    <color name="colorSelectedArea">#8027BEFF</color>
+    <color name="colorSelectedAreaStroke">#27BEFF</color>
 </resources>

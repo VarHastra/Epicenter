@@ -33,7 +33,7 @@ class PlacesManagerPresenter(
     }
 
 
-    override fun openEditor(placeId: Int) {
+    override fun openEditor(placeId: Int?) {
         view.showEditor(placeId)
     }
 

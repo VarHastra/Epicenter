@@ -43,6 +43,10 @@ class PlaceEditorPresenter(
     }
 
     override fun createArea(coordinates: Coordinates) {
+        if (state.area != null) {
+            return
+        }
+
         state = state.copy(area = Area(coordinates, Area.MIN_RADIUS_KM))
         state.area?.apply {
             view.drawAreaCenter(center)

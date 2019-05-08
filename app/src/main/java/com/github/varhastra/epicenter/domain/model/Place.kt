@@ -13,7 +13,7 @@ data class Place(
         @PrimaryKey(autoGenerate = true) val id: Int = 100,
         @ColumnInfo(name = "name") val name: String,
         @ColumnInfo(name = "coordinates") val coordinates: Coordinates,
-        @ColumnInfo(name = "radius") val radius: Int?
+        @ColumnInfo(name = "radius") val radiusKm: Double?
 ) {
     val latitude: Double
         get() = coordinates.latitude
@@ -22,7 +22,7 @@ data class Place(
         get() = coordinates.longitude
 
     fun checkCoordinates(point: Coordinates): Boolean {
-        return if (radius == null) {
+        return if (radiusKm == null) {
             true
         } else {
             val kLat = latDegToKm(1.0)
@@ -31,13 +31,13 @@ data class Place(
             val y = abs(latitude - point.latitude) * kLat
             val x = abs(longitude - point.longitude) * kLng
 
-            x * x + y * y <= radius * radius
+            x * x + y * y <= radiusKm * radiusKm
         }
     }
 
     companion object {
-        val WORLD = Place(1, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radius = null)
+        val WORLD = Place(1, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
         val CURRENT_LOCATION =
-                Place(0, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radius = null)
+                Place(0, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
     }
 }

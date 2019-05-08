@@ -46,10 +46,10 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
     inner class PlaceHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindPlace(place: Place) {
-            val radiusStr = if (place.radius == null) {
+            val radiusStr = if (place.radiusKm == null) {
                 context.getString(R.string.places_infinite)
             } else {
-                val localizedRadius = getLocalizedDistance(place.radius)
+                val localizedRadius = getLocalizedDistance(place.radiusKm)
                 getLocalizedUnitsString(localizedRadius)
             }
 
@@ -74,11 +74,11 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
             )
         }
 
-        private fun getLocalizedDistance(distanceInKm: Int): Int {
+        private fun getLocalizedDistance(distanceInKm: Double): Int {
             return when (unitsLocale) {
-                UnitsLocale.METRIC -> distanceInKm
+                UnitsLocale.METRIC -> distanceInKm.roundToInt()
                 UnitsLocale.IMPERIAL -> kmToMi(distanceInKm.toDouble()).roundToInt()
-                else -> distanceInKm
+                else -> distanceInKm.roundToInt()
             }
         }
 

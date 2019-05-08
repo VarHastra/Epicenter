@@ -68,10 +68,10 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale = Prefs.g
 
         fun bind(place: Place) {
             textView.text = place.name
-            val radiusStr = if (place.radius == null) {
+            val radiusStr = if (place.radiusKm == null) {
                 context.getString(R.string.feed_place_infinite)
             } else {
-                "${getLocalizedDistance(place.radius)} ${getLocalizedUnitsString()}"
+                "${getLocalizedDistance(place.radiusKm)} ${getLocalizedUnitsString()}"
             }
             radiusTextView.text = radiusStr
 
@@ -89,11 +89,11 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale = Prefs.g
             imgView.setImageResource(R.drawable.ic_place_edit_24px)
         }
 
-        private fun getLocalizedDistance(distanceInKm: Int): Int {
+        private fun getLocalizedDistance(distanceInKm: Double): Int {
             return when (unitsLocale) {
-                UnitsLocale.METRIC -> distanceInKm
+                UnitsLocale.METRIC -> distanceInKm.roundToInt()
                 UnitsLocale.IMPERIAL -> kmToMi(distanceInKm.toDouble()).roundToInt()
-                else -> distanceInKm
+                else -> distanceInKm.roundToInt()
             }
         }
 

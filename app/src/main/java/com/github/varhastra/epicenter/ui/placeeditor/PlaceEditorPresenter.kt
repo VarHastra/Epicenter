@@ -89,4 +89,15 @@ class PlaceEditorPresenter(
             adjustCameraToAreaBounds()
         }
     }
+
+    override fun openNamePicker() {
+        state.area?.apply {
+            view.showNamePicker(center)
+        }
+    }
+
+    override fun onResult(placeName: String) {
+//        placesDataSource.savePlace()
+        view.navigateBack()
+    }
 }

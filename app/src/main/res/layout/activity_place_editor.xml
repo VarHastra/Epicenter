@@ -17,17 +17,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <include
-        layout="@layout/sheet_place_editor"/>
+    <include layout="@layout/sheet_place_editor" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/nextFab"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:elevation="10dp"
-            android:layout_marginEnd="@dimen/spacing_3x"
-            app:layout_anchor="@id/bottomSheetRootView"
-            app:layout_anchorGravity="end"
-            tools:visibility="visible" />
+        android:id="@+id/nextFab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="@dimen/spacing_3x"
+        android:elevation="10dp"
+        app:icon="@drawable/ic_next_fab_dark_24px"
+        app:iconTint="@color/colorIconDarkActive"
+        app:rippleColor="@color/colorIconDarkDisabled"
+        app:layout_anchor="@id/bottomSheetRootView"
+        app:layout_anchorGravity="end"
+        tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

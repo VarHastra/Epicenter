@@ -1,5 +1,7 @@
 package com.github.varhastra.epicenter.ui.placeeditor
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
@@ -15,6 +17,7 @@ import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
+import com.github.varhastra.epicenter.ui.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,10 +26,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.sheet_place_editor.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 
 class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditorContract.View {
@@ -78,6 +78,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         mapFragment.getMapAsync(this)
 
         nextFab.hide(false)
+        nextFab.setOnClickListener { presenter.openNamePicker() }
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetRootView)
         bottomSheetBehavior.isHideable = true
@@ -210,9 +211,34 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         map?.animateCamera(cameraUpdate)
     }
 
+    override fun showNamePicker(coordinates: Coordinates) {
+        startActivityForResult<PlaceNamePickerActivity>(
+                REQUEST_PLACE_NAME,
+                PlaceNamePickerActivity.EXTRA_LAT to coordinates.latitude,
+                PlaceNamePickerActivity.EXTRA_LNG to coordinates.longitude
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_PLACE_NAME -> {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val name = data.getStringExtra(PlaceNamePickerActivity.RESULT_NAME)
+                    presenter.onResult(name)
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun navigateBack() {
+        onBackPressed()
+    }
+
     companion object {
         const val EXTRA_PLACE_ID = "EXTRA_PLACE_ID"
         const val EXTRA_MODE = "EXTRA_MODE"
         const val TAG_STATE_FRAGMENT = "STATE_FRAGMENT"
+        const val REQUEST_PLACE_NAME: Int = 100
     }
 }

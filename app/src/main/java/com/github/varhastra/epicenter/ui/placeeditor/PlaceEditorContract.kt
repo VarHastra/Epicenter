@@ -23,6 +23,10 @@ interface PlaceEditorContract {
         fun setMaxRadiusValue(maxRadius: Int)
 
         fun adjustCameraToFitBounds(left: Coordinates, right: Coordinates)
+
+        fun showNamePicker(coordinates: Coordinates)
+
+        fun navigateBack()
     }
 
     interface Presenter : BasePresenter {
@@ -37,6 +41,10 @@ interface PlaceEditorContract {
         fun setAreaCenter(coordinates: Coordinates)
 
         fun setAreaRadius(value: Int, lastUpdate: Boolean)
+
+        fun openNamePicker()
+
+        fun onResult(placeName: String)
     }
 
     enum class PresenterMode {

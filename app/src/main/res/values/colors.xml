@@ -23,9 +23,14 @@
     <color name="colorTextLink">#8027BEFF</color>
 
     <color name="colorIconActive">#ffffff</color>
-    <color name="colorIconInactive">#89ffffff</color>
-    <color name="colorIconDisabled">#60ffffff</color>
+    <color name="colorIconInactive">#B3FFFFFF</color>
+    <color name="colorIconDisabled">#80FFFFFF</color>
     <color name="colorIconSheer">#1fffffff</color>
+
+    <color name="colorIconDarkActive">#DE000000</color>
+    <color name="colorIconDarkInactive">#8A000000</color>
+    <color name="colorIconDarkDisabled">#61000000</color>
+    <color name="colorIconDarkSheer">#1F000000</color>
 
     <color name="colorDivider">#1F000000</color>
 

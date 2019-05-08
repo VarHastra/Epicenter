@@ -15,6 +15,7 @@
     <dimen name="size_icon_empty_view">256dp</dimen>
 
     <dimen name="elevation_toolbar">4dp</dimen>
+    <dimen name="elevation_fab">6dp</dimen>
 
     <dimen name="height_bottom_sheet_peek">256dp</dimen>
 

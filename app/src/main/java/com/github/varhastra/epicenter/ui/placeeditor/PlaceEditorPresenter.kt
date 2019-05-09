@@ -2,6 +2,7 @@ package com.github.varhastra.epicenter.ui.placeeditor
 
 import com.github.varhastra.epicenter.domain.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 import com.github.varhastra.epicenter.utils.UnitsFormatter
@@ -101,7 +102,9 @@ class PlaceEditorPresenter(
     }
 
     override fun onResult(placeName: String) {
-//        placesDataSource.savePlace()
+        state.area?.apply {
+            placesDataSource.savePlace(Place(0, placeName, center, radiusKm))
+        }
         view.navigateBack()
     }
 }

@@ -10,7 +10,7 @@ abstract class PlaceDao {
     abstract fun getAll(): List<Place>
 
     @Query("SELECT * FROM place WHERE id=:id")
-    abstract fun get(id: Int): Place
+    abstract fun get(id: Int): Place?
 
     @Insert
     abstract fun insert(place: Place)

@@ -34,7 +34,14 @@ class PlacesRepository private constructor(
 
     override fun getPlace(callback: DataSourceCallback<Place>, placeId: Int) {
         doAsync(executorService = IO_EXECUTOR) {
-            val place = substituteWithLocalizedName(placeDao.get(placeId))
+            val p = placeDao.get(placeId)
+            if (p == null) {
+                uiThread {
+                    callback.onFailure(NoSuchElementException("Place with the given id doesn't exist: $placeId."))
+                }
+                return@doAsync
+            }
+            val place = substituteWithLocalizedName(p)
             if (placeId == Place.CURRENT_LOCATION.id) {
                 locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
                     override fun onResult(result: Position) {

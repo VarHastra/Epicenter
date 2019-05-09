@@ -51,7 +51,6 @@ class FeedPresenter(
         view.showCurrentFilter(filter)
 
         placeId = feedStateDataSource.getSelectedPlaceId()
-        // TODO: handle deleted place
 
         loadPlaces()
         loadEvents()
@@ -120,7 +119,9 @@ class FeedPresenter(
                 // We might end up here only if we requested place representing current location
                 // and for some reason current location is not available at the moment
                 logger.warn("callback.onFailure(): $t")
-                view.showErrorLocationNotAvailable()
+                if (t !is NoSuchElementException) {
+                    view.showErrorLocationNotAvailable()
+                }
                 setPlaceAndReload(Place.WORLD)
             }
         }, placeId)

@@ -59,6 +59,7 @@ class EventsRenderer(
         markerOptions.icon(BitmapDescriptorFactory.fromResource(getMarkerResource(item.alertLevel)))
         markerOptions.zIndex(item.alertLevel.id.toFloat())
         markerOptions.alpha(item.alpha)
+        markerOptions.anchor(0.5f, 0.5f)
     }
 
     override fun onBeforeClusterRendered(cluster: Cluster<EventClusterItem>, markerOptions: MarkerOptions) {

@@ -9,4 +9,8 @@ interface PlacesDataSource {
     fun getPlace(callback: DataSourceCallback<Place>, placeId: Int)
 
     fun savePlace(place: Place)
+
+    fun deletePlace(place: Place)
+
+    fun updateOrder(places: List<Place>)
 }

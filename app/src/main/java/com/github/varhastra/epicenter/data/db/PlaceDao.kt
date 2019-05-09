@@ -6,7 +6,7 @@ import com.github.varhastra.epicenter.domain.model.Place
 @Dao
 abstract class PlaceDao {
 
-    @Query("SELECT * FROM place")
+    @Query("SELECT * FROM place ORDER BY `order` ASC")
     abstract fun getAll(): List<Place>
 
     @Query("SELECT * FROM place WHERE id=:id")
@@ -23,6 +23,9 @@ abstract class PlaceDao {
 
     @Update
     abstract fun update(list: List<Place>)
+
+    @Delete
+    abstract fun delete(place: Place)
 
     fun save(place: Place) {
         if (unsafeInsert(place) == -1L) {

@@ -71,6 +71,21 @@ class PlacesRepository private constructor(
         }
     }
 
+    override fun deletePlace(place: Place) {
+        doAsync(executorService = IO_EXECUTOR) {
+            placeDao.delete(place)
+        }
+    }
+
+    override fun updateOrder(places: List<Place>) {
+        doAsync(executorService = IO_EXECUTOR) {
+            val updatedList = places
+                    .mapIndexed { index, place -> place.copy(order = index) }
+                    .filterNot { it.id == Place.CURRENT_LOCATION.id || it.id == Place.WORLD.id }
+                    .toList()
+            placeDao.update(updatedList)
+        }
+    }
 
     companion object {
         @SuppressLint("StaticFieldLeak")

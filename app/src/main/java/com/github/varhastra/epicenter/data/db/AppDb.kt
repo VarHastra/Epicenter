@@ -7,6 +7,7 @@ import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.ioThread
+import java.util.*
 
 @Database(entities = [Place::class], version = 1)
 @TypeConverters(AppDb.Converters::class)
@@ -48,12 +49,12 @@ abstract class AppDb : RoomDatabase() {
     class Converters {
         @TypeConverter
         fun fromCoordinates(coordinates: Coordinates): String {
-            return String.format("%f,%f", coordinates.latitude, coordinates.longitude)
+            return String.format(Locale.US, "%f:%f", coordinates.latitude, coordinates.longitude)
         }
 
         @TypeConverter
         fun toCoordinates(string: String): Coordinates {
-            val parts = string.split(",")
+            val parts = string.split(":")
             return Coordinates(
                     parts[0].toDoubleOrNull() ?: 0.0,
                     parts[1].toDoubleOrNull() ?: 0.0

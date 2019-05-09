@@ -8,6 +8,9 @@
     <string name="app_map">Map</string>
     <string name="app_feed">Feed</string>
 
+    <string name="app_place_current_location">Current location</string>
+    <string name="app_place_world">World</string>
+
     <string name="app_refresh">Refresh</string>
     <string name="app_sort">Sort</string>
     <string name="app_filter">Filter</string>

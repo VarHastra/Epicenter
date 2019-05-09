@@ -1,6 +1,10 @@
 package com.github.varhastra.epicenter.data
 
+import android.annotation.SuppressLint
+import android.content.Context
+import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.IO_EXECUTOR
+import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
@@ -12,11 +16,16 @@ import com.github.varhastra.epicenter.domain.model.Position
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class PlacesRepository private constructor(private val locationDataSource: LocationDataSource, private val placeDao: PlaceDao) : PlacesDataSource {
+class PlacesRepository private constructor(
+        private val locationDataSource: LocationDataSource,
+        private val placeDao: PlaceDao,
+        context: Context = App.instance) : PlacesDataSource {
+
+    private val context = context.applicationContext
 
     override fun getPlaces(callback: DataSourceCallback<List<Place>>) {
         doAsync(executorService = IO_EXECUTOR) {
-            val places = placeDao.getAll()
+            val places = placeDao.getAll().map { substituteWithLocalizedName(it) }.toList()
             uiThread {
                 callback.onResult(places)
             }
@@ -25,7 +34,7 @@ class PlacesRepository private constructor(private val locationDataSource: Locat
 
     override fun getPlace(callback: DataSourceCallback<Place>, placeId: Int) {
         doAsync(executorService = IO_EXECUTOR) {
-            val place = placeDao.get(placeId)
+            val place = substituteWithLocalizedName(placeDao.get(placeId))
             if (placeId == Place.CURRENT_LOCATION.id) {
                 locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
                     override fun onResult(result: Position) {
@@ -48,6 +57,14 @@ class PlacesRepository private constructor(private val locationDataSource: Locat
         }
     }
 
+    private fun substituteWithLocalizedName(place: Place): Place {
+        return when (place.id) {
+            Place.CURRENT_LOCATION.id -> place.copy(name = context.getString(R.string.app_place_current_location))
+            Place.WORLD.id -> place.copy(name = context.getString(R.string.app_place_world))
+            else -> place
+        }
+    }
+
     override fun savePlace(place: Place) {
         doAsync(executorService = IO_EXECUTOR) {
             placeDao.save(place)
@@ -56,6 +73,7 @@ class PlacesRepository private constructor(private val locationDataSource: Locat
 
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         private var instance: PlacesRepository? = null
 
         fun getInstance(locationDataSource: LocationDataSource = LocationProvider(), placeDao: PlaceDao = AppDb.getInstance().getPlaceDao()): PlacesRepository {

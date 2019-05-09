@@ -39,7 +39,10 @@
         <activity
             android:name=".ui.placesmanager.PlacesManagerActivity"
             android:label="@string/places_title" />
-        <activity android:name=".ui.placeeditor.PlaceEditorActivity" />
+        <activity
+            android:name=".ui.placeeditor.PlaceEditorActivity"
+            android:theme="@style/AppTheme.TransparentStatus"
+            android:label=""/>
     </application>
 
 </manifest>

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
@@ -33,7 +34,10 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.sheet_place_editor.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.dip
+import org.jetbrains.anko.info
+import org.jetbrains.anko.startActivityForResult
 
 
 class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditorContract.View {
@@ -76,8 +80,9 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                nextFab.show(true)
+                nextFab.show()
                 bottomSheetBehavior.isHideable = false
+                map?.setPadding(0, dip(56 + 16), 0, bottomSheet.height)
             }
         }
     }
@@ -105,16 +110,24 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         setContentView(R.layout.activity_place_editor)
         ButterKnife.bind(this)
 
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
         @Suppress("UNCHECKED_CAST")
         stateFragment = supportFragmentManager.findFragmentByTag(TAG_STATE_FRAGMENT) as? StateFragment<PlaceEditorState>
                 ?: StateFragment<PlaceEditorState>().apply {
                     supportFragmentManager.beginTransaction().add(this, TAG_STATE_FRAGMENT).commit()
                 }
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        val mapFragment = SupportMapFragment.newInstance()
+        supportFragmentManager.beginTransaction()
+                .add(R.id.mapContainer, mapFragment)
+                .commit()
         mapFragment.getMapAsync(this)
 
-        nextFab.hide(false)
+
+        nextFab.hide()
         nextFab.setOnClickListener { presenter.openNamePicker() }
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetRootView)
@@ -135,13 +148,17 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         }
     }
 
-    override fun onResume() {
-        logger.info("onResume()")
-        super.onResume()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onPause() {
-        logger.info("onPause()")
         super.onPause()
         stateFragment.data = presenter.state
     }
@@ -149,6 +166,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
     override fun onMapReady(googleMap: GoogleMap) {
         logger.info("onMapReady")
         googleMap.uiSettings.isMapToolbarEnabled = false
+        googleMap.setPadding(0, dip(56 + 16), 0, 0)
         try {
             val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -198,10 +216,10 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
 
     override fun allowNameEditor(allow: Boolean) {
         if (allow) {
-            nextFab.icon = getDrawable(R.drawable.ic_next_fab_dark_24px)
+            nextFab.setImageResource(R.drawable.ic_next_fab_dark_24px)
             nextFab.setOnClickListener { presenter.openNamePicker() }
         } else {
-            nextFab.icon = getDrawable(R.drawable.ic_save_fab_dark_24px)
+            nextFab.setImageResource(R.drawable.ic_save_fab_dark_24px)
             nextFab.setOnClickListener { presenter.saveWithName("") }
         }
     }
@@ -215,13 +233,14 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
             val markerOptions = MarkerOptions()
                     .position(LatLng(coordinates.latitude, coordinates.longitude))
                     .draggable(draggable)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_b))
+                    .anchor(0.5f, 0.5f)
             addMarker(markerOptions)
         }
     }
 
     override fun drawArea(coordinates: Coordinates, radiusMeters: Double) {
         map?.apply {
-            toast(String.format("%x", areaColor))
             val circleOptions = CircleOptions()
                     .center(LatLng(coordinates.latitude, coordinates.longitude))
                     .radius(radiusMeters)

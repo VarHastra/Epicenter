@@ -4,32 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context=".ui.placeeditor.PlaceEditorActivity">
 
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <FrameLayout
+        android:id="@+id/mapContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.Toolbar.Surface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:elevation="0dp"
+        android:fitsSystemWindows="true" />
 
     <include layout="@layout/sheet_place_editor" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextFab"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginEnd="@dimen/spacing_3x"
         android:elevation="10dp"
-        app:icon="@drawable/ic_next_fab_dark_24px"
-        app:iconTint="@color/colorIconDarkActive"
-        app:rippleColor="@color/colorIconDarkDisabled"
+        android:src="@drawable/ic_next_fab_dark_24px"
         app:layout_anchor="@id/bottomSheetRootView"
         app:layout_anchorGravity="end"
+        app:rippleColor="@color/colorIconDarkDisabled"
+        app:srcCompat="@drawable/ic_next_fab_dark_24px"
+        app:tint="@color/colorIconDarkActive"
         tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

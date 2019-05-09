@@ -6,6 +6,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.ioThread
 
 @Database(entities = [Place::class], version = 1)
 @TypeConverters(AppDb.Converters::class)
@@ -17,23 +18,29 @@ abstract class AppDb : RoomDatabase() {
     companion object {
         private const val DB_NAME = "epicenter.db"
         private var instance: AppDb? = null
+        val prepopulateData = listOf(
+                Place(0, "Current location", Coordinates(0.0, 0.0), 1000.0),
+                Place(0, "World", Coordinates(0.0, 0.0), null)
+        )
 
         fun getInstance(context: Context = App.instance): AppDb {
             return instance ?: Room.databaseBuilder(
-                context.applicationContext,
-                AppDb::class.java,
+                    context.applicationContext,
+                    AppDb::class.java,
                     DB_NAME
             )
-                .allowMainThreadQueries()
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        // TODO: implement if prepopulation needed
+                    .allowMainThreadQueries()
+                    .addCallback(object : Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            ioThread {
+                                getInstance().getPlaceDao().insert(prepopulateData)
+                            }
+                        }
+                    })
+                    .build().apply {
+                        instance = this
                     }
-                })
-                .build().apply {
-                    instance = this
-                }
 
         }
     }
@@ -48,8 +55,8 @@ abstract class AppDb : RoomDatabase() {
         fun toCoordinates(string: String): Coordinates {
             val parts = string.split(",")
             return Coordinates(
-                parts[0].toDoubleOrNull() ?: 0.0,
-                parts[1].toDoubleOrNull() ?: 0.0
+                    parts[0].toDoubleOrNull() ?: 0.0,
+                    parts[1].toDoubleOrNull() ?: 0.0
             )
         }
     }

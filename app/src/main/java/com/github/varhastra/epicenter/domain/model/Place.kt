@@ -13,7 +13,8 @@ data class Place(
         @PrimaryKey(autoGenerate = true) val id: Int = 100,
         @ColumnInfo(name = "name") val name: String,
         @ColumnInfo(name = "coordinates") val coordinates: Coordinates,
-        @ColumnInfo(name = "radius") val radiusKm: Double?
+        @ColumnInfo(name = "radius") val radiusKm: Double?,
+        @ColumnInfo(name = "order") val order: Int = -10
 ) {
     val latitude: Double
         get() = coordinates.latitude
@@ -36,8 +37,8 @@ data class Place(
     }
 
     companion object {
-        val WORLD = Place(2, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
-        val CURRENT_LOCATION =
-                Place(1, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
+        private const val MIN_RADIUS = 500.0
+        val CURRENT_LOCATION = Place(1, "Current location", Coordinates(37.757815, -122.5076402), MIN_RADIUS, -100)
+        val WORLD = Place(2, "World", Coordinates(37.757815, -122.5076402), null, -99)
     }
 }

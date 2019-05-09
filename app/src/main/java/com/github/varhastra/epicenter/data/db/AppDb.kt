@@ -19,8 +19,8 @@ abstract class AppDb : RoomDatabase() {
         private const val DB_NAME = "epicenter.db"
         private var instance: AppDb? = null
         val prepopulateData = listOf(
-                Place(Place.CURRENT_LOCATION.id, "Current location", Coordinates(0.0, 0.0), 1000.0),
-                Place(Place.WORLD.id, "World", Coordinates(0.0, 0.0), null)
+                Place.CURRENT_LOCATION,
+                Place.WORLD
         )
 
         fun getInstance(context: Context = App.instance): AppDb {

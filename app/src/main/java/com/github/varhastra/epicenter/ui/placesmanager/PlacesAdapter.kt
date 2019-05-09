@@ -22,6 +22,8 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
         }
     var onStartDrag: ((RecyclerView.ViewHolder) -> Unit)? = null
     var onItemClick: ((Place) -> Unit)? = null
+    var onDeleteItemClick: ((Place) -> Unit)? = null
+    var onItemMoved: (() -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_view_place, parent, false)
@@ -39,6 +41,11 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
         data.add(to, item)
 
         notifyItemMoved(from, to)
+        onItemMoved?.invoke()
+    }
+
+    override fun getItemId(position: Int): Long {
+        return data[position].id.toLong()
     }
 
     fun onPrepareItemMove(from: Int, to: Int) = !(from in 0..1 || to in 0..1)
@@ -54,7 +61,7 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
                 getLocalizedUnitsString(localizedRadius)
             }
 
-            itemView.setOnClickListener { onItemClick?.invoke(data[adapterPosition]) }
+            itemView.setOnClickListener { onItemClick?.invoke(place) }
 
             itemView.placeNameTextView.text = place.name
             itemView.radiusTextView.text = radiusStr
@@ -68,6 +75,11 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
             itemView.dragHandleView.setOnTouchListener(touchListener)
 
             itemView.removeButton.visibility = if (adapterPosition <= 1) View.INVISIBLE else View.VISIBLE
+            itemView.removeButton.setOnClickListener {
+                val removedPlace = data.removeAt(adapterPosition)
+                notifyItemRemoved(adapterPosition)
+                onDeleteItemClick?.invoke(removedPlace)
+            }
             itemView.dragHandleView.setImageDrawable(
                     when (adapterPosition) {
                         0 -> context.getDrawable(R.drawable.ic_place_near_me_24px)

@@ -115,4 +115,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="place_name_picker_place_name">Place name</string>
     <string name="place_name_picker_error_empty_name">Enter place name</string>
+    <string name="places_manager_place_deleted">Place deleted</string>
+    <string name="app_undo">Undo</string>
 </resources>

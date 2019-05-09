@@ -3,11 +3,15 @@ package com.github.varhastra.epicenter.ui.placesmanager
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.Position
+import java.util.*
 
 class PlacesManagerPresenter(
         private val view: PlacesManagerContract.View,
         private val placesDataSource: PlacesDataSource
 ) : PlacesManagerContract.Presenter {
+
+    private val deletionQueue: Queue<Place> = LinkedList()
 
     init {
         view.attachPresenter(this)
@@ -40,14 +44,22 @@ class PlacesManagerPresenter(
     }
 
     override fun saveOrder(places: List<Place>) {
-        // TODO("stub, not implemented")
+        placesDataSource.updateOrder(places)
     }
 
-    override fun tryDeletePlace(placeId: Int) {
-        // TODO("stub, not implemented")
+    override fun tryDeletePlace(place: Place) {
+        deletionQueue.offer(place)
+        view.showUndoDeleteOption()
     }
 
     override fun deletePlace() {
-        // TODO("stub, not implemented")
+        deletionQueue.poll()?.apply {
+            placesDataSource.deletePlace(this)
+        }
+    }
+
+    override fun undoDeletion() {
+        deletionQueue.poll()
+        loadPlaces()
     }
 }

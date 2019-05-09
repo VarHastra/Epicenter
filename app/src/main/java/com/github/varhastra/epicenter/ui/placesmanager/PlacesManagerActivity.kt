@@ -10,7 +10,10 @@ import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.ui.placeeditor.PlaceEditorActivity
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_places_manager.*
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.startActivity
 
 class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
@@ -29,8 +32,11 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
         // Set up recycler view
         adapter = PlacesAdapter(this, Prefs.getPreferredUnits())
+        adapter.setHasStableIds(true)
         adapter.onStartDrag = this::onStartDrag
         adapter.onItemClick = { presenter.openEditor(it.id) }
+        adapter.onDeleteItemClick = { presenter.tryDeletePlace(it) }
+        adapter.onItemMoved = { presenter.saveOrder(adapter.data) }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = this.adapter
@@ -59,6 +65,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
     }
 
     override fun onPause() {
+        presenter.deletePlace()
         presenter.saveOrder(adapter.data)
 
         super.onPause()
@@ -76,6 +83,18 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         } else {
             startActivity<PlaceEditorActivity>()
         }
+    }
+
+    override fun showUndoDeleteOption() {
+        recyclerView.snackbar(R.string.places_manager_place_deleted, R.string.app_undo) {
+            presenter.undoDeletion()
+        }.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                if (event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_SWIPE || event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT) {
+                    presenter.deletePlace()
+                }
+            }
+        })
     }
 
     private fun onStartDrag(holder: RecyclerView.ViewHolder) {

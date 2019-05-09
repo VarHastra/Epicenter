@@ -196,6 +196,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         val marker = MarkerOptions()
                 .position(markerPos)
                 .icon(BitmapDescriptorFactory.fromResource(getMarkerResource(alertType)))
+                .anchor(0.5f, 0.5f)
 
         map.addMarker(marker)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPos, 2.4f))

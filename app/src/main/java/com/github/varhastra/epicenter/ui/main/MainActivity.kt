@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
             verticalOffset = -dip(32)
             setBackgroundDrawable(getDrawable(R.drawable.bg_popup_window))
             width = (displayMetrics.widthPixels / 1.5).roundToInt()
-            height = displayMetrics.heightPixels / 2
+            height = placesAdapter.count * dip(56)
             setAdapter(placesAdapter)
             setOnItemClickListener { parent, _, position, _ ->
                 if (position == parent.adapter.count - 1) {

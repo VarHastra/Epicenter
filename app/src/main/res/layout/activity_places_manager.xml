@@ -17,28 +17,27 @@
             style="@style/Widget.MaterialComponents.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleTextColor="?android:textColorPrimary"
-            android:elevation="@dimen/elevation_toolbar" />
+            android:elevation="@dimen/elevation_toolbar"
+            app:titleTextColor="?android:textColorPrimary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:theme="@style/AppTheme.Gentle" />
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addFab"
-        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/spacing_2x"
         android:layout_marginBottom="@dimen/spacing_2x"
-        android:text="@string/app_add"
-        android:textColor="@color/colorOnPrimary"
-        app:icon="@drawable/ic_add_black_24dp"
-        app:iconTint="@color/colorOnPrimary"
-        app:rippleColor="@color/colorOnPrimary"/>
+        app:rippleColor="@color/colorIconDarkDisabled"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:tint="@color/colorIconDarkActive" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

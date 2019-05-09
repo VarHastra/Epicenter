@@ -31,7 +31,6 @@
         android:layout_height="56dp"
         android:layout_marginEnd="@dimen/spacing_3x"
         android:elevation="10dp"
-        android:src="@drawable/ic_next_fab_dark_24px"
         app:layout_anchor="@id/bottomSheetRootView"
         app:layout_anchorGravity="end"
         app:rippleColor="@color/colorIconDarkDisabled"

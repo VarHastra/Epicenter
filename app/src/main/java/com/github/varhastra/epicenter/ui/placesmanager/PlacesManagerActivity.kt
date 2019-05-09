@@ -30,6 +30,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         // Set up recycler view
         adapter = PlacesAdapter(this, Prefs.getPreferredUnits())
         adapter.onStartDrag = this::onStartDrag
+        adapter.onItemClick = { presenter.openEditor(it.id) }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = this.adapter
@@ -70,7 +71,11 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
     }
 
     override fun showEditor(placeId: Int?) {
-        startActivity<PlaceEditorActivity>()
+        if (placeId != null) {
+            startActivity<PlaceEditorActivity>(PlaceEditorActivity.EXTRA_PLACE_ID to placeId)
+        } else {
+            startActivity<PlaceEditorActivity>()
+        }
     }
 
     private fun onStartDrag(holder: RecyclerView.ViewHolder) {

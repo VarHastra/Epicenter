@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.ui.placeeditor
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
@@ -24,6 +25,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.sheet_place_editor.*
 import org.jetbrains.anko.*
@@ -63,6 +70,36 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         }
     }
 
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                nextFab.show(true)
+                bottomSheetBehavior.isHideable = false
+            }
+        }
+    }
+
+    private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+            // Update area radius
+            if (fromUser) {
+                presenter.setAreaRadius(progress, false)
+            }
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar) {
+            // Do nothing
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar) {
+            // Update area radius
+            presenter.setAreaRadius(seekBar.progress, true)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_editor)
@@ -83,47 +120,28 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetRootView)
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
+        bottomSheetBehavior.setBottomSheetCallback(bottomSheetCallback)
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    nextFab.show(true)
-                    bottomSheetBehavior.isHideable = false
-                }
-            }
-        })
-
-        radiusSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                // Update area radius
-                if (fromUser) {
-                    presenter.setAreaRadius(progress, false)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // Do nothing
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                // Update area radius
-                presenter.setAreaRadius(seekBar.progress, true)
-            }
-        })
+        radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
         val presenter = PlaceEditorPresenter(this, PlacesRepository.getInstance(), Prefs.getPreferredUnits())
         if (stateFragment.data != null) {
             presenter.initialize(stateFragment.data!!)
+        } else {
+            val placeId = intent.getIntExtra(EXTRA_PLACE_ID, 0)
+            if (placeId != 0) {
+                presenter.initialize(placeId)
+            }
         }
     }
 
     override fun onResume() {
+        logger.info("onResume()")
         super.onResume()
     }
 
     override fun onPause() {
+        logger.info("onPause()")
         super.onPause()
         stateFragment.data = presenter.state
     }
@@ -155,19 +173,48 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         presenter.start()
     }
 
+    override fun showRequestLocationPermission(onGranted: () -> Unit, onDenied: () -> Unit) {
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        onGranted.invoke()
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        onDenied.invoke()
+                    }
+                })
+                .check()
+    }
+
     override fun attachPresenter(presenter: PlaceEditorContract.Presenter) {
         this.presenter = presenter
+    }
+
+    override fun allowNameEditor(allow: Boolean) {
+        if (allow) {
+            nextFab.icon = getDrawable(R.drawable.ic_next_fab_dark_24px)
+            nextFab.setOnClickListener { presenter.openNamePicker() }
+        } else {
+            nextFab.icon = getDrawable(R.drawable.ic_save_fab_dark_24px)
+            nextFab.setOnClickListener { presenter.saveWithName("") }
+        }
     }
 
     override fun setMaxRadiusValue(maxRadius: Int) {
         radiusSeekBar.max = maxRadius
     }
 
-    override fun drawAreaCenter(coordinates: Coordinates) {
+    override fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean) {
         map?.apply {
             val markerOptions = MarkerOptions()
                     .position(LatLng(coordinates.latitude, coordinates.longitude))
-                    .draggable(true)
+                    .draggable(draggable)
             addMarker(markerOptions)
         }
     }
@@ -224,15 +271,15 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
             REQUEST_PLACE_NAME -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val name = data.getStringExtra(PlaceNamePickerActivity.RESULT_NAME)
-                    presenter.onResult(name)
+                    presenter.saveWithName(name)
                 }
             }
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun navigateBack() {
-        onBackPressed()
+        finish()
     }
 
     companion object {

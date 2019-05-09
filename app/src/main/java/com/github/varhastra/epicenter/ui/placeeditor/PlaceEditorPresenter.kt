@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.ui.placeeditor
 
+import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
@@ -12,8 +13,8 @@ import com.google.maps.android.SphericalUtil
 import kotlin.math.roundToInt
 
 class PlaceEditorPresenter(
-        val view: PlaceEditorContract.View,
-        val placesDataSource: PlacesDataSource,
+        private val view: PlaceEditorContract.View,
+        private val placesDataSource: PlacesDataSource,
         unitsLocale: UnitsLocale
 ) : PlaceEditorContract.Presenter {
 
@@ -24,18 +25,58 @@ class PlaceEditorPresenter(
         view.attachPresenter(this)
     }
 
-    override fun initialize(presenterMode: PlaceEditorContract.PresenterMode, placeId: Int) {
-//        TODO("stub, not implemented")
+    override fun initialize(placeId: Int) {
+        state = state.copy(placeId = placeId)
+        if (placeId == Place.CURRENT_LOCATION.id) {
+            view.allowNameEditor(false)
+        }
     }
 
     override fun initialize(placeEditorState: PlaceEditorState) {
         state = placeEditorState
+        if (state.placeId == Place.CURRENT_LOCATION.id) {
+            view.allowNameEditor(false)
+        }
     }
 
     override fun start() {
         view.setMaxRadiusValue((Area.MAX_RADIUS_KM - Area.MIN_RADIUS_KM).roundToInt() - 1)
+
+        if (state.placeId == 0) {
+            drawCurrentState()
+            return
+        }
+
+        if (state.placeId == Place.CURRENT_LOCATION.id) {
+            view.showRequestLocationPermission(onGranted = {
+                getAndDrawPlace()
+            }, onDenied = {
+                view.navigateBack()
+            })
+
+        } else {
+            getAndDrawPlace()
+        }
+
+    }
+
+    private fun getAndDrawPlace() {
+        placesDataSource.getPlace(object : DataSourceCallback<Place> {
+            override fun onResult(result: Place) {
+                state = state.copy(area = Area(result.coordinates, result.radiusKm!!))
+                drawCurrentState()
+                adjustCameraToAreaBounds()
+            }
+
+            override fun onFailure(t: Throwable?) {
+                drawCurrentState()
+            }
+        }, placeId = state.placeId)
+    }
+
+    private fun drawCurrentState() {
         state.area?.apply {
-            view.drawAreaCenter(center)
+            view.drawAreaCenter(center, state.placeId != Place.CURRENT_LOCATION.id)
             view.drawArea(center, radiusM)
             view.showRadiusControls(true)
             view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(radiusKm))
@@ -101,9 +142,9 @@ class PlaceEditorPresenter(
         }
     }
 
-    override fun onResult(placeName: String) {
+    override fun saveWithName(placeName: String) {
         state.area?.apply {
-            placesDataSource.savePlace(Place(0, placeName, center, radiusKm))
+            placesDataSource.savePlace(Place(state.placeId, placeName, center, radiusKm))
         }
         view.navigateBack()
     }

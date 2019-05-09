@@ -21,6 +21,7 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
             notifyDataSetChanged()
         }
     var onStartDrag: ((RecyclerView.ViewHolder) -> Unit)? = null
+    var onItemClick: ((Place) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_view_place, parent, false)
@@ -52,6 +53,8 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
                 val localizedRadius = getLocalizedDistance(place.radiusKm)
                 getLocalizedUnitsString(localizedRadius)
             }
+
+            itemView.setOnClickListener { onItemClick?.invoke(data[adapterPosition]) }
 
             itemView.placeNameTextView.text = place.name
             itemView.radiusTextView.text = radiusStr

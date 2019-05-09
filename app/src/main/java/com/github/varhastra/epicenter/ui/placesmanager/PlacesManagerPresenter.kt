@@ -34,7 +34,9 @@ class PlacesManagerPresenter(
 
 
     override fun openEditor(placeId: Int?) {
-        view.showEditor(placeId)
+        if (placeId != Place.WORLD.id) {
+            view.showEditor(placeId)
+        }
     }
 
     override fun saveOrder(places: List<Place>) {

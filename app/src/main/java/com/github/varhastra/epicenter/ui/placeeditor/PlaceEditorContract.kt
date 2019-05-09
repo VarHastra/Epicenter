@@ -8,9 +8,13 @@ import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 interface PlaceEditorContract {
 
     interface View : BaseView<Presenter> {
+        fun allowNameEditor(allow: Boolean)
+
         fun showRadiusControls(show: Boolean)
 
-        fun drawAreaCenter(coordinates: Coordinates)
+        fun showRequestLocationPermission(onGranted: () -> Unit, onDenied: () -> Unit)
+
+        fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean = true)
 
         fun drawArea(coordinates: Coordinates, radiusMeters: Double)
 
@@ -32,7 +36,7 @@ interface PlaceEditorContract {
     interface Presenter : BasePresenter {
         var state: PlaceEditorState
 
-        fun initialize(presenterMode: PresenterMode, placeId: Int)
+        fun initialize(placeId: Int)
 
         fun initialize(placeEditorState: PlaceEditorState)
 
@@ -44,11 +48,6 @@ interface PlaceEditorContract {
 
         fun openNamePicker()
 
-        fun onResult(placeName: String)
-    }
-
-    enum class PresenterMode {
-        ADD,
-        EDIT
+        fun saveWithName(placeName: String)
     }
 }

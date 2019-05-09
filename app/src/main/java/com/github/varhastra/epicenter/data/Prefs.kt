@@ -5,6 +5,7 @@ import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
+import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
@@ -70,8 +71,7 @@ object Prefs : FeedStateDataSource, MapStateDataSource {
     }
 
     private fun retrieveSelectedPlaceId(context: Context = App.instance): Int {
-        // The default value is 1 because the "World" place id is 1
-        return context.defaultSharedPreferences.getInt(PREF_FEED_PLACE_ID, 1)
+        return context.defaultSharedPreferences.getInt(PREF_FEED_PLACE_ID, Place.WORLD.id)
     }
 
     private fun storeCurrentFilter(filter: FeedFilter, context: Context = App.instance) {

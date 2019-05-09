@@ -36,8 +36,8 @@ data class Place(
     }
 
     companion object {
-        val WORLD = Place(1, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
+        val WORLD = Place(2, name = "World", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
         val CURRENT_LOCATION =
-                Place(0, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
+                Place(1, name = "Current location", coordinates = Coordinates(37.757815, -122.5076402), radiusKm = null)
     }
 }

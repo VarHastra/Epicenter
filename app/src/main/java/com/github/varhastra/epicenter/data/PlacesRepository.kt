@@ -1,61 +1,65 @@
 package com.github.varhastra.epicenter.data
 
+import com.github.varhastra.epicenter.IO_EXECUTOR
+import com.github.varhastra.epicenter.data.db.AppDb
+import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.LocationDataSource
 import com.github.varhastra.epicenter.domain.PlacesDataSource
-import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.Position
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
-class PlacesRepository private constructor(val locationDataSource: LocationDataSource) : PlacesDataSource {
+class PlacesRepository private constructor(private val locationDataSource: LocationDataSource, private val placeDao: PlaceDao) : PlacesDataSource {
 
     override fun getPlaces(callback: DataSourceCallback<List<Place>>) {
-        // TODO: stub, implement when ready
-        val places = listOf(
-                Place(0, "Current Location", Coordinates(34.0207305, -118.6919151), 4000.0),
-                Place(1, "World", Coordinates(0.0, 0.0), null),
-                Place(2, "Port Moresby", Coordinates(-9.4374361, 147.1552399), 2000.0),
-                Place(3, "Anchorage, Alaska", Coordinates(61.1083688, -150.0006822), 3000.0)
-        )
-        callback.onResult(places)
+        doAsync(executorService = IO_EXECUTOR) {
+            val places = placeDao.getAll()
+            uiThread {
+                callback.onResult(places)
+            }
+        }
     }
 
     override fun getPlace(callback: DataSourceCallback<Place>, placeId: Int) {
-        // TODO: stub, implement when ready
-        val places = listOf(
-                Place(0, "Current Location", Coordinates(34.0207305, -118.6919151), 4000.0),
-                Place(1, "World", Coordinates(0.0, 0.0), null),
-                Place(2, "Port Moresby", Coordinates(-9.4374361, 147.1552399), 2000.0),
-                Place(3, "Anchorage, Alaska", Coordinates(61.1083688, -150.0006822), 3000.0)
-        )
+        doAsync(executorService = IO_EXECUTOR) {
+            val place = placeDao.get(placeId)
+            if (placeId == Place.CURRENT_LOCATION.id) {
+                locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
+                    override fun onResult(result: Position) {
+                        uiThread {
+                            callback.onResult(place.copy(coordinates = result.coordinates))
+                        }
+                    }
 
-        val place = places.first { it.id == placeId }
-        if (placeId == Place.CURRENT_LOCATION.id) {
-            locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
-                override fun onResult(result: Position) {
-                    callback.onResult(place.copy(coordinates = result.coordinates))
+                    override fun onFailure(t: Throwable?) {
+                        uiThread {
+                            callback.onFailure(t)
+                        }
+                    }
+                })
+            } else {
+                uiThread {
+                    callback.onResult(place)
                 }
-
-                override fun onFailure(t: Throwable?) {
-                    callback.onFailure(t)
-                }
-            })
-        } else {
-            callback.onResult(place)
+            }
         }
     }
 
     override fun savePlace(place: Place) {
-        TODO("stub, not implemented")
+        doAsync(executorService = IO_EXECUTOR) {
+            placeDao.save(place)
+        }
     }
 
 
     companion object {
         private var instance: PlacesRepository? = null
 
-        fun getInstance(locationDataSource: LocationDataSource = LocationProvider()): PlacesRepository {
-            return instance ?: PlacesRepository(locationDataSource)
+        fun getInstance(locationDataSource: LocationDataSource = LocationProvider(), placeDao: PlaceDao = AppDb.getInstance().getPlaceDao()): PlacesRepository {
+            return instance ?: PlacesRepository(locationDataSource, placeDao)
         }
     }
 }

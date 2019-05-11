@@ -122,6 +122,11 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
         holder.bind(data[position])
     }
 
+    override fun getItemId(position: Int): Long {
+        return with(data[position].event) {
+            latitude.toRawBits() xor longitude.toRawBits() xor timestamp.toEpochMilli()
+        }
+    }
 
     inner class EventHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.tv_item_feed_magnitude)

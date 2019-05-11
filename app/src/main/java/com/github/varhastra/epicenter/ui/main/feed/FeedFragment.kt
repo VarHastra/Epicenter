@@ -88,9 +88,11 @@ class FeedFragment : Fragment(), FeedContract.View {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         feedAdapter = FeedAdapter(activity!!, Prefs.getPreferredUnits())
+        feedAdapter.setHasStableIds(true)
         feedAdapter.onEventClickListener = { remoteEvent, _ ->
             presenter.openEventDetails(remoteEvent.event.id)
         }
+
         feedRecyclerView.setHasFixedSize(true)
         feedRecyclerView.layoutManager = LinearLayoutManager(activity)
         feedRecyclerView.adapter = feedAdapter

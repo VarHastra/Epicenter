@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindColor
 import butterknife.BindString
@@ -15,8 +14,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.utils.UnitsFormatter
 import com.github.varhastra.epicenter.utils.UnitsLocale
-import com.github.varhastra.epicenter.utils.kmToMi
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -60,10 +59,6 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
     var depthString: String = ""
 
     @JvmField
-    @BindString(R.string.app_miles_abbreviation)
-    var milesAbbreviation: String = ""
-
-    @JvmField
     @BindString(R.string.app_today)
     var todayString: String = ""
 
@@ -71,12 +66,6 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
     @BindString(R.string.app_yesterday)
     var yesterdayString: String = ""
 
-    @JvmField
-    @BindString(R.string.app_kilometers_abbreviation)
-    @StringRes
-    var kilometersAbbreviation: String = ""
-
-    private var unitsAbbreviation = ""
 
     private val now = LocalDateTime.now()
 
@@ -87,7 +76,6 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
 
     var onEventClickListener: ((RemoteEvent, Int) -> Unit)? = null
 
-
     var data: List<RemoteEvent> = listOf()
         set (value) {
             field = value
@@ -97,8 +85,11 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
     var unitsLocale: UnitsLocale = unitsLocale
         set(value) {
             field = value
-            notifyDataSetChanged()
+            unitsFormatter = UnitsFormatter(unitsLocale)
         }
+
+    private var unitsFormatter = UnitsFormatter(unitsLocale)
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_view_feed_event, parent, false)
@@ -108,12 +99,6 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         ButterKnife.bind(this, recyclerView)
-
-        unitsAbbreviation = when (unitsLocale) {
-            UnitsLocale.METRIC -> kilometersAbbreviation
-            UnitsLocale.IMPERIAL -> milesAbbreviation
-            else -> kilometersAbbreviation
-        }
     }
 
     override fun getItemCount() = data.size
@@ -162,11 +147,9 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
 
                 titleTextView.text = event.placeName
 
-                val dist = getLocalizedDistance(distance)
-                distanceTextView.text = String.format(distanceString, dist?.roundToInt(), unitsAbbreviation)
+                distanceTextView.text = String.format(distanceString, unitsFormatter.getLocalizedDistanceString(distance?.roundToInt()))
 
-                val depth = getLocalizedDistance(event.depth)
-                depthTextView.text = String.format(depthString, depth?.roundToInt(), unitsAbbreviation)
+                depthTextView.text = String.format(depthString, unitsFormatter.getLocalizedDistanceString(event.depth))
 
                 tsunamiImageView.visibility = if (event.tsunamiAlert) View.VISIBLE else View.GONE
 
@@ -189,18 +172,6 @@ class FeedAdapter(val context: Context, unitsLocale: UnitsLocale = UnitsLocale.g
                 in 6 until 8 -> colorAlert6
                 in 8..10 -> colorAlert8
                 else -> colorAlert0
-            }
-        }
-
-        private fun getLocalizedDistance(distance: Double?): Double? {
-            if (distance == null) {
-                return null
-            }
-
-            return when (unitsLocale) {
-                UnitsLocale.METRIC -> distance
-                UnitsLocale.IMPERIAL -> kmToMi(distance)
-                else -> distance
             }
         }
     }

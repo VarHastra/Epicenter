@@ -32,7 +32,10 @@ class UnitsFormatter(private val unitsLocale: UnitsLocale, decimalPlaces: Int = 
         }
     }
 
-    fun getLocalizedDistanceString(distanceKm: Double): String {
+    fun getLocalizedDistanceString(distanceKm: Double?, alternativeStrId: Int = R.string.app_not_available_abbreviation): String {
+        if (distanceKm == null) {
+            return context.getString(alternativeStrId)
+        }
         val localizedDistance = getLocalizedDistance(distanceKm)
         val distanceStr = decimalFormat.format(localizedDistance)
         return when (unitsLocale) {
@@ -42,7 +45,10 @@ class UnitsFormatter(private val unitsLocale: UnitsLocale, decimalPlaces: Int = 
         }
     }
 
-    fun getLocalizedDistanceString(distanceKm: Int): String {
+    fun getLocalizedDistanceString(distanceKm: Int?, alternativeStrId: Int = R.string.app_not_available_abbreviation): String {
+        if (distanceKm == null) {
+            return context.getString(alternativeStrId)
+        }
         val localizedDistance = getLocalizedDistance(distanceKm)
         val distanceStr = localizedDistance.toString()
         return when (unitsLocale) {

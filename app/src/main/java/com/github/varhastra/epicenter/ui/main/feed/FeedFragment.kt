@@ -27,6 +27,7 @@ import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.ui.details.DetailsActivity
 import com.github.varhastra.epicenter.ui.main.ToolbarProvider
 import com.github.varhastra.epicenter.ui.placesmanager.PlacesManagerActivity
+import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.views.EmptyView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -226,9 +227,10 @@ class FeedFragment : Fragment(), FeedContract.View {
         toolbarProvider?.setDropdownData(places)
     }
 
-    override fun showEvents(events: List<RemoteEvent>) {
+    override fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale) {
         emptyView.visibility = View.INVISIBLE
         feedRecyclerView.visibility = View.VISIBLE
+        feedAdapter.unitsLocale = unitsLocale
         feedAdapter.data = events
         feedRecyclerView.scrollToPosition(0)
         feedRecyclerView.scheduleLayoutAnimation()

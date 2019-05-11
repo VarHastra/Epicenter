@@ -5,6 +5,7 @@ import com.github.varhastra.epicenter.BaseView
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.utils.UnitsLocale
 
 interface FeedContract {
 
@@ -33,7 +34,7 @@ interface FeedContract {
 
         fun showPlaces(places: List<Place>)
 
-        fun showEvents(events: List<RemoteEvent>)
+        fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale)
 
         fun showErrorNoData(reason: ErrorReason)
 

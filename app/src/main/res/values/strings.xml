@@ -24,6 +24,7 @@
     <string name="app_format_kilometers">%d km</string>
     <string name="app_format_kilometers_real">%f km</string>
     <string name="app_format_kilometers_str">%s km</string>
+    <string name="app_not_available_abbreviation">n/a</string>
 
     <string name="app_today">Today</string>
     <string name="app_yesterday">Yesterday</string>
@@ -50,8 +51,8 @@
     <string name="feed_filters_chip_sorting_distance">Distance</string>
     <string name="feed_filters_radius">Radius</string>
 
-    <string name="feed_event_distance">Distance: %1$d %2$s</string>
-    <string name="feed_event_depth">Depth: %1$d %2$s</string>
+    <string name="feed_event_distance">Distance: %1$s</string>
+    <string name="feed_event_depth">Depth: %1$s</string>
 
     <string name="feed_edit_places">Edit places</string>
     <string name="feed_edit_places_desc">Add new or edit existing places</string>

@@ -10,6 +10,8 @@ import org.threeten.bp.Instant
  */
 class UsgsResponseMapper {
 
+    private val distancePattern = Regex("\\d+\\s?km\\s[A-Za-z]+\\sof\\s")
+
     fun mapToModel(usgsResponse: UsgsResponse): List<Event> {
         val earthquakes = mutableListOf<Event>()
 
@@ -26,7 +28,8 @@ class UsgsResponseMapper {
         val coordinates = feature.geometry.coordinates
 
         return with(feature.properties) {
-            Event(id, mag, place, Instant.ofEpochMilli(time),
+            val placeName = place.replace(distancePattern, "")
+            Event(id, mag, placeName, Instant.ofEpochMilli(time),
                     Coordinates(coordinates[1], coordinates[0]),
                     url,
                     felt ?: 0,

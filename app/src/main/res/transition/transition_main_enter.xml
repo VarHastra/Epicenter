@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <fade
+        android:duration="300"
+        android:fadingMode="fade_in"
+        android:interpolator="@android:interpolator/linear_out_slow_in" />
+</transitionSet>

@@ -8,6 +8,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.Fragment
+import androidx.transition.Transition
+import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     private val placesRepository = PlacesRepository.getInstance()
     private val locationProvider = LocationProvider()
     private val connectivityProvider = ConnectivityProvider()
+    private lateinit var fragmentEnterTransition: Transition
+    private lateinit var fragmentExitTransition: Transition
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +76,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
         setSupportActionBar(toolbar)
         toolbar.setOnDropdownClickListener { showDropdownPopup() }
+
+        fragmentEnterTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_main_enter)
+        fragmentExitTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_main_exit)
 
         info("onCreate")
 
@@ -124,6 +131,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     }
 
     private fun navigateTo(fragment: Fragment) {
+        fragment.apply {
+            enterTransition = fragmentEnterTransition
+            exitTransition = fragmentExitTransition
+        }
         supportFragmentManager.beginTransaction()
                 .replace(R.id.frame_content_main, fragment)
                 .commit()
@@ -179,7 +190,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
             return when (item.itemId) {
                 R.id.navigation_feed -> {
                     val fragment = FeedFragment()
-                    // TODO: replace mock provider with the real one
                     FeedPresenter(
                             fragment,
                             eventsRepository,

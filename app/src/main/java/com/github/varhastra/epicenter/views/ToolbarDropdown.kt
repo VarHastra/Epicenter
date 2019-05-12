@@ -3,10 +3,10 @@ package com.github.varhastra.epicenter.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import com.github.varhastra.epicenter.R
 
@@ -16,6 +16,10 @@ class ToolbarDropdown : Toolbar {
     private lateinit var titleTextView: TextView
 
     private var onClick: (() -> Unit)? = null
+
+    private val transition = Fade(Fade.MODE_OUT or Fade.MODE_IN).apply {
+        duration = 250
+    }
 
     constructor(context: Context) : super(context) {
         init(context, null)
@@ -57,13 +61,13 @@ class ToolbarDropdown : Toolbar {
     }
 
     fun showDropDown(show: Boolean) {
-        TransitionManager.beginDelayedTransition(this)
+        TransitionManager.beginDelayedTransition(this, transition)
         if (show) {
-            titleTextView.visibility = GONE
+            titleTextView.visibility = INVISIBLE
             dropdownTextView.visibility = VISIBLE
         } else {
-            dropdownTextView.visibility = GONE
-            titleTextView.visibility = View.VISIBLE
+            dropdownTextView.visibility = INVISIBLE
+            titleTextView.visibility = VISIBLE
         }
     }
 

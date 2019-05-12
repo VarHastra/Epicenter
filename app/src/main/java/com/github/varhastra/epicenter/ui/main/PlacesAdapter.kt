@@ -12,13 +12,22 @@ import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.utils.UnitsFormatter
 import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.kmToMi
 import kotlin.math.roundToInt
 
-class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale = Prefs.getPreferredUnits()) : BaseAdapter() {
+class PlacesAdapter(val context: Context, unitsLocale: UnitsLocale = Prefs.getPreferredUnits()) : BaseAdapter() {
 
     var places = listOf<Place>()
+
+    var unitsLocale = unitsLocale
+    set(value) {
+        field = value
+        unitsFormatter = UnitsFormatter(unitsLocale)
+    }
+
+    private var unitsFormatter = UnitsFormatter(unitsLocale)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var view = convertView
@@ -71,7 +80,7 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale = Prefs.g
             val radiusStr = if (place.radiusKm == null) {
                 context.getString(R.string.feed_place_infinite)
             } else {
-                "${getLocalizedDistance(place.radiusKm)} ${getLocalizedUnitsString()}"
+                unitsFormatter.getLocalizedDistanceString(place.radiusKm.roundToInt())
             }
             radiusTextView.text = radiusStr
 
@@ -87,22 +96,6 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale = Prefs.g
             textView.setText(R.string.feed_edit_places)
             radiusTextView.setText(R.string.feed_edit_places_desc)
             imgView.setImageResource(R.drawable.ic_place_edit_24px)
-        }
-
-        private fun getLocalizedDistance(distanceInKm: Double): Int {
-            return when (unitsLocale) {
-                UnitsLocale.METRIC -> distanceInKm.roundToInt()
-                UnitsLocale.IMPERIAL -> kmToMi(distanceInKm.toDouble()).roundToInt()
-                else -> distanceInKm.roundToInt()
-            }
-        }
-
-        private fun getLocalizedUnitsString(): String {
-            return when (unitsLocale) {
-                UnitsLocale.METRIC -> context.getString(R.string.app_kilometers_abbreviation)
-                UnitsLocale.IMPERIAL -> context.getString(R.string.app_miles_abbreviation)
-                else -> context.getString(R.string.app_kilometers_abbreviation)
-            }
         }
     }
 }

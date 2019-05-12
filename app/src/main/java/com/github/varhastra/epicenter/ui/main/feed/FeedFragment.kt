@@ -228,8 +228,8 @@ class FeedFragment : Fragment(), FeedContract.View {
         sortingChipGroup.check(id)
     }
 
-    override fun showPlaces(places: List<Place>) {
-        toolbarProvider?.setDropdownData(places)
+    override fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale) {
+        toolbarProvider?.setDropdownData(places, unitsLocale)
     }
 
     override fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale) {

@@ -67,7 +67,7 @@ class FeedPresenter(
                     return
                 }
 
-                view.showPlaces(result)
+                view.showPlaces(result, unitsLocaleDataSource.getPreferredUnitsLocale())
             }
 
             override fun onFailure(t: Throwable?) {

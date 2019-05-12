@@ -25,6 +25,7 @@ import com.github.varhastra.epicenter.ui.main.map.MapPresenter
 import com.github.varhastra.epicenter.ui.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.ui.main.search.SearchFragment
 import com.github.varhastra.epicenter.ui.settings.SettingsActivity
+import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -251,7 +252,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         placesEditPopupListener = listener
     }
 
-    override fun setDropdownData(places: List<Place>) {
+    override fun setDropdownData(places: List<Place>, unitsLocale: UnitsLocale) {
+        placesAdapter.unitsLocale = unitsLocale
         placesAdapter.places = places
         placesAdapter.notifyDataSetChanged()
     }

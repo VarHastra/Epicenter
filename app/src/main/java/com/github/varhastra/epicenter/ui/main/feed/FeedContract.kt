@@ -32,7 +32,7 @@ interface FeedContract {
 
         fun showCurrentFilter(filter: FeedFilter)
 
-        fun showPlaces(places: List<Place>)
+        fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale)
 
         fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale)
 

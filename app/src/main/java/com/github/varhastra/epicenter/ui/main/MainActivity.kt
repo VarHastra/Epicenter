@@ -212,14 +212,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     navigateTo(fragment)
                     true
                 }
-                R.id.navigation_search -> {
-                    navigateTo(SearchFragment())
-                    true
-                }
-                R.id.navigation_notifications -> {
-                    navigateTo(NotificationsFragment())
-                    true
-                }
+                // TODO: implement later
+//                R.id.navigation_search -> {
+//                    navigateTo(SearchFragment())
+//                    true
+//                }
+//                R.id.navigation_notifications -> {
+//                    navigateTo(NotificationsFragment())
+//                    true
+//                }
                 else -> false
             }
         }

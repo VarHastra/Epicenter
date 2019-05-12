@@ -155,7 +155,10 @@ class FeedFragment : Fragment(), FeedContract.View {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_filter -> {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.state = when (bottomSheetBehavior.state) {
+                    BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_HIDDEN
+                    else -> BottomSheetBehavior.STATE_EXPANDED
+                }
                 true
             }
             R.id.action_refresh -> {

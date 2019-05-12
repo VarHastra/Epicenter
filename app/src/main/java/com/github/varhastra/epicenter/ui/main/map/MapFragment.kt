@@ -115,7 +115,10 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_filter -> {
-                presenter.openFilters()
+                bottomSheetBehavior.state = when (bottomSheetBehavior.state) {
+                    BottomSheetBehavior.STATE_EXPANDED -> BottomSheetBehavior.STATE_HIDDEN
+                    else -> BottomSheetBehavior.STATE_EXPANDED
+                }
                 true
             }
             R.id.action_refresh -> {

@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:elevation="@dimen/elevation_toolbar"
-            app:titleTextColor="@color/mtrl_dark_on_primary_emphasis_high_type"/>
+            app:titleTextColor="?android:textColorPrimary"/>
 
     <FrameLayout
             android:id="@+id/frame_content_settings"

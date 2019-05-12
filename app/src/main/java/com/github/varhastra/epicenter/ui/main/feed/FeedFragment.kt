@@ -237,13 +237,17 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedRecyclerView.visibility = View.VISIBLE
         feedAdapter.unitsLocale = unitsLocale
         val oldEvents = feedAdapter.data
-        feedAdapter.data = events
         doAsync {
             // Compare the old and the new list and animate rv if there is any difference
             if (oldEvents != events) {
                 uiThread {
+                    feedAdapter.data = events
                     feedRecyclerView.scrollToPosition(0)
                     feedRecyclerView.scheduleLayoutAnimation()
+                }
+            } else {
+                uiThread {
+                    feedAdapter.data = events
                 }
             }
         }

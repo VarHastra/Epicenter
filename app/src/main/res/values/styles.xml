@@ -18,7 +18,7 @@
         <item name="snackbarStyle">@style/SnackbarStyle</item>
 
         <item name="android:statusBarColor">?colorSurface</item>
-        
+
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowContentTransitions">true</item>
 
@@ -26,7 +26,7 @@
         <item name="android:windowReenterTransition">@transition/transition_all_reenter</item>
         <item name="android:windowReturnTransition">@transition/transition_all_return</item>
     </style>
-    
+
     <style name="AppTheme.Gentle" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimaryGentle</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryGentleVariant</item>
@@ -59,5 +59,14 @@
         <item name="android:textColor">#80000000</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MapTooltipTextAppearance" parent="@style/TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/colorMapTooltipText</item>
+        <item name="android:background">@drawable/bg_map_tooltip</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/spacing_1x</item>
+        <item name="android:paddingEnd">@dimen/spacing_1x</item>
     </style>
 </resources>

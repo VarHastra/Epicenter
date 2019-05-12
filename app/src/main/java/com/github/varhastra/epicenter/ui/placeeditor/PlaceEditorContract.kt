@@ -18,6 +18,8 @@ interface PlaceEditorContract {
 
         fun drawArea(coordinates: Coordinates, radiusMeters: Double)
 
+        fun showTooltip(show: Boolean)
+
         fun updateAreaRadius(radiusMeters: Double)
 
         fun showAreaRadiusText(radiusText: String)

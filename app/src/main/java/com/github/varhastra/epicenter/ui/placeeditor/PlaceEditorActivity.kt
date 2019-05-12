@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.transition.TransitionManager
 import butterknife.BindColor
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
@@ -248,6 +249,10 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
                     .visible(true)
             areaCircle = addCircle(circleOptions)
         }
+    }
+
+    override fun showTooltip(show: Boolean) {
+        tooltipTextView.visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
     override fun updateAreaRadius(radiusMeters: Double) {

@@ -48,4 +48,7 @@
 
     <color name="colorSelectedArea">#8027BEFF</color>
     <color name="colorSelectedAreaStroke">#27BEFF</color>
+
+    <color name="colorMapTooltipBg">#D6FFFFFF</color>
+    <color name="colorMapTooltipText">#DE000000</color>
 </resources>

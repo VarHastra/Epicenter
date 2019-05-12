@@ -75,6 +75,7 @@ class PlaceEditorPresenter(
     }
 
     private fun drawCurrentState() {
+        view.showTooltip(state.area == null)
         state.area?.apply {
             view.drawAreaCenter(center, state.placeId != Place.CURRENT_LOCATION.id)
             view.drawArea(center, radiusM)
@@ -91,11 +92,7 @@ class PlaceEditorPresenter(
 
         state = state.copy(area = Area(coordinates, Area.MIN_RADIUS_KM))
         state.area?.apply {
-            view.drawAreaCenter(center)
-            view.drawArea(center, radiusM)
-            view.showRadiusControls(true)
-            view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(radiusKm))
-            view.setRadius((radiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
+            drawCurrentState()
             adjustCameraToAreaBounds()
         }
     }

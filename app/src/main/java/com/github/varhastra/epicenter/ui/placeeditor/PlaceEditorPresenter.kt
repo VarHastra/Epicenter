@@ -69,6 +69,9 @@ class PlaceEditorPresenter(
             }
 
             override fun onFailure(t: Throwable?) {
+                // TODO: find a better solution
+                // If location is not available, show area with zero coordinates
+                state = state.copy(area = Area(Coordinates(0.0, 0.0), Area.MIN_RADIUS_KM))
                 drawCurrentState()
             }
         }, placeId = state.placeId)

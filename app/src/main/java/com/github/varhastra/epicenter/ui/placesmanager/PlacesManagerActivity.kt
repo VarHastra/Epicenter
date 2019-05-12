@@ -1,6 +1,7 @@
 package com.github.varhastra.epicenter.ui.placesmanager
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,6 +63,16 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         super.onResume()
 
         presenter.start()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onPause() {

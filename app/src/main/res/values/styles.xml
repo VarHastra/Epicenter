@@ -21,6 +21,10 @@
         
         <item name="android:windowActivityTransitions">true</item>
         <item name="android:windowContentTransitions">true</item>
+
+        <item name="android:windowEnterTransition">@transition/transition_all_enter</item>
+        <item name="android:windowReenterTransition">@transition/transition_all_reenter</item>
+        <item name="android:windowReturnTransition">@transition/transition_all_return</item>
     </style>
     
     <style name="AppTheme.Gentle" parent="AppTheme">

@@ -38,11 +38,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 
 /**
  * A [Fragment] subclass that displays a list
@@ -315,7 +312,11 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlacesEditor() {
-        activity?.startActivity<PlacesManagerActivity>()
+        val host = activity
+        host?.let {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it).toBundle()
+            startActivity(activity?.intentFor<PlacesManagerActivity>(), options)
+        }
     }
 
     override fun showEventDetails(eventId: String) {

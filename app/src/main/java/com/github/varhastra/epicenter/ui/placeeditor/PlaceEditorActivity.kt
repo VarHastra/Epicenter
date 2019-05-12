@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import butterknife.BindColor
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
@@ -34,10 +35,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.sheet_place_editor.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.info
-import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.*
 
 
 class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditorContract.View {
@@ -278,10 +276,14 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
     }
 
     override fun showNamePicker(coordinates: Coordinates) {
-        startActivityForResult<PlaceNamePickerActivity>(
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+        startActivityForResult(
+                intentFor<PlaceNamePickerActivity>(
+                        PlaceNamePickerActivity.EXTRA_LAT to coordinates.latitude,
+                        PlaceNamePickerActivity.EXTRA_LNG to coordinates.longitude
+                ),
                 REQUEST_PLACE_NAME,
-                PlaceNamePickerActivity.EXTRA_LAT to coordinates.latitude,
-                PlaceNamePickerActivity.EXTRA_LNG to coordinates.longitude
+                options
         )
     }
 

@@ -3,6 +3,7 @@ package com.github.varhastra.epicenter.ui.placesmanager
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_places_manager.*
 import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startActivity
 
 class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
@@ -89,10 +91,11 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
     }
 
     override fun showEditor(placeId: Int?) {
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
         if (placeId != null) {
-            startActivity<PlaceEditorActivity>(PlaceEditorActivity.EXTRA_PLACE_ID to placeId)
+            startActivity(intentFor<PlaceEditorActivity>(PlaceEditorActivity.EXTRA_PLACE_ID to placeId), options)
         } else {
-            startActivity<PlaceEditorActivity>()
+            startActivity(intentFor<PlaceEditorActivity>(), options)
         }
     }
 

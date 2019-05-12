@@ -39,8 +39,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 /**
  * A [Fragment] subclass that displays a list
@@ -234,9 +236,17 @@ class FeedFragment : Fragment(), FeedContract.View {
         emptyView.visibility = View.INVISIBLE
         feedRecyclerView.visibility = View.VISIBLE
         feedAdapter.unitsLocale = unitsLocale
+        val oldEvents = feedAdapter.data
         feedAdapter.data = events
-        feedRecyclerView.scrollToPosition(0)
-        feedRecyclerView.scheduleLayoutAnimation()
+        doAsync {
+            // Compare the old and the new list and animate rv if there is any difference
+            if (oldEvents != events) {
+                uiThread {
+                    feedRecyclerView.scrollToPosition(0)
+                    feedRecyclerView.scheduleLayoutAnimation()
+                }
+            }
+        }
     }
 
     override fun showErrorNoData(reason: FeedContract.View.ErrorReason) {

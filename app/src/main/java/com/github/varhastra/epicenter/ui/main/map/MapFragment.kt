@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.children
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
@@ -223,7 +224,11 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventDetails(eventId: String) {
-        startActivity(activity?.intentFor<DetailsActivity>(DetailsActivity.EXTRA_EVENT_ID to eventId))
+        val host = activity
+        host?.let {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it).toBundle()
+            startActivity(activity?.intentFor<DetailsActivity>(DetailsActivity.EXTRA_EVENT_ID to eventId), options)
+        }
     }
 
     private fun onMarkerInfoWindowClick(eventsClusterItem: EventClusterItem) {

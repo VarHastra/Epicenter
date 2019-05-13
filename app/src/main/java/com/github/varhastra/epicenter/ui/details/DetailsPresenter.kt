@@ -1,8 +1,12 @@
 package com.github.varhastra.epicenter.ui.details
 
+import com.github.varhastra.epicenter.data.Prefs
+import com.github.varhastra.epicenter.domain.UnitsLocaleDataSource
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.utils.UnitsFormatter
+import com.github.varhastra.epicenter.utils.UnitsLocale
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.threeten.bp.LocalDateTime
@@ -10,12 +14,14 @@ import org.threeten.bp.temporal.ChronoUnit
 
 class DetailsPresenter(
         private val view: DetailsContract.View,
-        private val eventLoader: EventLoaderInteractor
+        private val eventLoader: EventLoaderInteractor,
+        private val unitsLocaleDataSource: UnitsLocaleDataSource = Prefs
 ) : DetailsContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
     private lateinit var eventId: String
     private var event: RemoteEvent? = null
+    private lateinit var unitsFormatter: UnitsFormatter
 
     init {
         view.attachPresenter(this)
@@ -27,6 +33,7 @@ class DetailsPresenter(
 
     override fun start() {
         loadEvent(eventId)
+        unitsFormatter = UnitsFormatter(unitsLocaleDataSource.getPreferredUnitsLocale())
     }
 
     override fun loadEvent(eventId: String) {
@@ -43,7 +50,7 @@ class DetailsPresenter(
                     view.showEventMagnitude(magnitude, magnitudeType)
                     view.showEventPlace(placeName)
                     view.showEventCoordinates(coordinates)
-                    view.showEventDepth(depth)
+                    view.showEventDepth(depth, unitsFormatter)
                     view.showTsunamiAlert(tsunamiAlert)
                     val days = ChronoUnit.DAYS.between(localDatetime, LocalDateTime.now())
                     view.showEventDate(localDatetime, days.toInt())
@@ -51,7 +58,7 @@ class DetailsPresenter(
                     view.showEventLink(link)
                 }
 
-                view.showEventDistance(result.distance)
+                view.showEventDistance(result.distance, unitsFormatter)
             }
 
             override fun onFailure(t: Throwable?) {

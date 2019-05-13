@@ -22,6 +22,7 @@ import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.utils.UnitsFormatter
 import com.github.varhastra.epicenter.utils.UnitsLocale
 import com.github.varhastra.epicenter.utils.kmToMi
 import com.github.varhastra.epicenter.views.TileTwolineView
@@ -218,8 +219,8 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         placeNameTextView.text = place
     }
 
-    override fun showEventDistance(distance: Double?) {
-        distanceTextView.text = getLocalizedDistanceStr(distance)
+    override fun showEventDistance(distance: Double?, unitsFormatter: UnitsFormatter) {
+        distanceTextView.text = getString(R.string.details_event_distance, unitsFormatter.getLocalizedDistanceString(distance?.toInt()))
     }
 
     override fun showEventCoordinates(coordinates: Coordinates) {
@@ -236,8 +237,8 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         dateTile.setSecondLineText(resources.getQuantityString(R.plurals.plurals_details_days_ago, daysAgo, daysAgo))
     }
 
-    override fun showEventDepth(depth: Double) {
-        depthTile.setText(getLocalizedDepthStr(depth))
+    override fun showEventDepth(depth: Double, unitsFormatter: UnitsFormatter) {
+        depthTile.setText(unitsFormatter.getLocalizedDistanceString(depth))
     }
 
     override fun showEventReports(reportsCount: Int) {
@@ -280,36 +281,6 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
             DetailsContract.View.AlertType.ALERT_6 -> R.drawable.marker_6
             DetailsContract.View.AlertType.ALERT_8 -> R.drawable.marker_8
             else -> R.drawable.marker_0
-        }
-    }
-
-    private fun getLocalizedDistance(distanceInKm: Double?): Double? {
-        if (distanceInKm == null) {
-            return null
-        }
-
-        return when (Prefs.getPreferredUnits()) {
-            UnitsLocale.METRIC -> distanceInKm
-            UnitsLocale.IMPERIAL -> kmToMi(distanceInKm)
-            else -> distanceInKm
-        }
-    }
-
-    private fun getLocalizedDistanceStr(distanceInKm: Double?): String {
-        val distance = getLocalizedDistance(distanceInKm)
-        return when (Prefs.getPreferredUnits()) {
-            UnitsLocale.METRIC -> getString(R.string.details_event_distance_km, distance?.roundToInt().toString())
-            UnitsLocale.IMPERIAL -> getString(R.string.details_event_distance_mi, distance?.roundToInt().toString())
-            else -> getString(R.string.details_event_distance_km, distance?.roundToInt().toString())
-        }
-    }
-
-    private fun getLocalizedDepthStr(depthInKm: Double?): String {
-        val depth = getLocalizedDistance(depthInKm)
-        return when (Prefs.getPreferredUnits()) {
-            UnitsLocale.METRIC -> getString(R.string.details_event_depth_km, depth?.roundToInt().toString())
-            UnitsLocale.IMPERIAL -> getString(R.string.details_event_depth_mi, depth?.roundToInt().toString())
-            else -> getString(R.string.details_event_depth_km, depth?.roundToInt().toString())
         }
     }
 

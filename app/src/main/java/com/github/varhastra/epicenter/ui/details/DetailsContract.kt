@@ -3,6 +3,7 @@ package com.github.varhastra.epicenter.ui.details
 import com.github.varhastra.epicenter.BasePresenter
 import com.github.varhastra.epicenter.BaseView
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.utils.UnitsFormatter
 import org.threeten.bp.LocalDateTime
 
 interface DetailsContract {
@@ -23,7 +24,7 @@ interface DetailsContract {
 
         fun showEventPlace(place: String)
 
-        fun showEventDistance(distance: Double?)
+        fun showEventDistance(distance: Double?, unitsFormatter: UnitsFormatter)
 
         fun showEventCoordinates(coordinates: Coordinates)
 
@@ -31,7 +32,7 @@ interface DetailsContract {
 
         fun showEventDate(localDateTime: LocalDateTime, daysAgo: Int)
 
-        fun showEventDepth(depth: Double)
+        fun showEventDepth(depth: Double, unitsFormatter: UnitsFormatter)
 
         fun showEventReports(reportsCount: Int)
 

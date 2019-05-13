@@ -18,7 +18,7 @@ class PlaceEditorPresenter(
         unitsLocale: UnitsLocale
 ) : PlaceEditorContract.Presenter {
 
-    override var state: PlaceEditorState = PlaceEditorState(0, null)
+    override var state: PlaceEditorState = PlaceEditorState(0, -10, null)
     private val unitsFormatter = UnitsFormatter(unitsLocale, 0)
 
     init {
@@ -63,7 +63,7 @@ class PlaceEditorPresenter(
     private fun getAndDrawPlace() {
         placesDataSource.getPlace(object : DataSourceCallback<Place> {
             override fun onResult(result: Place) {
-                state = state.copy(area = Area(result.coordinates, result.radiusKm!!))
+                state = state.copy(area = Area(result.coordinates, result.radiusKm!!), order = result.order)
                 drawCurrentState()
                 adjustCameraToAreaBounds()
             }
@@ -72,6 +72,7 @@ class PlaceEditorPresenter(
                 // TODO: find a better solution
                 // If location is not available, show area with zero coordinates
                 state = state.copy(area = Area(Coordinates(0.0, 0.0), Area.MIN_RADIUS_KM))
+                if (state.placeId == Place.CURRENT_LOCATION.id) state = state.copy(order = Place.CURRENT_LOCATION.order)
                 drawCurrentState()
             }
         }, placeId = state.placeId)
@@ -144,7 +145,7 @@ class PlaceEditorPresenter(
 
     override fun saveWithName(placeName: String) {
         state.area?.apply {
-            placesDataSource.savePlace(Place(state.placeId, placeName, center, radiusKm))
+            placesDataSource.savePlace(Place(state.placeId, placeName, center, radiusKm, state.order))
         }
         view.navigateBack()
     }

@@ -1,9 +1,10 @@
 package com.github.varhastra.epicenter.data.networking
 
 import com.google.gson.GsonBuilder
+import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 private const val TIMEOUT_MS = 15000L
@@ -18,9 +19,13 @@ object Network {
     val gson = GsonBuilder()
             .create()
 
+    val moshi = Moshi.Builder()
+            .build()
+
     val retrofit = Retrofit.Builder()
             .client(okHttp)
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 }

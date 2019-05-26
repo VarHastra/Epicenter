@@ -1,9 +1,10 @@
 package com.github.varhastra.epicenter.data.networking.usgs.model
 
-import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.data.networking.EventServiceResponse
+import com.github.varhastra.epicenter.domain.model.Event
+import com.squareup.moshi.JsonClass
 
-
+@JsonClass(generateAdapter = true)
 data class UsgsResponse(
         val type: String,
         val metadata: Metadata,
@@ -15,6 +16,7 @@ data class UsgsResponse(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class Metadata(
         /**
          * Timestamp indicating when this response
@@ -48,6 +50,7 @@ data class Metadata(
         val count: Int
 )
 
+@JsonClass(generateAdapter = true)
 data class Feature(
         /**
          * The value is always: "Feature".
@@ -68,6 +71,7 @@ data class Feature(
         val id: String
 )
 
+@JsonClass(generateAdapter = true)
 data class Geometry(
         /**
          * Basically, the value is always: "Point".
@@ -80,6 +84,7 @@ data class Geometry(
         val coordinates: List<Double>
 )
 
+@JsonClass(generateAdapter = true)
 data class Properties(
         /**
          * The magnitude for the event. See also magType.
@@ -189,25 +194,25 @@ data class Properties(
         /**
          * The total number of seismic stations used to determine earthquake location.
          */
-        val nst: Int,
+        val nst: Int?,
 
         /**
          * Horizontal distance from the epicenter to the nearest station (in degrees). 1 degree is approximately 111.2 kilometers.
          */
-        val dmin: Double,
+        val dmin: Double?,
 
         /**
          * The root-mean-square (RMS) travel time residual, in sec, using all weights.
          * This parameter provides a measure of the fit of the observed arrival times to the predicted arrival times for this location. Smaller numbers reflect a better fit of the data.
          */
-        val rms: Double,
+        val rms: Double?,
 
         /**
          * The largest azimuthal gap between azimuthally adjacent stations (in degrees).
          * In general, the smaller this number,
          * the more reliable is the calculated horizontal position of the earthquake.
          */
-        val gap: Double,
+        val gap: Double?,
 
         /**
          * The method or algorithm used to calculate the preferred magnitude for the event.

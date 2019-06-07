@@ -90,7 +90,7 @@ data class Properties(
          * The magnitude for the event. See also magType.
          * Note: it can be negative.
          */
-        val mag: Double,
+        val mag: Double?,
 
         /**
          * Textual description of named geographic region near to the event.
@@ -217,7 +217,7 @@ data class Properties(
         /**
          * The method or algorithm used to calculate the preferred magnitude for the event.
          */
-        val magType: String,
+        val magType: String?,
 
         /**
          * Type of seismic event.

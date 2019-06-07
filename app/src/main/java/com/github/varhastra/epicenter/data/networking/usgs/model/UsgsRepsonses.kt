@@ -4,12 +4,14 @@ import com.github.varhastra.epicenter.data.networking.EventServiceResponse
 import com.github.varhastra.epicenter.domain.model.Event
 import com.squareup.moshi.JsonClass
 
+// TODO: consider adding default constructors (to protect from missing JSON attributes)
+// TODO: consider making all fields nullable and validating them during the mapping process (to protect from unexpected null values)
 @JsonClass(generateAdapter = true)
 data class UsgsResponse(
-        val type: String,
-        val metadata: Metadata,
-        val features: List<Feature>,
-        val bbox: List<Double>
+    val type: String,
+    val metadata: Metadata,
+    val features: List<Feature>,
+    val bbox: List<Double>
 ) : EventServiceResponse {
     override fun mapToModel(): List<Event> {
         return UsgsResponseMapper().mapToModel(this)

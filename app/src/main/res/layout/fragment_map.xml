@@ -10,10 +10,10 @@
         android:background="?android:colorBackground" />
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.main.map.MapFragment" />
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".presentation.main.map.MapFragment"/>
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/pb_map"

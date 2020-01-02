@@ -16,13 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.placenamepicker.PlaceNamePickerActivity"></activity>
+        <activity android:name=".presentation.placenamepicker.PlaceNamePickerActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".presentation.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,17 +30,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".presentation.settings.SettingsActivity"
             android:label="@string/app_settings" />
         <activity
-            android:name=".ui.details.DetailsActivity"
+            android:name=".presentation.details.DetailsActivity"
             android:label=""
             android:theme="@style/AppTheme.TranslucentStatus" />
         <activity
-            android:name=".ui.placesmanager.PlacesManagerActivity"
+            android:name=".presentation.placesmanager.PlacesManagerActivity"
             android:label="@string/places_title" />
         <activity
-            android:name=".ui.placeeditor.PlaceEditorActivity"
+            android:name=".presentation.placeeditor.PlaceEditorActivity"
             android:theme="@style/AppTheme.TransparentStatus"
             android:label=""/>
     </application>

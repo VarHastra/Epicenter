@@ -1,10 +1,10 @@
 package com.github.varhastra.epicenter.presentation.details
 
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.domain.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.utils.UnitsFormatter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error

@@ -3,10 +3,10 @@ package com.github.varhastra.epicenter.device
 import android.content.Context
 import android.location.Geocoder
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.LocationRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Position
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.google.android.gms.location.LocationServices
 import org.jetbrains.anko.*
 

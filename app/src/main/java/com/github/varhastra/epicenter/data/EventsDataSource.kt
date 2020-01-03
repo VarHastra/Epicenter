@@ -3,9 +3,9 @@ package com.github.varhastra.epicenter.data
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.EventServiceResponse
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.domain.EventsRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.repos.EventsRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
 

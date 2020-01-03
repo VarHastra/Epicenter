@@ -2,11 +2,11 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource

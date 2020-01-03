@@ -1,10 +1,10 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
-import com.github.varhastra.epicenter.domain.ConnectivityRepository
-import com.github.varhastra.epicenter.domain.EventsRepository
-import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.repos.ConnectivityRepository
+import com.github.varhastra.epicenter.domain.repos.EventsRepository
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import org.threeten.bp.Instant

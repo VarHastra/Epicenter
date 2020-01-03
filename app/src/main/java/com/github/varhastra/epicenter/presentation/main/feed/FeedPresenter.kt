@@ -1,12 +1,12 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.domain.*
 import com.github.varhastra.epicenter.domain.interactors.FeedLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.repos.*
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error

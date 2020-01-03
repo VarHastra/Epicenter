@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.domain
+package com.github.varhastra.epicenter.domain.repos
 
 interface ConnectivityRepository {
 

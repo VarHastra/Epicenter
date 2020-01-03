@@ -1,9 +1,9 @@
 package com.github.varhastra.epicenter.domain.interactors
 
-import com.github.varhastra.epicenter.domain.EventsRepository
-import com.github.varhastra.epicenter.domain.LocationRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.*
+import com.github.varhastra.epicenter.domain.repos.EventsRepository
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 
 class FeedLoaderInteractor(
         private val eventsRepository: EventsRepository,

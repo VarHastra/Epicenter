@@ -1,11 +1,11 @@
 package com.github.varhastra.epicenter.domain.interactors
 
-import com.github.varhastra.epicenter.domain.EventsRepository
-import com.github.varhastra.epicenter.domain.LocationRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.Position
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.repos.EventsRepository
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 
 class EventLoaderInteractor(
         private val eventsRepository: EventsRepository,

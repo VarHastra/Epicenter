@@ -1,9 +1,9 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
-import com.github.varhastra.epicenter.domain.PlacesRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.repos.PlacesRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 import com.github.varhastra.epicenter.utils.UnitsFormatter

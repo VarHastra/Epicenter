@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.domain
+package com.github.varhastra.epicenter.domain.repos
 
 interface RepositoryCallback<in T> {
     fun onResult(result: T)

@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.presentation.placesmanager
 
-import com.github.varhastra.epicenter.domain.PlacesRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.repos.PlacesRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import java.util.*
 
 class PlacesManagerPresenter(

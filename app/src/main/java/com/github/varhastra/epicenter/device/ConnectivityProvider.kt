@@ -3,7 +3,7 @@ package com.github.varhastra.epicenter.device
 import android.content.Context
 import android.net.ConnectivityManager
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.ConnectivityRepository
+import com.github.varhastra.epicenter.domain.repos.ConnectivityRepository
 
 class ConnectivityProvider(val context: Context = App.instance) : ConnectivityRepository {
 

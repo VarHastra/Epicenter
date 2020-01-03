@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.presentation.placenamepicker
 
-import com.github.varhastra.epicenter.domain.LocationRepository
-import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
+import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 
 class PlaceNamePickerPresenter(
         val view: PlaceNamePickerContract.View,

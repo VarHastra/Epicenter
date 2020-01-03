@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.github.varhastra.epicenter.views.ToolbarDropdown
+        <com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
             android:id="@+id/tb_main"
             style="@style/Widget.MaterialComponents.Toolbar.Surface"
             android:layout_width="match_parent"

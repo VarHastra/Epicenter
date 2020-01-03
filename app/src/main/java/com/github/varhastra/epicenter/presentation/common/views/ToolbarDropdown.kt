@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.views
+package com.github.varhastra.epicenter.presentation.common.views
 
 import android.content.Context
 import android.util.AttributeSet

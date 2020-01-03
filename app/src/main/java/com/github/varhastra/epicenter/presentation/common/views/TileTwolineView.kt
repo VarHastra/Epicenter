@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.views
+package com.github.varhastra.epicenter.presentation.common.views
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -11,10 +11,11 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.github.varhastra.epicenter.R
 
-class TileView : FrameLayout {
+class TileTwolineView : FrameLayout {
 
     lateinit var titleTextView: TextView
-    lateinit var textTextView: TextView
+    lateinit var firstLineTextTextView: TextView
+    lateinit var secondLineTextTextView: TextView
     lateinit var iconImageView: ImageView
 
     constructor(context: Context) : super(context) {
@@ -30,20 +31,23 @@ class TileView : FrameLayout {
     }
 
     fun init(context: Context, attrs: AttributeSet?) {
-        View.inflate(context, R.layout.view_tile, this)
+        View.inflate(context, R.layout.view_tile_twoline, this)
 
         titleTextView = findViewById(R.id.tv_tile_title)
-        textTextView = findViewById(R.id.tv_tile_text)
+        firstLineTextTextView = findViewById(R.id.tv_tile_text_first)
+        secondLineTextTextView = findViewById(R.id.tv_tile_text_second)
         iconImageView = findViewById(R.id.iv_tile_icon)
 
-        val styleAttrs = context.obtainStyledAttributes(attrs, R.styleable.TileView)
+        val styleAttrs = context.obtainStyledAttributes(attrs, R.styleable.TileTwolineView)
         styleAttrs.apply {
-            val title = getString(R.styleable.TileView_title)
-            val caption = getString(R.styleable.TileView_text)
-            val drawable = getDrawable(R.styleable.TileView_icon)
+            val title = getString(R.styleable.TileTwolineView_title)
+            val caption1 = getString(R.styleable.TileTwolineView_textFirstLine)
+            val caption2 = getString(R.styleable.TileTwolineView_textSecondLine)
+            val drawable = getDrawable(R.styleable.TileTwolineView_icon)
 
             setTitle(title ?: "")
-            setText(caption ?: "")
+            setFirstLineText(caption1 ?: "")
+            setSecondLineText(caption2 ?: "")
             setIconDrawable(drawable)
         }
 
@@ -58,12 +62,20 @@ class TileView : FrameLayout {
         titleTextView.text = text
     }
 
-    fun setText(@StringRes stringRes: Int) {
-        textTextView.setText(stringRes)
+    fun setFirstLineText(@StringRes stringRes: Int) {
+        firstLineTextTextView.setText(stringRes)
     }
 
-    fun setText(text: String) {
-        textTextView.text = text
+    fun setFirstLineText(text: String) {
+        firstLineTextTextView.text = text
+    }
+
+    fun setSecondLineText(@StringRes stringRes: Int) {
+        secondLineTextTextView.setText(stringRes)
+    }
+
+    fun setSecondLineText(text: String) {
+        secondLineTextTextView.text = text
     }
 
     fun setIconDrawable(@DrawableRes drawableRes: Int) {

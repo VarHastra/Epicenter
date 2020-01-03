@@ -106,7 +106,7 @@
                 android:text="@string/details_tsunami_alert"
                 android:textColor="@color/colorTsunami" />
 
-            <com.github.varhastra.epicenter.views.TileTwolineView
+            <com.github.varhastra.epicenter.presentation.common.views.TileTwolineView
                 android:id="@+id/tile_details_datetime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
                 tools:textFirstLine="03/30/2019 at 12:34 pm"
                 tools:textSecondLine="2 days ago" />
 
-            <com.github.varhastra.epicenter.views.TileView
+            <com.github.varhastra.epicenter.presentation.common.views.TileView
                 android:id="@+id/tile_depth_datetime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                 app:title="@string/details_depth"
                 tools:text="15 km" />
 
-            <com.github.varhastra.epicenter.views.TileView
+            <com.github.varhastra.epicenter.presentation.common.views.TileView
                 android:id="@+id/tile_details_dyfi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
                 app:title="@string/details_dyfi"
                 tools:text="4" />
 
-            <com.github.varhastra.epicenter.views.TileView
+            <com.github.varhastra.epicenter.presentation.common.views.TileView
                 android:id="@+id/tile_details_source_link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

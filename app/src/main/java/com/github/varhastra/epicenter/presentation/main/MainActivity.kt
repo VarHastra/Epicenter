@@ -21,6 +21,7 @@ import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
 import com.github.varhastra.epicenter.presentation.main.feed.FeedPresenter
 import com.github.varhastra.epicenter.presentation.main.map.MapFragment
@@ -28,7 +29,6 @@ import com.github.varhastra.epicenter.presentation.main.map.MapPresenter
 import com.github.varhastra.epicenter.presentation.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.presentation.main.search.SearchFragment
 import com.github.varhastra.epicenter.presentation.settings.SettingsActivity
-import com.github.varhastra.epicenter.views.ToolbarDropdown
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.bottomnavigation.BottomNavigationView

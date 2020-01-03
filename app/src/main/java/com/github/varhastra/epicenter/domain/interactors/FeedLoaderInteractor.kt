@@ -2,12 +2,12 @@ package com.github.varhastra.epicenter.domain.interactors
 
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.EventsDataSource
-import com.github.varhastra.epicenter.domain.LocationDataSource
+import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.model.*
 
 class FeedLoaderInteractor(
-    private val eventsDataSource: EventsDataSource,
-    private val locationDataSource: LocationDataSource
+        private val eventsDataSource: EventsDataSource,
+        private val locationRepository: LocationRepository
 ) : Interactor<FeedLoaderInteractor.RequestValues, List<RemoteEvent>> {
 
 
@@ -17,7 +17,7 @@ class FeedLoaderInteractor(
 
     private fun loadEvents(param: RequestValues, callback: InteractorCallback<List<RemoteEvent>>) {
         // Try to get current user location first
-        locationDataSource.getLastLocation(object : DataSourceCallback<Position> {
+        locationRepository.getLastLocation(object : DataSourceCallback<Position> {
             override fun onResult(result: Position) {
                 // Location is available. Use it to calculate the distance to each event.
                 loadEvents(param, result.coordinates, callback)

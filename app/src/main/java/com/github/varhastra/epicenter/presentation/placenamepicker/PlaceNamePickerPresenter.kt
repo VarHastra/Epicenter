@@ -1,12 +1,12 @@
 package com.github.varhastra.epicenter.presentation.placenamepicker
 
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.LocationDataSource
+import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.model.Coordinates
 
 class PlaceNamePickerPresenter(
         val view: PlaceNamePickerContract.View,
-        val locationDataSource: LocationDataSource
+        val locationRepository: LocationRepository
 ) : PlaceNamePickerContract.Presenter {
 
     private var coordinates: Coordinates? = null
@@ -25,12 +25,12 @@ class PlaceNamePickerPresenter(
     }
 
     override fun loadSuggestedName() {
-        if (!locationDataSource.isGeoCodingAvailable()) {
+        if (!locationRepository.isGeoCodingAvailable()) {
             return
         }
 
         val cord = coordinates ?: return
-        locationDataSource.getLocationName(cord, object : DataSourceCallback<String> {
+        locationRepository.getLocationName(cord, object : DataSourceCallback<String> {
             override fun onResult(result: String) {
                 if (!view.isActive()) {
                     return

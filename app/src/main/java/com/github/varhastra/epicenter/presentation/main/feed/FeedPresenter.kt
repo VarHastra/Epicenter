@@ -18,7 +18,7 @@ class FeedPresenter(
         private val view: FeedContract.View,
         private val eventsDataSource: EventsDataSource,
         private val placesDataSource: PlacesDataSource,
-        private val locationDataSource: LocationDataSource,
+        private val locationRepository: LocationRepository,
         private val connectivityDataSource: ConnectivityDataSource,
         private val unitsLocaleRepository: UnitsLocaleRepository = Prefs,
         private val feedStateDataSource: FeedStateDataSource = Prefs
@@ -26,7 +26,7 @@ class FeedPresenter(
 
     private val logger = AnkoLogger(this.javaClass)
 
-    private val feedLoaderInteractor = FeedLoaderInteractor(eventsDataSource, locationDataSource)
+    private val feedLoaderInteractor = FeedLoaderInteractor(eventsDataSource, locationRepository)
 
     private lateinit var filter: FeedFilter
     private var placeId = Place.WORLD.id

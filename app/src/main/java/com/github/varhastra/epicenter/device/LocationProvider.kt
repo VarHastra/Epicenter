@@ -4,14 +4,13 @@ import android.content.Context
 import android.location.Geocoder
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.LocationDataSource
+import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Position
 import com.google.android.gms.location.LocationServices
 import org.jetbrains.anko.*
-import java.lang.Exception
 
-class LocationProvider(val context: Context = App.instance) : LocationDataSource {
+class LocationProvider(val context: Context = App.instance) : LocationRepository {
 
     private val locationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     private val geocoder = Geocoder(context)

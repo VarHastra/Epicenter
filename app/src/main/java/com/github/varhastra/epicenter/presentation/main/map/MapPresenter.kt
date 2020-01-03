@@ -2,7 +2,7 @@ package com.github.varhastra.epicenter.presentation.main.map
 
 import com.github.varhastra.epicenter.domain.ConnectivityDataSource
 import com.github.varhastra.epicenter.domain.EventsDataSource
-import com.github.varhastra.epicenter.domain.LocationDataSource
+import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.state.MapState
@@ -14,12 +14,12 @@ class MapPresenter(
         private val view: MapContract.View,
         private val mapStateDataSource: MapStateDataSource,
         private val eventsDataSource: EventsDataSource,
-        private val locationDataSource: LocationDataSource,
+        private val locationRepository: LocationRepository,
         private val connectivityDataSource: ConnectivityDataSource
 ) : MapContract.Presenter {
 
     private var state: MapState = MapState()
-    private val mapEventsLoaderInteractor: MapEventsLoaderInteractor = MapEventsLoaderInteractor(eventsDataSource, locationDataSource)
+    private val mapEventsLoaderInteractor: MapEventsLoaderInteractor = MapEventsLoaderInteractor(eventsDataSource, locationRepository)
 
     init {
         view.attachPresenter(this)

@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.domain
 
-interface ConnectivityDataSource {
+interface ConnectivityRepository {
 
     fun isNetworkConnected(): Boolean
 }

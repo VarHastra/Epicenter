@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
-import com.github.varhastra.epicenter.domain.ConnectivityDataSource
+import com.github.varhastra.epicenter.domain.ConnectivityRepository
 import com.github.varhastra.epicenter.domain.EventsDataSource
 import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
@@ -15,7 +15,7 @@ class MapPresenter(
         private val mapStateDataSource: MapStateDataSource,
         private val eventsDataSource: EventsDataSource,
         private val locationRepository: LocationRepository,
-        private val connectivityDataSource: ConnectivityDataSource
+        private val connectivityRepository: ConnectivityRepository
 ) : MapContract.Presenter {
 
     private var state: MapState = MapState()
@@ -75,7 +75,7 @@ class MapPresenter(
     }
 
     private fun getEvents(requestForceLoad: Boolean) {
-        val connectionAvailable = connectivityDataSource.isNetworkConnected()
+        val connectionAvailable = connectivityRepository.isNetworkConnected()
         if (requestForceLoad && !connectionAvailable) {
             // TODO
 //            view.showErrorNoConnection()

@@ -19,7 +19,7 @@ class FeedPresenter(
         private val eventsDataSource: EventsDataSource,
         private val placesDataSource: PlacesDataSource,
         private val locationRepository: LocationRepository,
-        private val connectivityDataSource: ConnectivityDataSource,
+        private val connectivityRepository: ConnectivityRepository,
         private val unitsLocaleRepository: UnitsLocaleRepository = Prefs,
         private val feedStateDataSource: FeedStateDataSource = Prefs
 ) : FeedContract.Presenter {
@@ -129,7 +129,7 @@ class FeedPresenter(
     }
 
     private fun getEvents(place: Place, forceLoadRequested: Boolean) {
-        val networkAvailable = connectivityDataSource.isNetworkConnected()
+        val networkAvailable = connectivityRepository.isNetworkConnected()
         if (forceLoadRequested && eventsDataSource.isCacheAvailable() && !networkAvailable) {
             view.showErrorNoConnection()
         }
@@ -163,7 +163,7 @@ class FeedPresenter(
                         logger.error("Error loading events: $t")
                         view.showProgress(false)
 
-                        if (!connectivityDataSource.isNetworkConnected()) {
+                        if (!connectivityRepository.isNetworkConnected()) {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
                         } else {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)

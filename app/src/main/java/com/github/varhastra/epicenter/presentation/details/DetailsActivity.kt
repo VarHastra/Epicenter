@@ -17,7 +17,7 @@ import butterknife.BindColor
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.data.EventsRepository
+import com.github.varhastra.epicenter.data.EventsDataSource
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
@@ -126,7 +126,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         sourceTile.setOnClickListener { presenter.openSourceLink() }
 
 
-        val presenter = DetailsPresenter(this, EventLoaderInteractor(EventsRepository.getInstance(), LocationProvider()))
+        val presenter = DetailsPresenter(this, EventLoaderInteractor(EventsDataSource.getInstance(), LocationProvider()))
         intent?.apply {
             val eventId = getStringExtra(EXTRA_EVENT_ID)
             presenter.init(eventId)

@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
 import com.github.varhastra.epicenter.domain.ConnectivityRepository
-import com.github.varhastra.epicenter.domain.EventsDataSource
+import com.github.varhastra.epicenter.domain.EventsRepository
 import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
@@ -13,13 +13,13 @@ import org.threeten.bp.temporal.ChronoUnit
 class MapPresenter(
         private val view: MapContract.View,
         private val mapStateDataSource: MapStateDataSource,
-        private val eventsDataSource: EventsDataSource,
+        private val eventsRepository: EventsRepository,
         private val locationRepository: LocationRepository,
         private val connectivityRepository: ConnectivityRepository
 ) : MapContract.Presenter {
 
     private var state: MapState = MapState()
-    private val mapEventsLoaderInteractor: MapEventsLoaderInteractor = MapEventsLoaderInteractor(eventsDataSource, locationRepository)
+    private val mapEventsLoaderInteractor: MapEventsLoaderInteractor = MapEventsLoaderInteractor(eventsRepository, locationRepository)
 
     init {
         view.attachPresenter(this)
@@ -83,7 +83,7 @@ class MapPresenter(
 
         view.showProgress(true)
 
-        val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
+        val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsRepository.getWeekFeedLastUpdated(), Instant.now())
         val forceLoad = (requestForceLoad || minsSinceLastUpd > FORCE_LOAD_RATE_MINS) && connectionAvailable
 
         val requestValues = MapEventsLoaderInteractor.RequestValues(state.filter, forceLoad)

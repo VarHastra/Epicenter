@@ -1,12 +1,12 @@
 package com.github.varhastra.epicenter.domain.interactors
 
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.EventsDataSource
+import com.github.varhastra.epicenter.domain.EventsRepository
 import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.model.*
 
 class MapEventsLoaderInteractor(
-        private val eventsDataSource: EventsDataSource,
+        private val eventsRepository: EventsRepository,
         private val locationRepository: LocationRepository) : FunctionalInteractor<MapEventsLoaderInteractor.RequestValues, List<RemoteEvent>> {
 
     override var onResult: ((List<RemoteEvent>) -> Unit)? = null
@@ -38,7 +38,7 @@ class MapEventsLoaderInteractor(
             coordinates: Coordinates?
     ) {
         // Get events
-        eventsDataSource.getWeekFeed(object : DataSourceCallback<List<Event>> {
+        eventsRepository.getWeekFeed(object : DataSourceCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
                 // Convert each Event to RemoteEvent (calculate the distance from the user's location)
                 val events = RemoteEvent.from(result, coordinates)

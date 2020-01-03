@@ -16,7 +16,7 @@ import org.threeten.bp.temporal.ChronoUnit
 
 class FeedPresenter(
         private val view: FeedContract.View,
-        private val eventsDataSource: EventsDataSource,
+        private val eventsRepository: EventsRepository,
         private val placesDataSource: PlacesDataSource,
         private val locationRepository: LocationRepository,
         private val connectivityRepository: ConnectivityRepository,
@@ -26,7 +26,7 @@ class FeedPresenter(
 
     private val logger = AnkoLogger(this.javaClass)
 
-    private val feedLoaderInteractor = FeedLoaderInteractor(eventsDataSource, locationRepository)
+    private val feedLoaderInteractor = FeedLoaderInteractor(eventsRepository, locationRepository)
 
     private lateinit var filter: FeedFilter
     private var placeId = Place.WORLD.id
@@ -130,11 +130,11 @@ class FeedPresenter(
 
     private fun getEvents(place: Place, forceLoadRequested: Boolean) {
         val networkAvailable = connectivityRepository.isNetworkConnected()
-        if (forceLoadRequested && eventsDataSource.isCacheAvailable() && !networkAvailable) {
+        if (forceLoadRequested && eventsRepository.isCacheAvailable() && !networkAvailable) {
             view.showErrorNoConnection()
         }
 
-        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsDataSource.getWeekFeedLastUpdated(), Instant.now())
+        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsRepository.getWeekFeedLastUpdated(), Instant.now())
         val forceLoad = (forceLoadRequested || (minsSinceUpd > FORCE_LOAD_RATE_MINS)) && networkAvailable
 
         val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, place)

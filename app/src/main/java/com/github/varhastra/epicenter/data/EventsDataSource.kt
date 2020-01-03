@@ -4,14 +4,14 @@ import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.EventServiceResponse
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.EventsDataSource
+import com.github.varhastra.epicenter.domain.EventsRepository
 import com.github.varhastra.epicenter.domain.model.Event
 import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
 
-class EventsRepository private constructor(
+class EventsDataSource private constructor(
         private val serviceProvider: EventServiceProvider
-) : EventsDataSource {
+) : EventsRepository {
 
     private val logger = AnkoLogger(this.javaClass)
 
@@ -78,7 +78,7 @@ class EventsRepository private constructor(
         fun getInstance(
                 serviceProvider: EventServiceProvider = UsgsServiceProvider()
         ): EventsRepository {
-            return instance ?: EventsRepository(serviceProvider).apply {
+            return instance ?: EventsDataSource(serviceProvider).apply {
                 instance = this
             }
         }

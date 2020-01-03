@@ -3,7 +3,7 @@ package com.github.varhastra.epicenter.domain
 import com.github.varhastra.epicenter.domain.model.Event
 import org.threeten.bp.Instant
 
-interface EventsDataSource {
+interface EventsRepository {
 
     fun getWeekFeed(
             callback: DataSourceCallback<List<Event>>,

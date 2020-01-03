@@ -13,7 +13,7 @@ import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.data.EventsRepository
+import com.github.varhastra.epicenter.data.EventsDataSource
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     var placesPopupListener: ((Place) -> Unit)? = null
     var placesEditPopupListener: (() -> Unit)? = null
 
-    private val eventsRepository = EventsRepository.getInstance(UsgsServiceProvider())
+    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
     private val placesRepository = PlacesRepository.getInstance()
     private val locationProvider = LocationProvider()
     private val connectivityProvider = ConnectivityProvider()

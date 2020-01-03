@@ -6,8 +6,8 @@ import com.github.varhastra.epicenter.domain.repos.PlacesRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
-import com.github.varhastra.epicenter.utils.UnitsFormatter
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import kotlin.math.roundToInt

@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.domain.repos
 
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 
 interface UnitsLocaleRepository {
 

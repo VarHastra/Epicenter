@@ -12,8 +12,8 @@ import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.utils.UnitsFormatter
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import kotlin.math.roundToInt
 
 class PlacesAdapter(val context: Context, unitsLocale: UnitsLocale = Prefs.getPreferredUnits()) : BaseAdapter() {

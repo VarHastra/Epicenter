@@ -10,7 +10,7 @@ import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.github.varhastra.epicenter.utils.getDouble
 import com.github.varhastra.epicenter.utils.putDouble
 import org.jetbrains.anko.defaultSharedPreferences

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.utils
+package com.github.varhastra.epicenter.presentation.common
 
 import java.util.*
 

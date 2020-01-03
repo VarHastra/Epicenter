@@ -5,7 +5,7 @@ import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 
 interface FeedContract {
 

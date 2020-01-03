@@ -3,7 +3,7 @@ package com.github.varhastra.epicenter.presentation.details
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
-import com.github.varhastra.epicenter.utils.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import org.threeten.bp.LocalDateTime
 
 interface DetailsContract {

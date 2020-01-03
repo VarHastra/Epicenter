@@ -14,8 +14,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
-import com.github.varhastra.epicenter.utils.UnitsFormatter
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle

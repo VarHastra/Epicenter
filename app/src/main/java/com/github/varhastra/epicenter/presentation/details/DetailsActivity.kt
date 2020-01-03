@@ -21,7 +21,7 @@ import com.github.varhastra.epicenter.data.EventsDataSource
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.utils.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.views.TileTwolineView
 import com.github.varhastra.epicenter.views.TileView
 import com.google.android.gms.maps.CameraUpdateFactory

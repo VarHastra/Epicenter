@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.main
 
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.utils.UnitsLocale
+import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 
 interface ToolbarProvider {
 

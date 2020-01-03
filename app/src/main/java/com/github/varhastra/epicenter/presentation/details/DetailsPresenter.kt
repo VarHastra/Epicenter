@@ -5,7 +5,7 @@ import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
-import com.github.varhastra.epicenter.utils.UnitsFormatter
+import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.threeten.bp.LocalDateTime

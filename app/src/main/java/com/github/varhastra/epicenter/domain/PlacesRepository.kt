@@ -4,9 +4,9 @@ import com.github.varhastra.epicenter.domain.model.Place
 
 interface PlacesRepository {
 
-    fun getPlaces(callback: DataSourceCallback<List<Place>>)
+    fun getPlaces(callback: RepositoryCallback<List<Place>>)
 
-    fun getPlace(callback: DataSourceCallback<Place>, placeId: Int)
+    fun getPlace(callback: RepositoryCallback<Place>, placeId: Int)
 
     fun savePlace(place: Place)
 

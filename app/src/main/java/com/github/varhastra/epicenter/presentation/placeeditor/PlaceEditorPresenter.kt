@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.PlacesRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
@@ -61,7 +61,7 @@ class PlaceEditorPresenter(
     }
 
     private fun getAndDrawPlace() {
-        placesRepository.getPlace(object : DataSourceCallback<Place> {
+        placesRepository.getPlace(object : RepositoryCallback<Place> {
             override fun onResult(result: Place) {
                 state = state.copy(area = Area(result.coordinates, result.radiusKm!!), order = result.order)
                 drawCurrentState()

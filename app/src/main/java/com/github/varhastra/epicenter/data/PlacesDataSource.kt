@@ -8,9 +8,9 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.LocationRepository
 import com.github.varhastra.epicenter.domain.PlacesRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.Position
 import org.jetbrains.anko.doAsync
@@ -23,7 +23,7 @@ class PlacesDataSource private constructor(
 
     private val context = context.applicationContext
 
-    override fun getPlaces(callback: DataSourceCallback<List<Place>>) {
+    override fun getPlaces(callback: RepositoryCallback<List<Place>>) {
         doAsync(executorService = IO_EXECUTOR) {
             val places = placeDao.getAll().map { substituteWithLocalizedName(it) }.toList()
             uiThread {
@@ -32,7 +32,7 @@ class PlacesDataSource private constructor(
         }
     }
 
-    override fun getPlace(callback: DataSourceCallback<Place>, placeId: Int) {
+    override fun getPlace(callback: RepositoryCallback<Place>, placeId: Int) {
         doAsync(executorService = IO_EXECUTOR) {
             val p = placeDao.get(placeId)
             if (p == null) {
@@ -43,7 +43,7 @@ class PlacesDataSource private constructor(
             }
             val place = substituteWithLocalizedName(p)
             if (placeId == Place.CURRENT_LOCATION.id) {
-                locationRepository.getLastLocation(object : DataSourceCallback<Position> {
+                locationRepository.getLastLocation(object : RepositoryCallback<Position> {
                     override fun onResult(result: Position) {
                         uiThread {
                             callback.onResult(place.copy(coordinates = result.coordinates))

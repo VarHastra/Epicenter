@@ -61,7 +61,7 @@ class FeedPresenter(
      * Loads a list of places and passes it to the view.
      */
     override fun loadPlaces() {
-        placesRepository.getPlaces(object : DataSourceCallback<List<Place>> {
+        placesRepository.getPlaces(object : RepositoryCallback<List<Place>> {
             override fun onResult(result: List<Place>) {
                 if (!view.isActive()) {
                     return
@@ -109,7 +109,7 @@ class FeedPresenter(
     }
 
     private fun getPlaceAndEvents(forceLoad: Boolean) {
-        placesRepository.getPlace(object : DataSourceCallback<Place> {
+        placesRepository.getPlace(object : RepositoryCallback<Place> {
             override fun onResult(result: Place) {
                 // Place is loaded, proceed by loading events
                 view.showCurrentPlace(result)

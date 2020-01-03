@@ -3,8 +3,8 @@ package com.github.varhastra.epicenter.data
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.EventServiceResponse
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.EventsRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Event
 import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
@@ -27,7 +27,7 @@ class EventsDataSource private constructor(
     private var feedLastUpdated: Instant = Instant.EPOCH
 
 
-    override fun getWeekFeed(callback: DataSourceCallback<List<Event>>, forceLoad: Boolean) {
+    override fun getWeekFeed(callback: RepositoryCallback<List<Event>>, forceLoad: Boolean) {
         if (!forceLoad && eventsFeedCache.isNotEmpty()) {
             val list = eventsFeedCache.values.toList()
             callback.onResult(list)
@@ -47,7 +47,7 @@ class EventsDataSource private constructor(
         })
     }
 
-    override fun getEvent(eventId: String, callback: DataSourceCallback<Event>) {
+    override fun getEvent(eventId: String, callback: RepositoryCallback<Event>) {
         val event = eventsFeedCache[eventId]
 
         if (event != null) {

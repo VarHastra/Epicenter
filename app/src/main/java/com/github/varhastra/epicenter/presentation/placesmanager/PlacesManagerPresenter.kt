@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.placesmanager
 
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.PlacesRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Place
 import java.util.*
 
@@ -21,7 +21,7 @@ class PlacesManagerPresenter(
     }
 
     override fun loadPlaces() {
-        placesRepository.getPlaces(object : DataSourceCallback<List<Place>> {
+        placesRepository.getPlaces(object : RepositoryCallback<List<Place>> {
             override fun onResult(result: List<Place>) {
                 if (!view.isActive()) {
                     return

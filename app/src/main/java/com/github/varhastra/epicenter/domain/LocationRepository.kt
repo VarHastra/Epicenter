@@ -5,9 +5,9 @@ import com.github.varhastra.epicenter.domain.model.Position
 
 interface LocationRepository {
 
-    fun getLastLocation(callback: DataSourceCallback<Position>)
+    fun getLastLocation(callback: RepositoryCallback<Position>)
 
-    fun getLocationName(coordinates: Coordinates, callback: DataSourceCallback<String>)
+    fun getLocationName(coordinates: Coordinates, callback: RepositoryCallback<String>)
 
     fun isGeoCodingAvailable(): Boolean
 }

@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.placenamepicker
 
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.LocationRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
 
 class PlaceNamePickerPresenter(
@@ -30,7 +30,7 @@ class PlaceNamePickerPresenter(
         }
 
         val cord = coordinates ?: return
-        locationRepository.getLocationName(cord, object : DataSourceCallback<String> {
+        locationRepository.getLocationName(cord, object : RepositoryCallback<String> {
             override fun onResult(result: String) {
                 if (!view.isActive()) {
                     return

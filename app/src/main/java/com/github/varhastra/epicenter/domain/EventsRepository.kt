@@ -6,11 +6,11 @@ import org.threeten.bp.Instant
 interface EventsRepository {
 
     fun getWeekFeed(
-            callback: DataSourceCallback<List<Event>>,
+            callback: RepositoryCallback<List<Event>>,
             forceLoad: Boolean = false
     )
 
-    fun getEvent(eventId: String, callback: DataSourceCallback<Event>)
+    fun getEvent(eventId: String, callback: RepositoryCallback<Event>)
 
     fun getWeekFeedLastUpdated(): Instant
 

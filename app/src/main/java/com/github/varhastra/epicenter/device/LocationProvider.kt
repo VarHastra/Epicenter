@@ -3,8 +3,8 @@ package com.github.varhastra.epicenter.device
 import android.content.Context
 import android.location.Geocoder
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.LocationRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Position
 import com.google.android.gms.location.LocationServices
@@ -16,7 +16,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     private val geocoder = Geocoder(context)
     private val logger = AnkoLogger(this.javaClass)
 
-    override fun getLastLocation(callback: DataSourceCallback<Position>) {
+    override fun getLastLocation(callback: RepositoryCallback<Position>) {
         try {
             locationProviderClient.lastLocation.addOnSuccessListener {
                 if (it == null) {
@@ -35,7 +35,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         }
     }
 
-    override fun getLocationName(coordinates: Coordinates, callback: DataSourceCallback<String>) {
+    override fun getLocationName(coordinates: Coordinates, callback: RepositoryCallback<String>) {
         doAsync(callback::onFailure) {
             val addresses = geocoder.getFromLocation(coordinates.latitude, coordinates.longitude, 1)
             uiThread {

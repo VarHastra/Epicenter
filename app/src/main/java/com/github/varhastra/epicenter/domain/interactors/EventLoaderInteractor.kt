@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.domain.interactors
 
-import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.EventsRepository
 import com.github.varhastra.epicenter.domain.LocationRepository
+import com.github.varhastra.epicenter.domain.RepositoryCallback
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.Position
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -14,7 +14,7 @@ class EventLoaderInteractor(
 
     override fun execute(arg: EventLoaderInteractor.RequestValues, callback: InteractorCallback<RemoteEvent>) {
 
-        locationRepository.getLastLocation(object : DataSourceCallback<Position> {
+        locationRepository.getLastLocation(object : RepositoryCallback<Position> {
             override fun onResult(result: Position) {
                 loadEvent(result, arg, callback)
             }
@@ -27,7 +27,7 @@ class EventLoaderInteractor(
     }
 
     private fun loadEvent(position: Position?, arg: RequestValues, callback: InteractorCallback<RemoteEvent>) {
-        eventsRepository.getEvent(arg.eventId, object : DataSourceCallback<Event> {
+        eventsRepository.getEvent(arg.eventId, object : RepositoryCallback<Event> {
             override fun onResult(result: Event) {
                 val remoteEvent = RemoteEvent.from(result, position?.coordinates)
                 callback.onResult(remoteEvent)

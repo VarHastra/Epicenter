@@ -15,11 +15,11 @@ import androidx.core.app.ActivityOptionsCompat
 import butterknife.BindColor
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.StateFragment
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
+import com.github.varhastra.epicenter.presentation.StateFragment
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

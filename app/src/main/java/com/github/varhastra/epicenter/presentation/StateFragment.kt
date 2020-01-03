@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter
+package com.github.varhastra.epicenter.presentation
 
 
 import android.os.Bundle

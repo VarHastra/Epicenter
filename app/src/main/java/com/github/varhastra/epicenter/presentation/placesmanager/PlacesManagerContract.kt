@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.presentation.placesmanager
 
-import com.github.varhastra.epicenter.BasePresenter
-import com.github.varhastra.epicenter.BaseView
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.presentation.BasePresenter
+import com.github.varhastra.epicenter.presentation.BaseView
 
 interface PlacesManagerContract {
 

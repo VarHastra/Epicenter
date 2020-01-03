@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.presentation.main.map.maputils
 
+import com.github.varhastra.epicenter.common.toLocalDateTime
 import com.github.varhastra.epicenter.presentation.main.map.AlertLevel
 import com.github.varhastra.epicenter.presentation.main.map.EventMarker
-import com.github.varhastra.epicenter.utils.toLocalDateTime
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import org.threeten.bp.Instant

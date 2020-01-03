@@ -2,6 +2,8 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
+import com.github.varhastra.epicenter.common.getDouble
+import com.github.varhastra.epicenter.common.putDouble
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
@@ -11,8 +13,6 @@ import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
-import com.github.varhastra.epicenter.utils.getDouble
-import com.github.varhastra.epicenter.utils.putDouble
 import org.jetbrains.anko.defaultSharedPreferences
 
 

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.utils
+package com.github.varhastra.epicenter.common
 
 import android.content.SharedPreferences
 import org.threeten.bp.Instant

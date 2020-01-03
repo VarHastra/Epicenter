@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.data.PlacesRepository
+import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
@@ -53,7 +53,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
         addFab.setOnClickListener { presenter.openEditor(null) }
 
-        PlacesManagerPresenter(this, PlacesRepository.getInstance())
+        PlacesManagerPresenter(this, PlacesDataSource.getInstance())
     }
 
     override fun attachPresenter(presenter: PlacesManagerContract.Presenter) {

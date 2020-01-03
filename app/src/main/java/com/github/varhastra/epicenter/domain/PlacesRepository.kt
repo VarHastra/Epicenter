@@ -2,7 +2,7 @@ package com.github.varhastra.epicenter.domain
 
 import com.github.varhastra.epicenter.domain.model.Place
 
-interface PlacesDataSource {
+interface PlacesRepository {
 
     fun getPlaces(callback: DataSourceCallback<List<Place>>)
 

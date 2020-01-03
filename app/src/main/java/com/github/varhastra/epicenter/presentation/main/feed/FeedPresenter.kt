@@ -17,7 +17,7 @@ import org.threeten.bp.temporal.ChronoUnit
 class FeedPresenter(
         private val view: FeedContract.View,
         private val eventsRepository: EventsRepository,
-        private val placesDataSource: PlacesDataSource,
+        private val placesRepository: PlacesRepository,
         private val locationRepository: LocationRepository,
         private val connectivityRepository: ConnectivityRepository,
         private val unitsLocaleRepository: UnitsLocaleRepository = Prefs,
@@ -61,7 +61,7 @@ class FeedPresenter(
      * Loads a list of places and passes it to the view.
      */
     override fun loadPlaces() {
-        placesDataSource.getPlaces(object : DataSourceCallback<List<Place>> {
+        placesRepository.getPlaces(object : DataSourceCallback<List<Place>> {
             override fun onResult(result: List<Place>) {
                 if (!view.isActive()) {
                     return
@@ -109,7 +109,7 @@ class FeedPresenter(
     }
 
     private fun getPlaceAndEvents(forceLoad: Boolean) {
-        placesDataSource.getPlace(object : DataSourceCallback<Place> {
+        placesRepository.getPlace(object : DataSourceCallback<Place> {
             override fun onResult(result: Place) {
                 // Place is loaded, proceed by loading events
                 view.showCurrentPlace(result)

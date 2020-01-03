@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.PlacesDataSource
+import com.github.varhastra.epicenter.domain.PlacesRepository
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 
 class PlaceEditorPresenter(
         private val view: PlaceEditorContract.View,
-        private val placesDataSource: PlacesDataSource,
+        private val placesRepository: PlacesRepository,
         unitsLocale: UnitsLocale
 ) : PlaceEditorContract.Presenter {
 
@@ -61,7 +61,7 @@ class PlaceEditorPresenter(
     }
 
     private fun getAndDrawPlace() {
-        placesDataSource.getPlace(object : DataSourceCallback<Place> {
+        placesRepository.getPlace(object : DataSourceCallback<Place> {
             override fun onResult(result: Place) {
                 state = state.copy(area = Area(result.coordinates, result.radiusKm!!), order = result.order)
                 drawCurrentState()
@@ -145,7 +145,7 @@ class PlaceEditorPresenter(
 
     override fun saveWithName(placeName: String) {
         state.area?.apply {
-            placesDataSource.savePlace(Place(state.placeId, placeName, center, radiusKm, state.order))
+            placesRepository.savePlace(Place(state.placeId, placeName, center, radiusKm, state.order))
         }
         view.navigateBack()
     }

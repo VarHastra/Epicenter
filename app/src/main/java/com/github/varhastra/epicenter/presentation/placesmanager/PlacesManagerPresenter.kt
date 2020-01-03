@@ -1,13 +1,13 @@
 package com.github.varhastra.epicenter.presentation.placesmanager
 
 import com.github.varhastra.epicenter.domain.DataSourceCallback
-import com.github.varhastra.epicenter.domain.PlacesDataSource
+import com.github.varhastra.epicenter.domain.PlacesRepository
 import com.github.varhastra.epicenter.domain.model.Place
 import java.util.*
 
 class PlacesManagerPresenter(
         private val view: PlacesManagerContract.View,
-        private val placesDataSource: PlacesDataSource
+        private val placesRepository: PlacesRepository
 ) : PlacesManagerContract.Presenter {
 
     private val deletionQueue: Queue<Place> = LinkedList()
@@ -21,7 +21,7 @@ class PlacesManagerPresenter(
     }
 
     override fun loadPlaces() {
-        placesDataSource.getPlaces(object : DataSourceCallback<List<Place>> {
+        placesRepository.getPlaces(object : DataSourceCallback<List<Place>> {
             override fun onResult(result: List<Place>) {
                 if (!view.isActive()) {
                     return
@@ -43,7 +43,7 @@ class PlacesManagerPresenter(
     }
 
     override fun saveOrder(places: List<Place>) {
-        placesDataSource.updateOrder(places)
+        placesRepository.updateOrder(places)
     }
 
     override fun tryDeletePlace(place: Place) {
@@ -53,7 +53,7 @@ class PlacesManagerPresenter(
 
     override fun deletePlace() {
         deletionQueue.poll()?.apply {
-            placesDataSource.deletePlace(this)
+            placesRepository.deletePlace(this)
         }
     }
 

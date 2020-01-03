@@ -10,16 +10,16 @@ import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.LocationRepository
-import com.github.varhastra.epicenter.domain.PlacesDataSource
+import com.github.varhastra.epicenter.domain.PlacesRepository
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.Position
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class PlacesRepository private constructor(
+class PlacesDataSource private constructor(
         private val locationRepository: LocationRepository,
         private val placeDao: PlaceDao,
-        context: Context = App.instance) : PlacesDataSource {
+        context: Context = App.instance) : PlacesRepository {
 
     private val context = context.applicationContext
 
@@ -99,7 +99,7 @@ class PlacesRepository private constructor(
         private var instance: PlacesRepository? = null
 
         fun getInstance(locationRepository: LocationRepository = LocationProvider(), placeDao: PlaceDao = AppDb.getInstance().getPlaceDao()): PlacesRepository {
-            return instance ?: PlacesRepository(locationRepository, placeDao)
+            return instance ?: PlacesDataSource(locationRepository, placeDao)
         }
     }
 }

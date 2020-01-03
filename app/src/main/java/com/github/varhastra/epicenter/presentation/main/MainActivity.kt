@@ -14,7 +14,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.PlacesRepository
+import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     var placesEditPopupListener: (() -> Unit)? = null
 
     private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
-    private val placesRepository = PlacesRepository.getInstance()
+    private val placesRepository = PlacesDataSource.getInstance()
     private val locationProvider = LocationProvider()
     private val connectivityProvider = ConnectivityProvider()
     private lateinit var fragmentEnterTransition: Transition

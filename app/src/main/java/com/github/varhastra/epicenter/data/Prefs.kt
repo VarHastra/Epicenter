@@ -2,7 +2,7 @@ package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.domain.UnitsLocaleDataSource
+import com.github.varhastra.epicenter.domain.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
@@ -16,7 +16,7 @@ import com.github.varhastra.epicenter.utils.putDouble
 import org.jetbrains.anko.defaultSharedPreferences
 
 
-object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleDataSource {
+object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleRepository {
     private const val PREF_FIRST_LAUNCH = "PREF_FIRST_LAUNCH"
     private const val PREF_UNITS = "PREF_UNITS"
 
@@ -131,7 +131,7 @@ object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleDataSource {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // UnitsLocaleDataSource methods
+    // UnitsLocaleRepository methods
     ////////////////////////////////////////////////////////////////////////////////////////////////
     override fun getPreferredUnitsLocale(): UnitsLocale {
         return getPreferredUnits()

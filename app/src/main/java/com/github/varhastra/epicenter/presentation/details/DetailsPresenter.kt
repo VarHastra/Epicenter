@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.presentation.details
 
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.domain.UnitsLocaleDataSource
+import com.github.varhastra.epicenter.domain.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -14,7 +14,7 @@ import org.threeten.bp.temporal.ChronoUnit
 class DetailsPresenter(
         private val view: DetailsContract.View,
         private val eventLoader: EventLoaderInteractor,
-        private val unitsLocaleDataSource: UnitsLocaleDataSource = Prefs
+        private val unitsLocaleRepository: UnitsLocaleRepository = Prefs
 ) : DetailsContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
@@ -32,7 +32,7 @@ class DetailsPresenter(
 
     override fun start() {
         loadEvent(eventId)
-        unitsFormatter = UnitsFormatter(unitsLocaleDataSource.getPreferredUnitsLocale())
+        unitsFormatter = UnitsFormatter(unitsLocaleRepository.getPreferredUnitsLocale())
     }
 
     override fun loadEvent(eventId: String) {

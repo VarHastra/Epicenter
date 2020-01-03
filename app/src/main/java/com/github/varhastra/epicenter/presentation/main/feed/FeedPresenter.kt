@@ -20,7 +20,7 @@ class FeedPresenter(
         private val placesDataSource: PlacesDataSource,
         private val locationDataSource: LocationDataSource,
         private val connectivityDataSource: ConnectivityDataSource,
-        private val unitsLocaleDataSource: UnitsLocaleDataSource = Prefs,
+        private val unitsLocaleRepository: UnitsLocaleRepository = Prefs,
         private val feedStateDataSource: FeedStateDataSource = Prefs
 ) : FeedContract.Presenter {
 
@@ -67,7 +67,7 @@ class FeedPresenter(
                     return
                 }
 
-                view.showPlaces(result, unitsLocaleDataSource.getPreferredUnitsLocale())
+                view.showPlaces(result, unitsLocaleRepository.getPreferredUnitsLocale())
             }
 
             override fun onFailure(t: Throwable?) {
@@ -150,7 +150,7 @@ class FeedPresenter(
                         view.showProgress(false)
 
                         if (result.isNotEmpty()) {
-                            view.showEvents(result, unitsLocaleDataSource.getPreferredUnitsLocale())
+                            view.showEvents(result, unitsLocaleRepository.getPreferredUnitsLocale())
                         } else {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
                         }

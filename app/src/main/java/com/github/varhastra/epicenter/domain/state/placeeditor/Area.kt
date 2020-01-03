@@ -1,7 +1,7 @@
 package com.github.varhastra.epicenter.domain.state.placeeditor
 
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.utils.kmToM
+import com.github.varhastra.epicenter.domain.model.kmToM
 
 data class Area(
         val center: Coordinates,

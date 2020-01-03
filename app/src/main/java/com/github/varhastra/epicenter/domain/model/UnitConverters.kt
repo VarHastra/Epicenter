@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.utils
+package com.github.varhastra.epicenter.domain.model
 
 import kotlin.math.PI
 import kotlin.math.cos

@@ -3,8 +3,6 @@ package com.github.varhastra.epicenter.domain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.github.varhastra.epicenter.utils.latDegToKm
-import com.github.varhastra.epicenter.utils.lngDegToMi
 import kotlin.math.abs
 
 

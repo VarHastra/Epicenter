@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.kmToMi
 import com.github.varhastra.epicenter.utils.UnitsLocale
-import com.github.varhastra.epicenter.utils.kmToMi
 import kotlinx.android.synthetic.main.item_view_place.view.*
 import kotlin.math.roundToInt
 

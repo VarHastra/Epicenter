@@ -3,6 +3,7 @@ package com.github.varhastra.epicenter.utils
 import android.content.Context
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.domain.model.kmToMi
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 

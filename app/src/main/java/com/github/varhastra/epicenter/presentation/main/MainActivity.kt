@@ -16,7 +16,7 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.EventsRepository
 import com.github.varhastra.epicenter.data.PlacesRepository
 import com.github.varhastra.epicenter.data.Prefs
-import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Place

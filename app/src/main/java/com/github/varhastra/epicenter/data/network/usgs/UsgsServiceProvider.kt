@@ -1,8 +1,8 @@
-package com.github.varhastra.epicenter.data.networking.usgs
+package com.github.varhastra.epicenter.data.network.usgs
 
-import com.github.varhastra.epicenter.data.networking.EventServiceProvider
-import com.github.varhastra.epicenter.data.networking.Network
-import com.github.varhastra.epicenter.data.networking.usgs.model.UsgsResponse
+import com.github.varhastra.epicenter.data.network.EventServiceProvider
+import com.github.varhastra.epicenter.data.network.Network
+import com.github.varhastra.epicenter.data.network.usgs.model.UsgsResponse
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.jetbrains.anko.info

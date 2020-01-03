@@ -1,11 +1,11 @@
-package com.github.varhastra.epicenter.data.networking.usgs
+package com.github.varhastra.epicenter.data.network.usgs
 
 import android.content.Context
 import android.os.Handler
 import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.data.networking.EventServiceProvider
-import com.github.varhastra.epicenter.data.networking.Network
-import com.github.varhastra.epicenter.data.networking.usgs.model.UsgsResponse
+import com.github.varhastra.epicenter.data.network.EventServiceProvider
+import com.github.varhastra.epicenter.data.network.Network
+import com.github.varhastra.epicenter.data.network.usgs.model.UsgsResponse
 import com.squareup.moshi.Moshi
 import okio.Okio
 import java.util.concurrent.Executors

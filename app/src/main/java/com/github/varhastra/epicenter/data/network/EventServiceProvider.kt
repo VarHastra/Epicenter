@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.data.networking
+package com.github.varhastra.epicenter.data.network
 
 /**
  * Defines common interface for all earthquake data providers.

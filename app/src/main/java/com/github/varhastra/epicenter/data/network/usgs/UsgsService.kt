@@ -1,6 +1,6 @@
-package com.github.varhastra.epicenter.data.networking.usgs
+package com.github.varhastra.epicenter.data.network.usgs
 
-import com.github.varhastra.epicenter.data.networking.usgs.model.UsgsResponse
+import com.github.varhastra.epicenter.data.network.usgs.model.UsgsResponse
 import retrofit2.Call
 import retrofit2.http.GET
 

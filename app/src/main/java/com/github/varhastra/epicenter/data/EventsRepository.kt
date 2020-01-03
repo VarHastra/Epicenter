@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.data
 
-import com.github.varhastra.epicenter.data.networking.EventServiceProvider
-import com.github.varhastra.epicenter.data.networking.EventServiceResponse
-import com.github.varhastra.epicenter.data.networking.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.data.network.EventServiceProvider
+import com.github.varhastra.epicenter.data.network.EventServiceResponse
+import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.DataSourceCallback
 import com.github.varhastra.epicenter.domain.EventsDataSource
 import com.github.varhastra.epicenter.domain.model.Event

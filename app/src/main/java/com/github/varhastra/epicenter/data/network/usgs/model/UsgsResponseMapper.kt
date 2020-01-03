@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.data.networking.usgs.model
+package com.github.varhastra.epicenter.data.network.usgs.model
 
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Event

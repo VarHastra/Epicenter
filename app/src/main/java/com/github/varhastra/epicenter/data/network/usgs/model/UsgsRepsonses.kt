@@ -1,6 +1,6 @@
-package com.github.varhastra.epicenter.data.networking.usgs.model
+package com.github.varhastra.epicenter.data.network.usgs.model
 
-import com.github.varhastra.epicenter.data.networking.EventServiceResponse
+import com.github.varhastra.epicenter.data.network.EventServiceResponse
 import com.github.varhastra.epicenter.domain.model.Event
 import com.squareup.moshi.JsonClass
 

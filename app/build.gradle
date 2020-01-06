@@ -32,6 +32,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+
     implementation "org.jetbrains.anko:anko-commons:$versions.anko"
     implementation "org.jetbrains.anko:anko-design:$versions.anko"
 

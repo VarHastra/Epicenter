@@ -83,7 +83,7 @@ class MapPresenter(
 
         view.showProgress(true)
 
-        val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsRepository.getWeekFeedLastUpdated(), Instant.now())
+        val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsRepository.weekFeedUpdatedAt, Instant.now())
         val forceLoad = (requestForceLoad || minsSinceLastUpd > FORCE_LOAD_RATE_MINS) && connectionAvailable
 
         val requestValues = MapEventsLoaderInteractor.RequestValues(state.filter, forceLoad)

@@ -7,6 +7,10 @@ import java.util.*
 
 interface EventsRepository {
 
+    val weekFeedUpdatedAt: Instant
+
+    val isCacheAvailable: Boolean
+
     fun getWeekFeed(
             callback: RepositoryCallback<List<Event>>,
             forceLoad: Boolean = false
@@ -17,8 +21,4 @@ interface EventsRepository {
     fun getEvent(eventId: String, callback: RepositoryCallback<Event>)
 
     suspend fun getEventSuspending(eventId: UUID): Either<Event, Throwable>
-
-    fun getWeekFeedLastUpdated(): Instant
-
-    fun isCacheAvailable(): Boolean
 }

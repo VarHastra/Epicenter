@@ -8,7 +8,6 @@ import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
-import org.jetbrains.anko.AnkoLogger
 import org.threeten.bp.Instant
 import java.util.*
 
@@ -16,18 +15,13 @@ class EventsDataSource private constructor(
         private val serviceProvider: EventServiceProvider
 ) : EventsRepository {
 
-    private val logger = AnkoLogger(this.javaClass)
+    override val isCacheAvailable get() = eventsFeedCache.isNotEmpty()
 
-    /**
-     * Contains cached events week feed.
-     */
+    override val weekFeedUpdatedAt: Instant get() = feedUpdatedAt
+
     private val eventsFeedCache: MutableMap<String, Event> = mutableMapOf()
 
-    /**
-     * Stores the [Instant] of the last week feed update. By default
-     * it is initialized with [Instant.EPOCH]
-     */
-    private var feedLastUpdated: Instant = Instant.EPOCH
+    private var feedUpdatedAt: Instant = Instant.EPOCH
 
 
     override fun getWeekFeed(callback: RepositoryCallback<List<Event>>, forceLoad: Boolean) {
@@ -81,16 +75,8 @@ class EventsDataSource private constructor(
         }
     }
 
-    override fun getWeekFeedLastUpdated(): Instant {
-        return feedLastUpdated
-    }
-
-    override fun isCacheAvailable(): Boolean {
-        return !eventsFeedCache.isEmpty()
-    }
-
     private fun updateFeedCache(list: List<Event>) {
-        feedLastUpdated = Instant.now()
+        feedUpdatedAt = Instant.now()
         eventsFeedCache.clear()
         eventsFeedCache.putAll(list.associateBy { it.id })
     }

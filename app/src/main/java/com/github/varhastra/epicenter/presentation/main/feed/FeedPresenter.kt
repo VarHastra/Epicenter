@@ -130,11 +130,11 @@ class FeedPresenter(
 
     private fun getEvents(place: Place, forceLoadRequested: Boolean) {
         val networkAvailable = connectivityRepository.isNetworkConnected()
-        if (forceLoadRequested && eventsRepository.isCacheAvailable() && !networkAvailable) {
+        if (forceLoadRequested && eventsRepository.isCacheAvailable && !networkAvailable) {
             view.showErrorNoConnection()
         }
 
-        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsRepository.getWeekFeedLastUpdated(), Instant.now())
+        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsRepository.weekFeedUpdatedAt, Instant.now())
         val forceLoad = (forceLoadRequested || (minsSinceUpd > FORCE_LOAD_RATE_MINS)) && networkAvailable
 
         val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, place)

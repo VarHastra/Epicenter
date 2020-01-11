@@ -84,7 +84,7 @@ class UsgsServiceProvider(
         })
     }
 
-    override suspend fun getWeekFeedSuspending(): Either<Throwable, EventServiceResponse> {
+    override suspend fun getWeekFeedSuspending(): Either<EventServiceResponse, Throwable> {
         return if (isNetworkConnected.not()) {
             Either.Failure(NoNetworkConnectionException())
         } else {
@@ -92,7 +92,7 @@ class UsgsServiceProvider(
         }
     }
 
-    private suspend fun fetchWeekFeedCatching(): Either<Throwable, EventServiceResponse> {
+    private suspend fun fetchWeekFeedCatching(): Either<EventServiceResponse, Throwable> {
         return try {
             fetchWeekFeed()
         } catch (t: Throwable) {
@@ -101,7 +101,7 @@ class UsgsServiceProvider(
         }
     }
 
-    private suspend fun fetchWeekFeed(): Either<Throwable, UsgsResponse> {
+    private suspend fun fetchWeekFeed(): Either<UsgsResponse, Throwable> {
         val response = usgsService.getWeekFeedSuspending()
         return if (response.isSuccessful.not()) {
             Timber.w("fetchWeekFeed(): Bad response code encountered: ${response.code()}.")

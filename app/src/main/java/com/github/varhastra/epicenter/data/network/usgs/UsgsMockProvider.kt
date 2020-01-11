@@ -32,7 +32,7 @@ class UsgsMockProvider(val context: Context = App.instance, val moshi: Moshi = N
         TODO("stub, not implemented")
     }
 
-    override suspend fun getWeekFeedSuspending(): Either<Throwable, EventServiceResponse> {
+    override suspend fun getWeekFeedSuspending(): Either<EventServiceResponse, Throwable> {
         TODO("stub, not implemented")
     }
 }

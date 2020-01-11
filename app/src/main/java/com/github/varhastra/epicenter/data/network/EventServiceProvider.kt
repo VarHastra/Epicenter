@@ -11,7 +11,7 @@ interface EventServiceProvider {
 
     fun getDayFeed(responseCallback: ResponseCallback)
 
-    suspend fun getWeekFeedSuspending(): Either<Throwable, EventServiceResponse>
+    suspend fun getWeekFeedSuspending(): Either<EventServiceResponse, Throwable>
 
     interface ResponseCallback {
         fun onResult(response: EventServiceResponse)

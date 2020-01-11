@@ -1,23 +1,23 @@
 package com.github.varhastra.epicenter.common.functionaltypes
 
-sealed class Either<out L, out R> {
+sealed class Either<out D, out T : Throwable> {
 
-    data class Success<out R>(val data: R) : Either<Nothing, R>()
+    data class Success<out D>(val data: D) : Either<D, Nothing>()
 
-    data class Failure<out L>(val t: L) : Either<L, Nothing>()
+    data class Failure<out T : Throwable>(val t: T) : Either<Nothing, T>()
 
-    val isSuccess get() = this is Success<R>
+    val isSuccess get() = this is Success<D>
 
-    val isFailure get() = this is Failure<L>
+    val isFailure get() = this is Failure<T>
 
-    inline fun <U> fold(onSuccess: (R) -> U, onFailure: (L) -> U): U {
+    inline fun <R> fold(onSuccess: (D) -> R, onFailure: (T) -> R): R {
         return when (this) {
             is Success -> onSuccess(data)
             is Failure -> onFailure(t)
         }
     }
 
-    inline fun <T> map(f: (R) -> T): Either<L, T> {
+    inline fun <R> map(f: (D) -> R): Either<R, T> {
         return when (this) {
             is Success -> Success(f(data))
             is Failure -> this
@@ -25,21 +25,21 @@ sealed class Either<out L, out R> {
     }
 }
 
-inline fun <L, R, T> Either<L, R>.flatMap(f: (R) -> Either<L, T>): Either<L, T> {
+inline fun <D, T : Throwable, R> Either<D, T>.flatMap(f: (D) -> Either<R, T>): Either<R, T> {
     return when (this) {
         is Either.Success -> f(data)
         is Either.Failure -> this
     }
 }
 
-inline fun <L, R, T> Either<L, R>.ifSuccess(f: (R) -> T): Either<L, R> {
+inline fun <D, T : Throwable> Either<D, T>.ifSuccess(f: (D) -> Unit): Either<D, T> {
     if (this is Either.Success) {
         f(data)
     }
     return this
 }
 
-inline fun <L, R, T> Either<L, R>.ifFailure(f: (L) -> T): Either<L, R> {
+inline fun <D, T : Throwable> Either<D, T>.ifFailure(f: (T) -> Unit): Either<D, T> {
     if (this is Either.Failure) {
         f(t)
     }

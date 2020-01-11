@@ -31,3 +31,17 @@ fun <L, R, T> Either<L, R>.flatMap(f: (R) -> Either<L, T>): Either<L, T> {
         is Either.Failure -> this
     }
 }
+
+fun <L, R, T> Either<L, R>.ifSuccess(f: (R) -> T): Either<L, R> {
+    if (this is Either.Success) {
+        f(data)
+    }
+    return this
+}
+
+fun <L, R, T> Either<L, R>.ifFailure(f: (L) -> T): Either<L, R> {
+    if (this is Either.Failure) {
+        f(t)
+    }
+    return this
+}

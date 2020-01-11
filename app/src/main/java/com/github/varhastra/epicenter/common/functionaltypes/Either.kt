@@ -10,14 +10,14 @@ sealed class Either<out L, out R> {
 
     val isFailure get() = this is Failure<L>
 
-    fun <U> fold(onSuccess: (R) -> U, onFailure: (L) -> U): U {
+    inline fun <U> fold(onSuccess: (R) -> U, onFailure: (L) -> U): U {
         return when (this) {
             is Success -> onSuccess(data)
             is Failure -> onFailure(t)
         }
     }
 
-    fun <T> map(f: (R) -> T): Either<L, T> {
+    inline fun <T> map(f: (R) -> T): Either<L, T> {
         return when (this) {
             is Success -> Success(f(data))
             is Failure -> this
@@ -25,21 +25,21 @@ sealed class Either<out L, out R> {
     }
 }
 
-fun <L, R, T> Either<L, R>.flatMap(f: (R) -> Either<L, T>): Either<L, T> {
+inline fun <L, R, T> Either<L, R>.flatMap(f: (R) -> Either<L, T>): Either<L, T> {
     return when (this) {
         is Either.Success -> f(data)
         is Either.Failure -> this
     }
 }
 
-fun <L, R, T> Either<L, R>.ifSuccess(f: (R) -> T): Either<L, R> {
+inline fun <L, R, T> Either<L, R>.ifSuccess(f: (R) -> T): Either<L, R> {
     if (this is Either.Success) {
         f(data)
     }
     return this
 }
 
-fun <L, R, T> Either<L, R>.ifFailure(f: (L) -> T): Either<L, R> {
+inline fun <L, R, T> Either<L, R>.ifFailure(f: (L) -> T): Either<L, R> {
     if (this is Either.Failure) {
         f(t)
     }

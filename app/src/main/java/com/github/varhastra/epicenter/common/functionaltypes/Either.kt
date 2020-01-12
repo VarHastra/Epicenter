@@ -23,6 +23,20 @@ sealed class Either<out D, out T : Throwable> {
             is Failure -> this
         }
     }
+
+    companion object {
+        fun <D> success(data: D) = Success(data)
+
+        fun <T : Throwable> failure(t: T) = Failure(t)
+
+        inline fun <D> of(data: D?, onNull: ((D?) -> Throwable)): Either<D, Throwable> {
+            return if (data == null) {
+                failure(onNull(data))
+            } else {
+                success(data)
+            }
+        }
+    }
 }
 
 inline fun <D, T : Throwable, R> Either<D, T>.flatMap(f: (D) -> Either<R, T>): Either<R, T> {

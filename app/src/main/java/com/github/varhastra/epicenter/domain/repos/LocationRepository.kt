@@ -8,7 +8,9 @@ interface LocationRepository {
 
     fun getLastLocation(callback: RepositoryCallback<Position>)
 
-    suspend fun getLastLocation(): Either<Coordinates, Throwable>
+    suspend fun getCoordinates(): Either<Coordinates, Throwable>
+
+    suspend fun getLastCoordinates(): Either<Coordinates, Throwable>
 
     fun getLocationName(coordinates: Coordinates, callback: RepositoryCallback<String>)
 

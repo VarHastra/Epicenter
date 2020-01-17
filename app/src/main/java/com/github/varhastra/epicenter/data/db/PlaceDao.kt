@@ -1,41 +1,40 @@
 package com.github.varhastra.epicenter.data.db
 
 import androidx.room.*
-import com.github.varhastra.epicenter.domain.model.Place
 
 @Dao
 abstract class PlaceDao {
 
     @Query("SELECT * FROM place ORDER BY `order` ASC")
-    abstract fun getAll(): List<Place>
+    abstract fun getAll(): List<PlaceEntity>
 
     @Query("SELECT * FROM place WHERE id=:id")
-    abstract fun get(id: Int): Place?
+    abstract fun get(id: Int): PlaceEntity?
 
     @Insert
-    abstract fun insert(place: Place)
+    abstract fun insert(place: PlaceEntity)
 
     @Insert
-    abstract fun insert(list: List<Place>)
+    abstract fun insert(list: List<PlaceEntity>)
 
     @Update
-    abstract fun update(place: Place)
+    abstract fun update(place: PlaceEntity)
 
     @Update
-    abstract fun update(list: List<Place>)
+    abstract fun update(list: List<PlaceEntity>)
 
     @Delete
-    abstract fun delete(place: Place)
+    abstract fun delete(place: PlaceEntity)
 
-    fun save(place: Place) {
+    fun save(place: PlaceEntity) {
         if (unsafeInsert(place) == -1L) {
             unsafeUpdate(place)
         }
     }
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract fun unsafeUpdate(place: Place)
+    protected abstract fun unsafeUpdate(place: PlaceEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract fun unsafeInsert(place: Place): Long
+    protected abstract fun unsafeInsert(place: PlaceEntity): Long
 }

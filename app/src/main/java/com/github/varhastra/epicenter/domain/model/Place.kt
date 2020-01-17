@@ -1,18 +1,13 @@
 package com.github.varhastra.epicenter.domain.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlin.math.abs
 
-
-@Entity(tableName = "place")
 data class Place(
-        @PrimaryKey(autoGenerate = true) val id: Int = 100,
-        @ColumnInfo(name = "name") val name: String,
-        @ColumnInfo(name = "coordinates") val coordinates: Coordinates,
-        @ColumnInfo(name = "radius") val radiusKm: Double?,
-        @ColumnInfo(name = "order") val order: Int = -10
+        val id: Int = 100,
+        val name: String,
+        val coordinates: Coordinates,
+        val radiusKm: Double?,
+        val order: Int = -10
 ) {
     val latitude: Double
         get() = coordinates.latitude

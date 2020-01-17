@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.varhastra.epicenter.App
+import com.github.varhastra.epicenter.data.toPlaceEntity
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.ioThread
 import java.util.*
 
-@Database(entities = [Place::class], version = 1)
+@Database(entities = [PlaceEntity::class], version = 1)
 @TypeConverters(AppDb.Converters::class)
 abstract class AppDb : RoomDatabase() {
 
@@ -22,7 +23,7 @@ abstract class AppDb : RoomDatabase() {
         val prepopulateData = listOf(
                 Place.CURRENT_LOCATION,
                 Place.WORLD
-        )
+        ).map { it.toPlaceEntity() }
 
         fun getInstance(context: Context = App.instance): AppDb {
             return instance ?: Room.databaseBuilder(

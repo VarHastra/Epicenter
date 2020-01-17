@@ -25,7 +25,7 @@ class PlacesDataSource private constructor(
 
     override fun getPlaces(callback: RepositoryCallback<List<Place>>) {
         doAsync(executorService = IO_EXECUTOR) {
-            val places = placeDao.getAll().map { substituteWithLocalizedName(it) }.toList()
+            val places = placeDao.getAll().map { substituteWithLocalizedName(it.toPlace()) }.toList()
             uiThread {
                 callback.onResult(places)
             }
@@ -41,7 +41,7 @@ class PlacesDataSource private constructor(
                 }
                 return@doAsync
             }
-            val place = substituteWithLocalizedName(p)
+            val place = substituteWithLocalizedName(p.toPlace())
             if (placeId == Place.CURRENT_LOCATION.id) {
                 locationRepository.getLastLocation(object : RepositoryCallback<Position> {
                     override fun onResult(result: Position) {
@@ -74,21 +74,21 @@ class PlacesDataSource private constructor(
 
     override fun savePlace(place: Place) {
         doAsync(executorService = IO_EXECUTOR) {
-            placeDao.save(place)
+            placeDao.save(place.toPlaceEntity())
         }
     }
 
     override fun deletePlace(place: Place) {
         doAsync(executorService = IO_EXECUTOR) {
-            placeDao.delete(place)
+            placeDao.delete(place.toPlaceEntity())
         }
     }
 
     override fun updateOrder(places: List<Place>) {
         doAsync(executorService = IO_EXECUTOR) {
             val updatedList = places
-                    .mapIndexed { index, place -> place.copy(order = index) }
                     .filterNot { it.id == Place.CURRENT_LOCATION.id || it.id == Place.WORLD.id }
+                    .mapIndexed { index, place -> place.copy(order = index).toPlaceEntity() }
                     .toList()
             placeDao.update(updatedList)
         }

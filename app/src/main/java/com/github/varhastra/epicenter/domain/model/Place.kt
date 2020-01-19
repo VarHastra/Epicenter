@@ -20,7 +20,7 @@ data class Place(
             true
         } else {
             val kLat = latDegToKm(1.0)
-            val kLng = lngDegToMi(1.0, latitude)
+            val kLng = lngDegToKm(1.0, latitude)
 
             val y = abs(latitude - point.latitude) * kLat
             val x = abs(longitude - point.longitude) * kLng

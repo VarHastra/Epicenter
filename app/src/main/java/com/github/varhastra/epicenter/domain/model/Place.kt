@@ -15,7 +15,7 @@ data class Place(
     val longitude: Double
         get() = coordinates.longitude
 
-    fun checkCoordinates(point: Coordinates): Boolean {
+    operator fun contains(point: Coordinates): Boolean {
         return if (radiusKm == null) {
             true
         } else {

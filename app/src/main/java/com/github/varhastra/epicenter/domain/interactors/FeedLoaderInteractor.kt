@@ -53,7 +53,7 @@ class FeedLoaderInteractor(
     }
 
     private fun filter(events: List<RemoteEvent>, filter: FeedFilter, place: Place): List<RemoteEvent> {
-        val result = events.filter { place.checkCoordinates(it.event.coordinates) }
+        val result = events.filter { place.contains(it.event.coordinates) }
         return filter.applyTo(result)
     }
 

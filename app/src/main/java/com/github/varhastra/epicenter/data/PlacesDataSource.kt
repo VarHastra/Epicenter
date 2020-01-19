@@ -5,6 +5,7 @@ import android.content.Context
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.IO_EXECUTOR
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
@@ -93,6 +94,39 @@ class PlacesDataSource private constructor(
             placeDao.update(updatedList)
         }
     }
+
+    override suspend fun getPlacesSuspending(): Either<List<Place>, Throwable> {
+        val places = placeDao.getAll().map { substituteWithLocalizedName(it.toPlace()) }.toList()
+        return Either.Success(places)
+    }
+
+    override suspend fun getPlaceSuspending(placeId: Int): Either<Place, Throwable> {
+        val p = placeDao.get(placeId)
+                ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
+        val place = substituteWithLocalizedName(p.toPlace())
+        return if (placeId == Place.CURRENT_LOCATION.id) {
+            locationRepository.getLastCoordinates().map { place.copy(coordinates = it) }
+        } else {
+            Either.success(place)
+        }
+    }
+
+    override suspend fun savePlaceSuspending(place: Place) {
+        placeDao.save(place.toPlaceEntity())
+    }
+
+    override suspend fun deletePlaceSuspending(place: Place) {
+        placeDao.delete(place.toPlaceEntity())
+    }
+
+    override suspend fun updateOrderSuspending(places: List<Place>) {
+        val updatedList = places
+                .filterNot { it.id == Place.CURRENT_LOCATION.id || it.id == Place.WORLD.id }
+                .mapIndexed { index, place -> place.copy(order = index).toPlaceEntity() }
+                .toList()
+        placeDao.update(updatedList)
+    }
+
 
     companion object {
         @SuppressLint("StaticFieldLeak")

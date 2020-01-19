@@ -59,3 +59,13 @@ inline fun <D, T : Throwable> Either<D, T>.ifFailure(f: (T) -> Unit): Either<D, 
     }
     return this
 }
+
+fun <D, T : Throwable> Either<D, T>.or(fallback: D) = when (this) {
+    is Either.Success -> this
+    is Either.Failure -> Either.Success(fallback)
+}
+
+fun <D, T : Throwable> Either<D, T>.orNull() = when (this) {
+    is Either.Success -> data
+    is Either.Failure -> null
+}

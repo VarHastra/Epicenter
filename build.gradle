@@ -17,6 +17,7 @@ buildscript {
         retrofit:'2.7.1',
         moshi:'1.8.0',
         butter_knife:'10.1.0',
+        kotpref:'2.10.0',
         dexter:'5.0.0',
         play_location:'16.0.0',
         play_maps:'16.1.0',

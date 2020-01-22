@@ -40,7 +40,7 @@ object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleRepository {
                 .apply()
     }
 
-    fun getPreferredUnits(context: Context = App.instance): UnitsLocale {
+    override fun getPreferredUnits(context: Context): UnitsLocale {
         val prefUnits = context.defaultSharedPreferences.getString(PREF_UNITS, null)
 
         return when (prefUnits) {
@@ -127,13 +127,5 @@ object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleRepository {
             val lng = getDouble(PREF_MAP_CAM_LNG, 0.0)
             MapState(MapFilter(mag, days), zoom, Coordinates(lat, lng))
         }
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // UnitsLocaleRepository methods
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    override fun getPreferredUnitsLocale(): UnitsLocale {
-        return getPreferredUnits()
     }
 }

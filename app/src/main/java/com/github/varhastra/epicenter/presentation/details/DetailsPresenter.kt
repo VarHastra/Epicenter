@@ -32,7 +32,7 @@ class DetailsPresenter(
 
     override fun start() {
         loadEvent(eventId)
-        unitsFormatter = UnitsFormatter(unitsLocaleRepository.getPreferredUnitsLocale())
+        unitsFormatter = UnitsFormatter(unitsLocaleRepository.getPreferredUnits())
     }
 
     override fun loadEvent(eventId: String) {

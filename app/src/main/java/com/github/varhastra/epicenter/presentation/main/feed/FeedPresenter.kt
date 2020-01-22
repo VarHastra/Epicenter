@@ -67,7 +67,7 @@ class FeedPresenter(
                     return
                 }
 
-                view.showPlaces(result, unitsLocaleRepository.getPreferredUnitsLocale())
+                view.showPlaces(result, unitsLocaleRepository.getPreferredUnits())
             }
 
             override fun onFailure(t: Throwable?) {
@@ -150,7 +150,7 @@ class FeedPresenter(
                         view.showProgress(false)
 
                         if (result.isNotEmpty()) {
-                            view.showEvents(result, unitsLocaleRepository.getPreferredUnitsLocale())
+                            view.showEvents(result, unitsLocaleRepository.getPreferredUnits())
                         } else {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
                         }

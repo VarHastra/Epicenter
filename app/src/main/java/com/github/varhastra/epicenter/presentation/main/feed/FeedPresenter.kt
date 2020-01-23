@@ -1,6 +1,7 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
-import com.github.varhastra.epicenter.data.Prefs
+import com.github.varhastra.epicenter.data.AppSettings
+import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.domain.interactors.FeedLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.FeedFilter
@@ -20,8 +21,8 @@ class FeedPresenter(
         private val placesRepository: PlacesRepository,
         private val locationRepository: LocationRepository,
         private val connectivityRepository: ConnectivityRepository,
-        private val unitsLocaleRepository: UnitsLocaleRepository = Prefs,
-        private val feedStateDataSource: FeedStateDataSource = Prefs
+        private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
+        private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
@@ -48,10 +49,10 @@ class FeedPresenter(
         }
         view.showTitle()
 
-        filter = feedStateDataSource.getCurrentFilter()
+        filter = feedStateDataSource.filter
         view.showCurrentFilter(filter)
 
-        placeId = feedStateDataSource.getSelectedPlaceId()
+        placeId = feedStateDataSource.selectedPlaceId
 
         loadPlaces()
         loadEvents()
@@ -67,7 +68,7 @@ class FeedPresenter(
                     return
                 }
 
-                view.showPlaces(result, unitsLocaleRepository.getPreferredUnits())
+                view.showPlaces(result, unitsLocaleRepository.preferredUnits)
             }
 
             override fun onFailure(t: Throwable?) {
@@ -150,7 +151,7 @@ class FeedPresenter(
                         view.showProgress(false)
 
                         if (result.isNotEmpty()) {
-                            view.showEvents(result, unitsLocaleRepository.getPreferredUnits())
+                            view.showEvents(result, unitsLocaleRepository.preferredUnits)
                         } else {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
                         }
@@ -174,25 +175,25 @@ class FeedPresenter(
 
     override fun setPlaceAndReload(place: Place) {
         placeId = place.id
-        feedStateDataSource.saveSelectedPlaceId(placeId)
+        feedStateDataSource.selectedPlaceId = placeId
         loadEvents()
     }
 
     override fun setFilterAndReload(filter: FeedFilter) {
         this.filter = filter
-        feedStateDataSource.saveCurrentFilter(filter)
+        feedStateDataSource.filter = filter
         loadEvents()
     }
 
     override fun setMagnitudeFilterAndReload(minMag: Int) {
         filter = filter.copy(minMagnitude = minMag.toDouble())
-        feedStateDataSource.saveCurrentFilter(filter)
+        feedStateDataSource.filter = filter
         loadEvents()
     }
 
     override fun setSortingAndReload(sorting: FeedFilter.Sorting) {
         filter = filter.copy(sorting = sorting)
-        feedStateDataSource.saveCurrentFilter(filter)
+        feedStateDataSource.filter = filter
         loadEvents()
     }
 

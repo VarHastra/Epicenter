@@ -87,6 +87,19 @@
         <item quantity="other">%d days ago</item>
     </plurals>
 
+    <string name="prefs_app_settings">APP_SETTINGS</string>
+    <string name="pref_units_key" translatable="false">UNITS</string>
+    <string name="pref_first_launch_key" translatable="false">FIRST_LAUNCH</string>
+
+    <string name="pref_feed_selected_place">SELECTED_PLACE</string>
+    <string name="pref_feed_min_mag">FEED_MIN_MAG</string>
+    <string name="pref_feed_sorting">FEED_SORTING</string>
+
+    <string name="pref_map_filter_min_mag">MAP_MIN_MAG</string>
+    <string name="pref_map_filter_days_ago">MAP_DAYS_AGO</string>
+    <string name="pref_map_camera_zoom">CAMERA</string>
+    <string name="pref_map_cam_lat">CAMERA_LAT</string>
+    <string name="pref_map_cam_lon">CAMERA_LON</string>
 
     <string-array name="pref_units_entries">
         <item>Auto</item>

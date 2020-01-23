@@ -15,8 +15,8 @@ import androidx.core.app.ActivityOptionsCompat
 import butterknife.BindColor
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 import com.github.varhastra.epicenter.presentation.StateFragment
@@ -138,7 +138,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
 
         radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
-        val presenter = PlaceEditorPresenter(this, PlacesDataSource.getInstance(), Prefs.getPreferredUnits())
+        val presenter = PlaceEditorPresenter(this, PlacesDataSource.getInstance(), AppSettings.preferredUnits)
         if (stateFragment.data != null) {
             presenter.initialize(stateFragment.data!!)
         } else {

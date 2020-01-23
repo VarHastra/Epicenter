@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -33,7 +33,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Set up recycler view
-        adapter = PlacesAdapter(this, Prefs.getPreferredUnits())
+        adapter = PlacesAdapter(this, AppSettings.preferredUnits)
         adapter.setHasStableIds(true)
         adapter.onStartDrag = this::onStartDrag
         adapter.onItemClick = { presenter.openEditor(it.id) }

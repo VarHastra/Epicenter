@@ -1,9 +1,9 @@
 package com.github.varhastra.epicenter.data
 
-import android.content.Context
-import com.github.varhastra.epicenter.App
-import com.github.varhastra.epicenter.common.getDouble
-import com.github.varhastra.epicenter.common.putDouble
+import com.chibatching.kotpref.KotprefModel
+import com.chibatching.kotpref.bulk
+import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.doublePref
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
@@ -13,119 +13,69 @@ import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
-import org.jetbrains.anko.defaultSharedPreferences
+
+object AppState : KotprefModel() {
+    var isFirstLaunch by booleanPref(default = true, key = R.string.pref_first_launch_key)
+}
 
 
-object Prefs : FeedStateDataSource, MapStateDataSource, UnitsLocaleRepository {
-    private const val PREF_FIRST_LAUNCH = "PREF_FIRST_LAUNCH"
-    private const val PREF_UNITS = "PREF_UNITS"
+object AppSettings : KotprefModel(), UnitsLocaleRepository {
+    override val kotprefName: String
+        get() = context.getString(R.string.prefs_app_settings)
 
-    private const val PREF_FEED_PLACE_ID = "PREF_FEED_PLACE_ID"
-    private const val PREF_FEED_FILTER_MAG = "PREF_FEED_FILTER_MAG"
-    private const val PREF_FEED_FILTER_SORT = "PREF_FEED_FILTER_SORT"
-
-    private const val PREF_MAP_FILTER_MAG = "PREF_MAP_FILTER_MAG"
-    private const val PREF_MAP_FILTER_DAYS = "PREF_MAP_FILTER_DAYS"
-    private const val PREF_MAP_ZOOM_LEVEL = "PREF_MAP_ZOOM_LEVEL"
-    private const val PREF_MAP_CAM_LAT = "PREF_MAP_CAM_LAT"
-    private const val PREF_MAP_CAM_LNG = "PREF_MAP_CAM_LNG"
-
-    fun isFirstLaunch(context: Context = App.instance): Boolean {
-        return context.defaultSharedPreferences.getBoolean(PREF_FIRST_LAUNCH, true)
-    }
-
-    fun saveFirstLaunchFinished(context: Context = App.instance) {
-        context.defaultSharedPreferences.edit()
-                .putBoolean(PREF_FIRST_LAUNCH, false)
-                .apply()
-    }
-
-    override fun getPreferredUnits(context: Context): UnitsLocale {
-        val prefUnits = context.defaultSharedPreferences.getString(PREF_UNITS, null)
-
-        return when (prefUnits) {
+    override val preferredUnits
+        get() = when (_preferredUnits) {
             "0" -> UnitsLocale.getDefault()
             "1" -> UnitsLocale.METRIC
             "2" -> UnitsLocale.IMPERIAL
             else -> UnitsLocale.getDefault()
         }
-    }
+
+    private val _preferredUnits by stringPref(default = "0", key = R.string.pref_units_key)
+}
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // FeedStateDataSource methods
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+object FeedState : KotprefModel(), FeedStateDataSource {
+    override var selectedPlaceId by intPref(default = Place.WORLD.id, key = R.string.pref_feed_selected_place)
 
-    override fun saveSelectedPlaceId(id: Int) = storeSelectedPlaceId(id)
-
-    override fun getSelectedPlaceId() = retrieveSelectedPlaceId()
-
-    override fun saveCurrentFilter(filter: FeedFilter) = storeCurrentFilter(filter)
-
-    override fun getCurrentFilter(): FeedFilter = retrieveCurrentFilter()
-
-
-    private fun storeSelectedPlaceId(id: Int, context: Context = App.instance) {
-        context.defaultSharedPreferences.edit()
-                .putInt(PREF_FEED_PLACE_ID, id)
-                .apply()
-    }
-
-    private fun retrieveSelectedPlaceId(context: Context = App.instance): Int {
-        return context.defaultSharedPreferences.getInt(PREF_FEED_PLACE_ID, Place.WORLD.id)
-    }
-
-    private fun storeCurrentFilter(filter: FeedFilter, context: Context = App.instance) {
-        with(filter) {
-            context.defaultSharedPreferences.edit()
-                    .putDouble(PREF_FEED_FILTER_MAG, minMagnitude)
-                    .putInt(PREF_FEED_FILTER_SORT, filter.sorting.id)
-                    .apply()
+    override var filter: FeedFilter
+        get() {
+            return FeedFilter(_minMagnitude, FeedFilter.Sorting.fromId(_sorting))
         }
-    }
-
-    private fun retrieveCurrentFilter(context: Context = App.instance): FeedFilter {
-        return with(context.defaultSharedPreferences) {
-            val mag = getDouble(PREF_FEED_FILTER_MAG, -2.0)
-            val sortingId = getInt(PREF_FEED_FILTER_SORT, 0)
-            return FeedFilter(mag, FeedFilter.Sorting.fromId(sortingId))
-        }
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // MapStateDataSourceMethods
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    override fun saveMapState(mapState: MapState) {
-        storeMapState(mapState)
-    }
-
-    private fun storeMapState(mapState: MapState, context: Context = App.instance) {
-        context.defaultSharedPreferences.edit().apply {
-            mapState.filter.also {
-                putInt(PREF_MAP_FILTER_DAYS, it.periodDays)
-                putDouble(PREF_MAP_FILTER_MAG, it.minMagnitude)
+        set(value) {
+            bulk {
+                _minMagnitude = value.minMagnitude
+                _sorting = value.sorting.id
             }
-            mapState.also {
-                putFloat(PREF_MAP_ZOOM_LEVEL, it.zoomLevel)
-                putDouble(PREF_MAP_CAM_LAT, it.cameraPosition.latitude)
-                putDouble(PREF_MAP_CAM_LNG, it.cameraPosition.longitude)
-            }
-        }.apply()
-    }
-
-    override fun getMapState(): MapState {
-        return retrieveMapState()
-    }
-
-    private fun retrieveMapState(context: Context = App.instance): MapState {
-        return with(context.defaultSharedPreferences) {
-            val days = getInt(PREF_MAP_FILTER_DAYS, 1)
-            val mag = getDouble(PREF_MAP_FILTER_MAG, -2.0)
-            val zoom = getFloat(PREF_MAP_ZOOM_LEVEL, 3.0f)
-            val lat = getDouble(PREF_MAP_CAM_LAT, 0.0)
-            val lng = getDouble(PREF_MAP_CAM_LNG, 0.0)
-            MapState(MapFilter(mag, days), zoom, Coordinates(lat, lng))
         }
-    }
+
+    private var _minMagnitude by doublePref(key = R.string.pref_feed_min_mag)
+
+    private var _sorting by intPref(key = R.string.pref_feed_sorting)
+}
+
+
+object MapState : KotprefModel(), MapStateDataSource {
+
+    override var value: MapState
+        get() {
+            return MapState(MapFilter(_minMag, _daysAgo), _zoomLevel, Coordinates(_cameraLat, _cameraLon))
+        }
+        set(value) {
+            _minMag = value.filter.minMagnitude
+            _daysAgo = value.filter.periodDays
+            _zoomLevel = value.zoomLevel
+            _cameraLat = value.cameraPosition.latitude
+            _cameraLon = value.cameraPosition.longitude
+        }
+
+    private var _minMag by doublePref(default = -2.0, key = R.string.pref_map_filter_min_mag)
+
+    private var _daysAgo by intPref(default = 7, key = R.string.pref_map_filter_days_ago)
+
+    private var _zoomLevel by floatPref(default = 3.0f, key = R.string.pref_map_camera_zoom)
+
+    private var _cameraLat by doublePref(default = 0.0, key = R.string.pref_map_cam_lat)
+
+    private var _cameraLon by doublePref(default = 0.0, key = R.string.pref_map_cam_lon)
 }

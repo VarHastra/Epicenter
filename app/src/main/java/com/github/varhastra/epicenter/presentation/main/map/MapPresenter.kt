@@ -54,7 +54,7 @@ class MapPresenter(
 
     override fun start() {
         view.showTitle()
-        state = mapStateDataSource.getMapState()
+        state = mapStateDataSource.value
         with(state.filter) {
             view.showCurrentDaysFilter(periodDays)
             view.showCurrentMagnitudeFilter(minMagnitude.toInt())
@@ -96,19 +96,19 @@ class MapPresenter(
 
     override fun setMinMagnitude(minMagnitude: Int) {
         state = state.copy(filter = state.filter.copy(minMagnitude = minMagnitude.toDouble()))
-        mapStateDataSource.saveMapState(state)
+        mapStateDataSource.value = state
         loadEvents()
     }
 
     override fun setPeriod(days: Int) {
         state = state.copy(filter = state.filter.copy(periodDays = days))
-        mapStateDataSource.saveMapState(state)
+        mapStateDataSource.value = state
         loadEvents()
     }
 
     override fun saveCameraPosition(coordinates: Coordinates, zoom: Float) {
         state = state.copy(cameraPosition = coordinates, zoomLevel = zoom)
-        mapStateDataSource.saveMapState(state)
+        mapStateDataSource.value = state
     }
 
     override fun openEventDetails(eventId: String) {

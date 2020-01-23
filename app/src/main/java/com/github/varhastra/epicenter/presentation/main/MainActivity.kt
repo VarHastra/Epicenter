@@ -13,9 +13,10 @@ import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.data.AppState
 import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.MapState
 import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.data.Prefs
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         info("onCreate")
 
         if (checkPlayApiAvailability()) {
-            if (Prefs.isFirstLaunch()) {
+            if (AppState.isFirstLaunch) {
                 checkLocationPermission()
             }
         }
@@ -172,7 +173,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(object : PermissionListener {
                     override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                        Prefs.saveFirstLaunchFinished()
+                        AppState.isFirstLaunch = false
                     }
 
                     override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) {
@@ -180,7 +181,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     }
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                        Prefs.saveFirstLaunchFinished()
+                        AppState.isFirstLaunch = false
                     }
                 }).check()
     }
@@ -204,7 +205,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     val fragment = MapFragment()
                     MapPresenter(
                             fragment,
-                            Prefs,
+                            MapState,
                             eventsRepository,
                             locationProvider,
                             connectivityProvider

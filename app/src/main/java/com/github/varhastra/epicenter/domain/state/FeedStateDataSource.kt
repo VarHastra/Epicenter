@@ -1,18 +1,16 @@
 package com.github.varhastra.epicenter.domain.state
 
-import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
+import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 
 interface FeedStateDataSource {
 
     var selectedPlaceId: Int
 
-    var filter: FeedFilter
+    var sortCriterion: SortCriterion
 
-//    fun saveSelectedPlaceId(id: Int)
+    var sortOrder: SortOrder
 
-//    fun getSelectedPlaceId(): Int
-
-//    fun saveCurrentFilter(filter: FeedFilter)
-
-//    fun getCurrentFilter(): FeedFilter
+    var minMagnitude: MagnitudeLevel
 }

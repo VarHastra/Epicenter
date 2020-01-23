@@ -52,19 +52,11 @@
                 android:text="@string/feed_filters_chip_sorting_data" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_mag_asc"
+                android:id="@+id/chip_sorting_mag"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_filters_chip_sorting_mag_asc"
-                app:chipIconEnabled="true" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_mag_desc"
-                style="@style/SelectableChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/feed_filters_chip_sorting_mag_desc"
+                android:text="@string/feed_filters_chip_sorting_mag"
                 app:chipIconEnabled="true" />
 
             <com.google.android.material.chip.Chip

@@ -1,8 +1,10 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
-import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
+import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
@@ -30,7 +32,11 @@ interface FeedContract {
 
         fun showCurrentPlace(place: Place)
 
-        fun showCurrentFilter(filter: FeedFilter)
+        fun showCurrentSortCriterion(sortCriterion: SortCriterion)
+
+        fun showCurrentSortOrder(sortOrder: SortOrder)
+
+        fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel)
 
         fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale)
 
@@ -60,11 +66,11 @@ interface FeedContract {
 
         fun setPlaceAndReload(place: Place)
 
-        fun setFilterAndReload(filter: FeedFilter)
+        fun setSortCriterion(sortCriterion: SortCriterion)
 
-        fun setMagnitudeFilterAndReload(minMag: Int)
+        fun setSortOrder(sortOrder: SortOrder)
 
-        fun setSortingAndReload(sorting: FeedFilter.Sorting)
+        fun setMinMagnitude(magnitudeLevel: MagnitudeLevel)
 
         fun openPlacesEditor()
 

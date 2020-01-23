@@ -1,6 +1,10 @@
 package com.github.varhastra.epicenter.domain.interactors
 
-import com.github.varhastra.epicenter.domain.model.*
+import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.Position
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.filters.Filter
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
@@ -15,52 +19,43 @@ class FeedLoaderInteractor(
         loadEvents(arg, callback)
     }
 
-    private fun loadEvents(param: RequestValues, callback: InteractorCallback<List<RemoteEvent>>) {
-        // Try to get current user location first
+    private fun loadEvents(requestValues: RequestValues, callback: InteractorCallback<List<RemoteEvent>>) {
         locationRepository.getLastLocation(object : RepositoryCallback<Position> {
             override fun onResult(result: Position) {
-                // Location is available. Use it to calculate the distance to each event.
-                loadEvents(param, result.coordinates, callback)
+                loadEvents(requestValues, result.coordinates, callback)
             }
 
             override fun onFailure(t: Throwable?) {
-                // If current location is not available then just pass null
-                // RemoteEvent will take care of it
-                loadEvents(param, null, callback)
+                loadEvents(requestValues, null, callback)
             }
         })
     }
 
     private fun loadEvents(
-        param: RequestValues,
-        coordinates: Coordinates?,
-        callback: InteractorCallback<List<RemoteEvent>>
+            requestValues: RequestValues,
+            coordinates: Coordinates?,
+            callback: InteractorCallback<List<RemoteEvent>>
     ) {
-        // Get events
         eventsRepository.getWeekFeed(object : RepositoryCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
-                // Convert each Event to RemoteEvent (calculate the distance from the user's location)
-                val events = RemoteEvent.from(result, coordinates)
+                val (_, filter, comparator) = requestValues
+                val events = result.map { RemoteEvent.from(it, coordinates) }
+                        .filter { filter(it) }
+                        .sortedWith(comparator)
 
-                // Apply filters and return
-                callback.onResult(filter(events, param.filter, param.place))
+                callback.onResult(events)
             }
 
             override fun onFailure(t: Throwable?) {
                 callback.onFailure(t)
             }
-        }, param.forceLoad)
-    }
-
-    private fun filter(events: List<RemoteEvent>, filter: FeedFilter, place: Place): List<RemoteEvent> {
-        val result = events.filter { place.contains(it.event.coordinates) }
-        return filter.applyTo(result)
+        }, requestValues.forceLoad)
     }
 
 
-    class RequestValues(
-        val forceLoad: Boolean,
-        val filter: FeedFilter,
-        val place: Place
+    data class RequestValues(
+            val forceLoad: Boolean,
+            val filter: Filter<RemoteEvent>,
+            val comparator: Comparator<RemoteEvent>
     )
 }

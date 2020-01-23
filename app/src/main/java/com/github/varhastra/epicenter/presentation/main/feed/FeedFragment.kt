@@ -21,9 +21,11 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
+import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.github.varhastra.epicenter.presentation.common.views.EmptyView
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
@@ -125,14 +127,14 @@ class FeedFragment : Fragment(), FeedContract.View {
             }
 
             val minMag = when (checkedId) {
-                R.id.chip_mag_0 -> 0
-                R.id.chip_mag_2 -> 2
-                R.id.chip_mag_4 -> 4
-                R.id.chip_mag_6 -> 6
-                R.id.chip_mag_8 -> 8
-                else -> 0
+                R.id.chip_mag_0 -> MagnitudeLevel.ZERO_OR_LESS
+                R.id.chip_mag_2 -> MagnitudeLevel.TWO
+                R.id.chip_mag_4 -> MagnitudeLevel.FOUR
+                R.id.chip_mag_6 -> MagnitudeLevel.SIX
+                R.id.chip_mag_8 -> MagnitudeLevel.EIGHT
+                else -> MagnitudeLevel.ZERO_OR_LESS
             }
-            presenter.setMagnitudeFilterAndReload(minMag)
+            presenter.setMinMagnitude(minMag)
         }
 
         sortingChipGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -142,14 +144,20 @@ class FeedFragment : Fragment(), FeedContract.View {
                 }
             }
 
-            val sorting = when (checkedId) {
-                R.id.chip_sorting_date -> FeedFilter.Sorting.DATE
-                R.id.chip_sorting_mag_asc -> FeedFilter.Sorting.MAGNITUDE_ASC
-                R.id.chip_sorting_mag_desc -> FeedFilter.Sorting.MAGNITUDE_DESC
-                R.id.chip_sorting_distance -> FeedFilter.Sorting.DISTANCE
-                else -> FeedFilter.Sorting.DATE
+            val sortCriterion = when (checkedId) {
+                R.id.chip_sorting_date -> SortCriterion.DATE
+                R.id.chip_sorting_mag -> SortCriterion.MAGNITUDE
+                R.id.chip_sorting_distance -> SortCriterion.DISTANCE
+                else -> SortCriterion.DATE
             }
-            presenter.setSortingAndReload(sorting)
+            val sortOrder = when (checkedId) {
+                R.id.chip_sorting_date -> SortOrder.DESCENDING
+                R.id.chip_sorting_mag -> SortOrder.DESCENDING
+                R.id.chip_sorting_distance -> SortOrder.ASCENDING
+                else -> SortOrder.ASCENDING
+            }
+            presenter.setSortCriterion(sortCriterion)
+            presenter.setSortOrder(sortOrder)
         }
     }
 
@@ -200,31 +208,29 @@ class FeedFragment : Fragment(), FeedContract.View {
         toolbarProvider?.setDropdownText(place.name)
     }
 
-    override fun showCurrentFilter(filter: FeedFilter) {
-        showCurrentMagnitudeFilter(filter.minMagnitude.toInt())
-        showCurrentSorting(filter.sorting)
+    override fun showCurrentSortCriterion(sortCriterion: SortCriterion) {
+        val id = when (sortCriterion) {
+            SortCriterion.DATE -> R.id.chip_sorting_date
+            SortCriterion.MAGNITUDE -> R.id.chip_sorting_mag
+            SortCriterion.DISTANCE -> R.id.chip_sorting_distance
+        }
+        sortingChipGroup.check(id)
     }
 
-    private fun showCurrentMagnitudeFilter(magnitude: Int) {
-        val id = when (magnitude) {
-            in -2 until 2 -> R.id.chip_mag_0
-            in 2 until 4 -> R.id.chip_mag_2
-            in 4 until 6 -> R.id.chip_mag_4
-            in 6 until 8 -> R.id.chip_mag_6
-            in 8..10 -> R.id.chip_mag_8
+    override fun showCurrentSortOrder(sortOrder: SortOrder) {
+        // TODO: implement when ui is ready
+    }
+
+    override fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel) {
+        val id = when (magnitudeLevel) {
+            MagnitudeLevel.ZERO_OR_LESS -> R.id.chip_mag_0
+            MagnitudeLevel.TWO -> R.id.chip_mag_2
+            MagnitudeLevel.FOUR -> R.id.chip_mag_4
+            MagnitudeLevel.SIX -> R.id.chip_mag_6
+            MagnitudeLevel.EIGHT -> R.id.chip_mag_8
             else -> R.id.chip_mag_0
         }
         magnitudeChipGroup.check(id)
-    }
-
-    private fun showCurrentSorting(sorting: FeedFilter.Sorting) {
-        val id = when (sorting) {
-            FeedFilter.Sorting.DATE -> R.id.chip_sorting_date
-            FeedFilter.Sorting.MAGNITUDE_ASC -> R.id.chip_sorting_mag_asc
-            FeedFilter.Sorting.MAGNITUDE_DESC -> R.id.chip_sorting_mag_desc
-            FeedFilter.Sorting.DISTANCE -> R.id.chip_sorting_distance
-        }
-        sortingChipGroup.check(id)
     }
 
     override fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale) {

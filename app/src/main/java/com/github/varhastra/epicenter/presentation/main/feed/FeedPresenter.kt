@@ -7,6 +7,13 @@ import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.filters.AndFilter
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.domain.model.filters.PlaceFilter
+import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
+import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
+import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
 import com.github.varhastra.epicenter.domain.repos.*
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import org.jetbrains.anko.AnkoLogger
@@ -30,6 +37,13 @@ class FeedPresenter(
     private val feedLoaderInteractor = FeedLoaderInteractor(eventsRepository, locationRepository)
 
     private lateinit var filter: FeedFilter
+
+    private lateinit var sortCriterion: SortCriterion
+
+    private lateinit var sortOrder: SortOrder
+
+    private lateinit var minMagnitude: MagnitudeLevel
+
     private var placeId = Place.WORLD.id
     private var ignoreUpcomingStartCall = false
 
@@ -49,8 +63,13 @@ class FeedPresenter(
         }
         view.showTitle()
 
-        filter = feedStateDataSource.filter
-        view.showCurrentFilter(filter)
+        sortCriterion = feedStateDataSource.sortCriterion
+        sortOrder = feedStateDataSource.sortOrder
+        minMagnitude = feedStateDataSource.minMagnitude
+
+        view.showCurrentSortCriterion(sortCriterion)
+        view.showCurrentSortOrder(sortOrder)
+        view.showCurrentMagnitudeFilter(minMagnitude)
 
         placeId = feedStateDataSource.selectedPlaceId
 
@@ -138,7 +157,9 @@ class FeedPresenter(
         val minsSinceUpd = ChronoUnit.MINUTES.between(eventsRepository.weekFeedUpdatedAt, Instant.now())
         val forceLoad = (forceLoadRequested || (minsSinceUpd > FORCE_LOAD_RATE_MINS)) && networkAvailable
 
-        val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, place)
+        val filter = AndFilter(PlaceFilter(place), MagnitudeFilter(minMagnitude))
+        val sorting = SortStrategy(sortCriterion, sortOrder)
+        val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, sorting)
 
         view.showProgress(true)
         feedLoaderInteractor.execute(
@@ -179,21 +200,21 @@ class FeedPresenter(
         loadEvents()
     }
 
-    override fun setFilterAndReload(filter: FeedFilter) {
-        this.filter = filter
-        feedStateDataSource.filter = filter
+    override fun setSortCriterion(sortCriterion: SortCriterion) {
+        this.sortCriterion = sortCriterion
+        feedStateDataSource.sortCriterion = sortCriterion
         loadEvents()
     }
 
-    override fun setMagnitudeFilterAndReload(minMag: Int) {
-        filter = filter.copy(minMagnitude = minMag.toDouble())
-        feedStateDataSource.filter = filter
+    override fun setSortOrder(sortOrder: SortOrder) {
+        this.sortOrder = sortOrder
+        feedStateDataSource.sortOrder = sortOrder
         loadEvents()
     }
 
-    override fun setSortingAndReload(sorting: FeedFilter.Sorting) {
-        filter = filter.copy(sorting = sorting)
-        feedStateDataSource.filter = filter
+    override fun setMinMagnitude(magnitudeLevel: MagnitudeLevel) {
+        this.minMagnitude = magnitudeLevel
+        feedStateDataSource.minMagnitude = magnitudeLevel
         loadEvents()
     }
 

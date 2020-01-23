@@ -1,13 +1,14 @@
 package com.github.varhastra.epicenter.data
 
 import com.chibatching.kotpref.KotprefModel
-import com.chibatching.kotpref.bulk
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.doublePref
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.MapFilter
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
+import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.domain.state.MapState
@@ -36,22 +37,32 @@ object AppSettings : KotprefModel(), UnitsLocaleRepository {
 
 
 object FeedState : KotprefModel(), FeedStateDataSource {
+
     override var selectedPlaceId by intPref(default = Place.WORLD.id, key = R.string.pref_feed_selected_place)
 
-    override var filter: FeedFilter
-        get() {
-            return FeedFilter(_minMagnitude, FeedFilter.Sorting.fromId(_sorting))
-        }
+    override var sortCriterion
+        get() = SortCriterion.fromValue(_sortCriterion)
         set(value) {
-            bulk {
-                _minMagnitude = value.minMagnitude
-                _sorting = value.sorting.id
-            }
+            _sortCriterion = value.value
         }
 
-    private var _minMagnitude by doublePref(key = R.string.pref_feed_min_mag)
+    var _sortCriterion by intPref(default = SortCriterion.DATE.value, key = R.string.pref_feed_sort_criterion)
 
-    private var _sorting by intPref(key = R.string.pref_feed_sorting)
+    override var sortOrder
+        get() = SortOrder.fromValue(_sortOrder)
+        set(value) {
+            _sortOrder = value.value
+        }
+
+    var _sortOrder by intPref(default = SortOrder.ASCENDING.value, key = R.string.pref_feed_sort_order)
+
+    override var minMagnitude
+        get() = MagnitudeLevel.fromValue(_minMagnitude)
+        set(value) {
+            _minMagnitude = value.value
+        }
+
+    var _minMagnitude by intPref(default = MagnitudeLevel.ZERO_OR_LESS.value, key = R.string.pref_feed_min_mag)
 }
 
 

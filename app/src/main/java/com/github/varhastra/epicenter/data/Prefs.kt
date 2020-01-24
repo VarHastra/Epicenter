@@ -4,14 +4,13 @@ import com.chibatching.kotpref.KotprefModel
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.doublePref
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.model.MapFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
+import com.github.varhastra.epicenter.domain.state.CameraState
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
-import com.github.varhastra.epicenter.domain.state.MapState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 
@@ -68,25 +67,29 @@ object FeedState : KotprefModel(), FeedStateDataSource {
 
 object MapState : KotprefModel(), MapStateDataSource {
 
-    override var value: MapState
+    override var cameraState: CameraState
         get() {
-            return MapState(MapFilter(_minMag, _daysAgo), _zoomLevel, Coordinates(_cameraLat, _cameraLon))
+            return CameraState(_zoomLevel, Coordinates(_cameraLat, _cameraLon))
         }
         set(value) {
-            _minMag = value.filter.minMagnitude
-            _daysAgo = value.filter.periodDays
             _zoomLevel = value.zoomLevel
-            _cameraLat = value.cameraPosition.latitude
-            _cameraLon = value.cameraPosition.longitude
+            _cameraLat = value.position.latitude
+            _cameraLon = value.position.longitude
         }
-
-    private var _minMag by doublePref(default = -2.0, key = R.string.pref_map_filter_min_mag)
-
-    private var _daysAgo by intPref(default = 7, key = R.string.pref_map_filter_days_ago)
 
     private var _zoomLevel by floatPref(default = 3.0f, key = R.string.pref_map_camera_zoom)
 
     private var _cameraLat by doublePref(default = 0.0, key = R.string.pref_map_cam_lat)
 
     private var _cameraLon by doublePref(default = 0.0, key = R.string.pref_map_cam_lon)
+
+    override var minMagnitude: MagnitudeLevel
+        get() = MagnitudeLevel.fromValue(_minMag)
+        set(value) {
+            _minMag = value.value
+        }
+
+    private var _minMag by intPref(default = MagnitudeLevel.ZERO_OR_LESS.value, key = R.string.pref_map_filter_min_mag)
+
+    override var numberOfDaysToShow by intPref(default = 7, key = R.string.pref_map_filter_days_ago)
 }

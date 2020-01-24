@@ -1,6 +1,10 @@
 package com.github.varhastra.epicenter.domain.interactors
 
-import com.github.varhastra.epicenter.domain.model.*
+import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.Position
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.filters.Filter
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
@@ -17,48 +21,43 @@ class MapEventsLoaderInteractor(
         loadEvents(arg)
     }
 
-    private fun loadEvents(param: RequestValues) {
+    private fun loadEvents(requestValues: RequestValues) {
         // Try to get current user location first
         locationRepository.getLastLocation(object : RepositoryCallback<Position> {
             override fun onResult(result: Position) {
                 // Location is available. Use it to calculate the distance to each event.
-                loadEvents(param, result.coordinates)
+                loadEvents(requestValues, result.coordinates)
             }
 
             override fun onFailure(t: Throwable?) {
                 // If current location is not available then just pass null
                 // RemoteEvent will take care of it
-                loadEvents(param, null)
+                loadEvents(requestValues, null)
             }
         })
     }
 
     private fun loadEvents(
-            param: RequestValues,
+            requestValues: RequestValues,
             coordinates: Coordinates?
     ) {
         // Get events
         eventsRepository.getWeekFeed(object : RepositoryCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
-                // Convert each Event to RemoteEvent (calculate the distance from the user's location)
-                val events = RemoteEvent.from(result, coordinates)
+                val events = result.map { RemoteEvent.from(it, coordinates) }
+                        .filter { requestValues.filter(it) }
 
-                // Apply filters and return
-                onResult?.invoke(filter(events, param.filter))
+                onResult?.invoke(events)
             }
 
             override fun onFailure(t: Throwable?) {
                 onFailure?.invoke(t)
             }
-        }, param.forceLoad)
-    }
-
-    private fun filter(events: List<RemoteEvent>, mapFilter: MapFilter): List<RemoteEvent> {
-        return events.filter { mapFilter.filter(it) }
+        }, requestValues.forceLoad)
     }
 
     class RequestValues(
-            val filter: MapFilter,
-            val forceLoad: Boolean
+            val forceLoad: Boolean,
+            val filter: Filter<RemoteEvent>
     )
 }

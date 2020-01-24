@@ -1,10 +1,12 @@
 package com.github.varhastra.epicenter.domain.state
 
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+
 interface MapStateDataSource {
 
-    var value: MapState
+    var cameraState: CameraState
 
-//    fun saveMapState(mapState: MapState)
+    var numberOfDaysToShow: Int
 
-//    fun getMapState(): MapState
+    var minMagnitude: MagnitudeLevel
 }

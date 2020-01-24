@@ -16,6 +16,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.main.map.maputils.EventClusterItem
@@ -88,12 +89,12 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
             }
 
             val minMag = when (checkedId) {
-                R.id.chip_mag_0 -> 0
-                R.id.chip_mag_2 -> 2
-                R.id.chip_mag_4 -> 4
-                R.id.chip_mag_6 -> 6
-                R.id.chip_mag_8 -> 8
-                else -> 0
+                R.id.chip_mag_0 -> MagnitudeLevel.ZERO_OR_LESS
+                R.id.chip_mag_2 -> MagnitudeLevel.TWO
+                R.id.chip_mag_4 -> MagnitudeLevel.FOUR
+                R.id.chip_mag_6 -> MagnitudeLevel.SIX
+                R.id.chip_mag_8 -> MagnitudeLevel.EIGHT
+                else -> MagnitudeLevel.ZERO_OR_LESS
             }
             presenter.setMinMagnitude(minMag)
         }
@@ -108,7 +109,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                presenter.setPeriod(seekBar.progress + 1)
+                presenter.setNumberOfDaysToShow(seekBar.progress + 1)
             }
         })
     }
@@ -193,13 +194,13 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    override fun showCurrentMagnitudeFilter(magnitude: Int) {
-        val id = when (magnitude) {
-            in -2 until 2 -> R.id.chip_mag_0
-            in 2 until 4 -> R.id.chip_mag_2
-            in 4 until 6 -> R.id.chip_mag_4
-            in 6 until 8 -> R.id.chip_mag_6
-            in 8..10 -> R.id.chip_mag_8
+    override fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel) {
+        val id = when (magnitudeLevel) {
+            MagnitudeLevel.ZERO_OR_LESS -> R.id.chip_mag_0
+            MagnitudeLevel.TWO -> R.id.chip_mag_2
+            MagnitudeLevel.FOUR -> R.id.chip_mag_4
+            MagnitudeLevel.SIX -> R.id.chip_mag_6
+            MagnitudeLevel.EIGHT -> R.id.chip_mag_8
             else -> R.id.chip_mag_0
         }
         magnitudeChipGroup.check(id)

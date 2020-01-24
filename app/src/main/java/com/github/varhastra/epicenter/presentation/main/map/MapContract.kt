@@ -1,6 +1,7 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
 
@@ -21,7 +22,7 @@ interface MapContract {
 
         fun showFilters()
 
-        fun showCurrentMagnitudeFilter(magnitude: Int)
+        fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel)
 
         fun showCurrentDaysFilter(days: Int)
 
@@ -35,9 +36,9 @@ interface MapContract {
 
         fun openFilters()
 
-        fun setMinMagnitude(minMagnitude: Int)
+        fun setMinMagnitude(magnitudeLevel: MagnitudeLevel)
 
-        fun setPeriod(days: Int)
+        fun setNumberOfDaysToShow(days: Int)
 
         fun viewReady()
 

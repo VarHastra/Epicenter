@@ -68,7 +68,6 @@ dependencies {
     implementation "com.google.maps.android:android-maps-utils:$versions.play_maps_utils"
 
     implementation "com.chibatching.kotpref:kotpref:$versions.kotpref"
-    implementation "com.chibatching.kotpref:enum-support:$versions.kotpref"
 
     implementation "com.karumi:dexter:$versions.dexter"
 

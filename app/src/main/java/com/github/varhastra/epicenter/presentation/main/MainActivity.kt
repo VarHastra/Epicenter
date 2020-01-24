@@ -195,8 +195,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                             fragment,
                             eventsRepository,
                             placesRepository,
-                            locationProvider,
-                            connectivityProvider
+                            locationProvider
                     )
                     navigateTo(fragment)
                     true
@@ -207,8 +206,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                             fragment,
                             MapState,
                             eventsRepository,
-                            locationProvider,
-                            connectivityProvider
+                            locationProvider
                     )
                     navigateTo(fragment)
                     true

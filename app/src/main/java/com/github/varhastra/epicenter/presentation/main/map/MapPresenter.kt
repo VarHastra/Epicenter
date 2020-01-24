@@ -6,20 +6,16 @@ import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.filters.RecencyFilter
-import com.github.varhastra.epicenter.domain.repos.ConnectivityRepository
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.state.CameraState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.ChronoUnit
 
 class MapPresenter(
         private val view: MapContract.View,
         private val mapStateDataSource: MapStateDataSource,
         private val eventsRepository: EventsRepository,
-        private val locationRepository: LocationRepository,
-        private val connectivityRepository: ConnectivityRepository
+        private val locationRepository: LocationRepository
 ) : MapContract.Presenter {
 
     private var state: CameraState = CameraState()
@@ -82,17 +78,8 @@ class MapPresenter(
         getEvents(true)
     }
 
-    private fun getEvents(requestForceLoad: Boolean) {
-        val connectionAvailable = connectivityRepository.isNetworkConnected()
-        if (requestForceLoad && !connectionAvailable) {
-            // TODO
-//            view.showErrorNoConnection()
-        }
-
+    private fun getEvents(forceLoad: Boolean) {
         view.showProgress(true)
-
-        val minsSinceLastUpd = ChronoUnit.MINUTES.between(eventsRepository.weekFeedUpdatedAt, Instant.now())
-        val forceLoad = (requestForceLoad || minsSinceLastUpd > FORCE_LOAD_RATE_MINS) && connectionAvailable
 
         val filter = AndFilter(MagnitudeFilter(minMagnitude), RecencyFilter(numberOfDaysToShow))
         val requestValues = MapEventsLoaderInteractor.RequestValues(forceLoad, filter)
@@ -122,9 +109,5 @@ class MapPresenter(
 
     override fun openEventDetails(eventId: String) {
         view.showEventDetails(eventId)
-    }
-
-    companion object {
-        const val FORCE_LOAD_RATE_MINS = 10
     }
 }

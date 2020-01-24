@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.data
 
+import android.os.SystemClock
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
@@ -8,23 +9,25 @@ import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
-import org.threeten.bp.Instant
+import org.threeten.bp.Duration
 
 class EventsDataSource private constructor(
         private val serviceProvider: EventServiceProvider
 ) : EventsRepository {
 
-    override val isCacheAvailable get() = eventsFeedCache.isNotEmpty()
-
-    override val weekFeedUpdatedAt: Instant get() = feedUpdatedAt
-
     private val eventsFeedCache: MutableMap<String, Event> = mutableMapOf()
 
-    private var feedUpdatedAt: Instant = Instant.EPOCH
+    private var cacheUpdatedAtMillis: Long = 0
+
+    private val millisSinceCacheUpdate get() = SystemClock.elapsedRealtime() - cacheUpdatedAtMillis
+
+    private val cacheIsStale get() = millisSinceCacheUpdate > CACHE_OBSOLESCENCE_THRESHOLD_MS
+
+    private val cacheIsAvailable get() = eventsFeedCache.isNotEmpty()
 
 
     override fun getWeekFeed(callback: RepositoryCallback<List<Event>>, forceLoad: Boolean) {
-        if (!forceLoad && eventsFeedCache.isNotEmpty()) {
+        if (!forceLoad && cacheIsAvailable && !cacheIsStale) {
             val list = eventsFeedCache.values.toList()
             callback.onResult(list)
             return
@@ -44,7 +47,7 @@ class EventsDataSource private constructor(
     }
 
     override suspend fun getWeekFeedSuspending(forceLoad: Boolean): Either<List<Event>, Throwable> {
-        if (!forceLoad && eventsFeedCache.isNotEmpty()) {
+        if (!forceLoad && cacheIsAvailable && !cacheIsStale) {
             val list = eventsFeedCache.values.toList()
             return Either.Success(list)
         }
@@ -75,7 +78,7 @@ class EventsDataSource private constructor(
     }
 
     private fun updateFeedCache(list: List<Event>) {
-        feedUpdatedAt = Instant.now()
+        cacheUpdatedAtMillis = SystemClock.elapsedRealtime()
         eventsFeedCache.clear()
         eventsFeedCache.putAll(list.associateBy { it.id })
     }
@@ -91,5 +94,7 @@ class EventsDataSource private constructor(
                 instance = this
             }
         }
+
+        private val CACHE_OBSOLESCENCE_THRESHOLD_MS = Duration.ofMinutes(10).toMillis()
     }
 }

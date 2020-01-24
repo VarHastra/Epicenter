@@ -2,6 +2,7 @@ package com.github.varhastra.epicenter.presentation.main.feed
 
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
+import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
 import com.github.varhastra.epicenter.domain.interactors.FeedLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.model.FeedFilter
@@ -19,15 +20,12 @@ import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.jetbrains.anko.warn
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.ChronoUnit
 
 class FeedPresenter(
         private val view: FeedContract.View,
         private val eventsRepository: EventsRepository,
         private val placesRepository: PlacesRepository,
         private val locationRepository: LocationRepository,
-        private val connectivityRepository: ConnectivityRepository,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
@@ -148,15 +146,7 @@ class FeedPresenter(
         }, placeId)
     }
 
-    private fun getEvents(place: Place, forceLoadRequested: Boolean) {
-        val networkAvailable = connectivityRepository.isNetworkConnected()
-        if (forceLoadRequested && eventsRepository.isCacheAvailable && !networkAvailable) {
-            view.showErrorNoConnection()
-        }
-
-        val minsSinceUpd = ChronoUnit.MINUTES.between(eventsRepository.weekFeedUpdatedAt, Instant.now())
-        val forceLoad = (forceLoadRequested || (minsSinceUpd > FORCE_LOAD_RATE_MINS)) && networkAvailable
-
+    private fun getEvents(place: Place, forceLoad: Boolean) {
         val filter = AndFilter(PlaceFilter(place), MagnitudeFilter(minMagnitude))
         val sorting = SortStrategy(sortCriterion, sortOrder)
         val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, sorting)
@@ -185,8 +175,12 @@ class FeedPresenter(
                         logger.error("Error loading events: $t")
                         view.showProgress(false)
 
-                        if (!connectivityRepository.isNetworkConnected()) {
-                            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
+                        if (t is NoNetworkConnectionException) {
+                            if (forceLoad) {
+                                view.showErrorNoConnection()
+                            } else {
+                                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
+                            }
                         } else {
                             view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
                         }
@@ -228,9 +222,5 @@ class FeedPresenter(
 
     override fun ignoreUpcomingStartCall() {
         ignoreUpcomingStartCall = true
-    }
-
-    companion object {
-        const val FORCE_LOAD_RATE_MINS = 10
     }
 }

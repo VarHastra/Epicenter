@@ -14,8 +14,8 @@ import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.google.android.gms.location.*
 import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.*
+import org.threeten.bp.Duration
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -66,7 +66,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         val locationRequest = LocationRequest.create().apply {
             numUpdates = 1
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            setExpirationDuration(TimeUnit.SECONDS.toMillis(5))
+            setExpirationDuration(Duration.ofSeconds(5).toMillis())
         }
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
@@ -175,6 +175,6 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
 
 
     companion object {
-        private val LOCATION_OBSOLESCENCE_THRESHOLD_NS = TimeUnit.MINUTES.toNanos(5)
+        private val LOCATION_OBSOLESCENCE_THRESHOLD_NS = Duration.ofMinutes(5).toNanos()
     }
 }

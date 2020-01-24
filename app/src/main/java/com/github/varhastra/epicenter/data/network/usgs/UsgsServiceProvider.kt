@@ -29,6 +29,11 @@ class UsgsServiceProvider(
 
 
     override fun getWeekFeed(responseCallback: EventServiceProvider.ResponseCallback) {
+        if (isNetworkConnected.not()) {
+            responseCallback.onFailure(NoNetworkConnectionException())
+            return
+        }
+
         usgsService.getWeekFeed().enqueue(object : Callback<UsgsResponse> {
             override fun onFailure(call: Call<UsgsResponse>, t: Throwable) {
                 logger.error("getWeekFeed() failed loading data: $t")
@@ -57,6 +62,11 @@ class UsgsServiceProvider(
     }
 
     override fun getDayFeed(responseCallback: EventServiceProvider.ResponseCallback) {
+        if (isNetworkConnected.not()) {
+            responseCallback.onFailure(NoNetworkConnectionException())
+            return
+        }
+
         usgsService.getDayFeed().enqueue(object : Callback<UsgsResponse> {
             override fun onFailure(call: Call<UsgsResponse>, t: Throwable) {
                 logger.error("getDayFeed() failed loading data: $t")

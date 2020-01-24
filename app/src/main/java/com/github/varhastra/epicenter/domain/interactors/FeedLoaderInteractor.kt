@@ -1,5 +1,7 @@
 package com.github.varhastra.epicenter.domain.interactors
 
+import com.github.varhastra.epicenter.common.functionaltypes.Either
+import com.github.varhastra.epicenter.common.functionaltypes.orNull
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.Position
@@ -8,12 +10,27 @@ import com.github.varhastra.epicenter.domain.model.filters.Filter
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FeedLoaderInteractor(
         private val eventsRepository: EventsRepository,
         private val locationRepository: LocationRepository
 ) : Interactor<FeedLoaderInteractor.RequestValues, List<RemoteEvent>> {
 
+    suspend operator fun invoke(
+            forceLoad: Boolean,
+            filter: Filter<RemoteEvent>,
+            sortingStrategy: Comparator<RemoteEvent>
+    ): Either<List<RemoteEvent>, Throwable> = withContext(Dispatchers.IO) {
+
+        val coordinates = locationRepository.getCoordinates().orNull()
+        eventsRepository.getWeekFeedSuspending(forceLoad).map { events ->
+            events.map { RemoteEvent.from(it, coordinates) }
+                    .filter { filter(it) }
+                    .sortedWith(sortingStrategy)
+        }
+    }
 
     override fun execute(arg: RequestValues, callback: InteractorCallback<List<RemoteEvent>>) {
         loadEvents(arg, callback)

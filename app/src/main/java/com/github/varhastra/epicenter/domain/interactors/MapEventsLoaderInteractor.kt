@@ -1,5 +1,7 @@
 package com.github.varhastra.epicenter.domain.interactors
 
+import com.github.varhastra.epicenter.common.functionaltypes.Either
+import com.github.varhastra.epicenter.common.functionaltypes.orNull
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.Position
@@ -8,6 +10,8 @@ import com.github.varhastra.epicenter.domain.model.filters.Filter
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MapEventsLoaderInteractor(
         private val eventsRepository: EventsRepository,
@@ -16,6 +20,20 @@ class MapEventsLoaderInteractor(
     override var onResult: ((List<RemoteEvent>) -> Unit)? = null
     override var onFailure: ((Throwable?) -> Unit)? = null
 
+
+    suspend operator fun invoke(
+            forceLoad: Boolean,
+            filter: Filter<Event>,
+            sortingStrategy: Comparator<RemoteEvent>
+    ): Either<List<RemoteEvent>, Throwable> = withContext(Dispatchers.IO) {
+
+        val coordinates = locationRepository.getCoordinates().orNull()
+        eventsRepository.getWeekFeedSuspending(forceLoad).map { events ->
+            events.filter { filter(it) }
+                    .map { RemoteEvent.from(it, coordinates) }
+                    .sortedWith(sortingStrategy)
+        }
+    }
 
     override fun execute(arg: RequestValues) {
         loadEvents(arg)

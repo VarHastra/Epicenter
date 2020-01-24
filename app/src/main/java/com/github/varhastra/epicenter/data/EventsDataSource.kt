@@ -9,7 +9,6 @@ import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import org.threeten.bp.Instant
-import java.util.*
 
 class EventsDataSource private constructor(
         private val serviceProvider: EventServiceProvider
@@ -65,8 +64,8 @@ class EventsDataSource private constructor(
         }
     }
 
-    override suspend fun getEventSuspending(eventId: UUID): Either<Event, Throwable> {
-        val cachedEvent = eventsFeedCache[eventId.toString()]
+    override suspend fun getEventSuspending(eventId: String): Either<Event, Throwable> {
+        val cachedEvent = eventsFeedCache[eventId]
 
         return if (cachedEvent != null) {
             Either.Success(cachedEvent)

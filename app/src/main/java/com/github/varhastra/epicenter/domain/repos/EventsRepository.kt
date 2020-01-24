@@ -3,7 +3,6 @@ package com.github.varhastra.epicenter.domain.repos
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.domain.model.Event
 import org.threeten.bp.Instant
-import java.util.*
 
 interface EventsRepository {
 
@@ -20,5 +19,5 @@ interface EventsRepository {
 
     fun getEvent(eventId: String, callback: RepositoryCallback<Event>)
 
-    suspend fun getEventSuspending(eventId: UUID): Either<Event, Throwable>
+    suspend fun getEventSuspending(eventId: String): Either<Event, Throwable>
 }

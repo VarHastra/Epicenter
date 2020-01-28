@@ -42,10 +42,6 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 
-/**
- * A [Fragment] subclass that displays a list
- * of recent earthquakes.
- */
 class FeedFragment : Fragment(), FeedContract.View {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>

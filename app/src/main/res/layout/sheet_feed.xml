@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sheet_feed"
+    android:id="@+id/filtersSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?colorSurface"
@@ -34,8 +34,8 @@
         android:scrollbars="none"
         android:theme="@style/AppTheme.Gentle">
 
-        <com.google.android.material.chip.ChipGroup xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cg_feed_filters_sort_by"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/sortingChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_1x"
@@ -45,14 +45,14 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_date"
+                android:id="@+id/sortByDateChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/feed_filters_chip_sorting_data" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_mag"
+                android:id="@+id/sortByMagnitudeChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 app:chipIconEnabled="true" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sorting_distance"
+                android:id="@+id/sortByDistanceChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
         android:theme="@style/AppTheme.Gentle">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cg_feed_filters_magnitude"
+            android:id="@+id/magnitudeChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_1x"
@@ -93,7 +93,7 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_0"
+                android:id="@+id/magnitudeZeroChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_0" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_2"
+                android:id="@+id/magnitudeTwoChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_2" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_4"
+                android:id="@+id/magnitudeFourChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_4" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_6"
+                android:id="@+id/magnitudeSixChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_6" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_8"
+                android:id="@+id/magnitudeEightChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

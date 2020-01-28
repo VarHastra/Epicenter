@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:background="?colorSurface"
-                                                     tools:context=".presentation.main.feed.FeedFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorSurface"
+    tools:context=".presentation.main.feed.FeedFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_feed"
+        android:id="@+id/feedRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme.Gentle" />
 
     <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/pb_feed"
+        android:id="@+id/progressBar"
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:indeterminateTint="?colorPrimary" />
 
     <com.github.varhastra.epicenter.presentation.common.views.EmptyView
-        android:id="@+id/emptv_feed"
+        android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

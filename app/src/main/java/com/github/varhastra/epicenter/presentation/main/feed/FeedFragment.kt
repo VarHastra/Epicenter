@@ -11,14 +11,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.children
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.domain.model.Place
@@ -27,19 +24,19 @@ import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
-import com.github.varhastra.epicenter.presentation.common.views.EmptyView
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.placesmanager.PlacesManagerActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import kotlinx.android.synthetic.main.fragment_feed.*
+import kotlinx.android.synthetic.main.sheet_feed.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
@@ -51,24 +48,7 @@ import org.jetbrains.anko.uiThread
  */
 class FeedFragment : Fragment(), FeedContract.View {
 
-    @BindView(R.id.pb_feed)
-    lateinit var progressBar: ContentLoadingProgressBar
-
-    @BindView(R.id.cg_feed_filters_magnitude)
-    lateinit var magnitudeChipGroup: ChipGroup
-
-    @BindView(R.id.cg_feed_filters_sort_by)
-    lateinit var sortingChipGroup: ChipGroup
-
-    @BindView(R.id.sheet_feed)
-    lateinit var sheetFeed: ViewGroup
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
-
-    @BindView(R.id.emptv_feed)
-    lateinit var emptyView: EmptyView
-
-    @BindView(R.id.rv_feed)
-    lateinit var feedRecyclerView: RecyclerView
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private lateinit var presenter: FeedContract.Presenter
 
@@ -76,32 +56,33 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     private var toolbarProvider: ToolbarProvider? = null
 
-
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val root = inflater.inflate(R.layout.fragment_feed, container, false)
-        ButterKnife.bind(this, root)
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
 
-        bottomSheetBehavior = BottomSheetBehavior.from(sheetFeed)
-        bottomSheetBehavior.skipCollapsed = true
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_feed, container, false)
+    }
 
-        feedAdapter = FeedAdapter(activity!!, AppSettings.preferredUnits)
-        feedAdapter.setHasStableIds(true)
-        feedAdapter.onEventClickListener = { remoteEvent, _ ->
-            presenter.openEventDetails(remoteEvent.event.id)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet).apply {
+            skipCollapsed = true
+            state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        feedRecyclerView.setHasFixedSize(true)
-        feedRecyclerView.layoutManager = LinearLayoutManager(activity)
-        feedRecyclerView.adapter = feedAdapter
+        feedAdapter = FeedAdapter(requireActivity(), AppSettings.preferredUnits).apply {
+            setHasStableIds(true)
+            onEventClickListener = { remoteEvent, _ -> presenter.openEventDetails(remoteEvent.event.id) }
+        }
 
-        return root
+        feedRecyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(activity)
+            adapter = feedAdapter
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -127,11 +108,11 @@ class FeedFragment : Fragment(), FeedContract.View {
             }
 
             val minMag = when (checkedId) {
-                R.id.chip_mag_0 -> MagnitudeLevel.ZERO_OR_LESS
-                R.id.chip_mag_2 -> MagnitudeLevel.TWO
-                R.id.chip_mag_4 -> MagnitudeLevel.FOUR
-                R.id.chip_mag_6 -> MagnitudeLevel.SIX
-                R.id.chip_mag_8 -> MagnitudeLevel.EIGHT
+                R.id.magnitudeZeroChip -> MagnitudeLevel.ZERO_OR_LESS
+                R.id.magnitudeTwoChip -> MagnitudeLevel.TWO
+                R.id.magnitudeFourChip -> MagnitudeLevel.FOUR
+                R.id.magnitudeSixChip -> MagnitudeLevel.SIX
+                R.id.magnitudeEightChip -> MagnitudeLevel.EIGHT
                 else -> MagnitudeLevel.ZERO_OR_LESS
             }
             presenter.setMinMagnitude(minMag)
@@ -145,15 +126,15 @@ class FeedFragment : Fragment(), FeedContract.View {
             }
 
             val sortCriterion = when (checkedId) {
-                R.id.chip_sorting_date -> SortCriterion.DATE
-                R.id.chip_sorting_mag -> SortCriterion.MAGNITUDE
-                R.id.chip_sorting_distance -> SortCriterion.DISTANCE
+                R.id.sortByDateChip -> SortCriterion.DATE
+                R.id.sortByMagnitudeChip -> SortCriterion.MAGNITUDE
+                R.id.sortByDistanceChip -> SortCriterion.DISTANCE
                 else -> SortCriterion.DATE
             }
             val sortOrder = when (checkedId) {
-                R.id.chip_sorting_date -> SortOrder.DESCENDING
-                R.id.chip_sorting_mag -> SortOrder.DESCENDING
-                R.id.chip_sorting_distance -> SortOrder.ASCENDING
+                R.id.sortByDateChip -> SortOrder.DESCENDING
+                R.id.sortByMagnitudeChip -> SortOrder.DESCENDING
+                R.id.sortByDistanceChip -> SortOrder.ASCENDING
                 else -> SortOrder.ASCENDING
             }
             presenter.setSortCriterion(sortCriterion)
@@ -210,9 +191,9 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showCurrentSortCriterion(sortCriterion: SortCriterion) {
         val id = when (sortCriterion) {
-            SortCriterion.DATE -> R.id.chip_sorting_date
-            SortCriterion.MAGNITUDE -> R.id.chip_sorting_mag
-            SortCriterion.DISTANCE -> R.id.chip_sorting_distance
+            SortCriterion.DATE -> R.id.sortByDateChip
+            SortCriterion.MAGNITUDE -> R.id.sortByMagnitudeChip
+            SortCriterion.DISTANCE -> R.id.sortByDistanceChip
         }
         sortingChipGroup.check(id)
     }
@@ -223,12 +204,12 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel) {
         val id = when (magnitudeLevel) {
-            MagnitudeLevel.ZERO_OR_LESS -> R.id.chip_mag_0
-            MagnitudeLevel.TWO -> R.id.chip_mag_2
-            MagnitudeLevel.FOUR -> R.id.chip_mag_4
-            MagnitudeLevel.SIX -> R.id.chip_mag_6
-            MagnitudeLevel.EIGHT -> R.id.chip_mag_8
-            else -> R.id.chip_mag_0
+            MagnitudeLevel.ZERO_OR_LESS -> R.id.magnitudeZeroChip
+            MagnitudeLevel.TWO -> R.id.magnitudeTwoChip
+            MagnitudeLevel.FOUR -> R.id.magnitudeFourChip
+            MagnitudeLevel.SIX -> R.id.magnitudeSixChip
+            MagnitudeLevel.EIGHT -> R.id.magnitudeEightChip
+            else -> R.id.magnitudeZeroChip
         }
         magnitudeChipGroup.check(id)
     }

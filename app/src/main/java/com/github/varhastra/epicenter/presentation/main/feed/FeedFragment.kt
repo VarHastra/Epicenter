@@ -83,12 +83,13 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        toolbarProvider = context as? ToolbarProvider
-        toolbarProvider?.attachListener {
-            presenter.setPlaceAndReload(it)
-        }
-        toolbarProvider?.attachOnEditListener {
-            presenter.openPlacesEditor()
+        toolbarProvider = (context as ToolbarProvider).apply {
+            attachListener {
+                presenter.setPlaceAndReload(it)
+            }
+            attachOnEditListener {
+                presenter.openPlacesEditor()
+            }
         }
     }
 
@@ -138,6 +139,11 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        toolbarProvider = null
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_filter -> {
@@ -171,10 +177,7 @@ class FeedFragment : Fragment(), FeedContract.View {
 
 
     override fun showTitle() {
-        activity?.apply {
-            this as ToolbarProvider
-            showDropdown(true)
-        }
+        toolbarProvider?.showDropdown(true)
     }
 
     override fun showProgress(active: Boolean) {

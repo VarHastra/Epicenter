@@ -1,11 +1,13 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
+import com.github.varhastra.epicenter.common.functionaltypes.flatMap
+import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
-import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
-import com.github.varhastra.epicenter.domain.model.FeedFilter
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
@@ -15,30 +17,34 @@ import com.github.varhastra.epicenter.domain.model.filters.PlaceFilter
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
-import com.github.varhastra.epicenter.domain.repos.*
+import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import org.jetbrains.anko.warn
 
 class FeedPresenter(
         private val view: FeedContract.View,
-        private val eventsRepository: EventsRepository,
-        private val placesRepository: PlacesRepository,
-        private val locationRepository: LocationRepository,
+        private val loadFeedInteractor: LoadFeedInteractor,
+        private val loadPlacesInteractor: LoadPlacesInteractor,
+        private val loadPlaceInteractor: LoadPlaceInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
 
-    private val feedLoaderInteractor = LoadFeedInteractor(eventsRepository, locationRepository)
-
-    private lateinit var filter: FeedFilter
+    private val sortStrategy
+        get() = SortStrategy(sortCriterion, sortOrder)
 
     private lateinit var sortCriterion: SortCriterion
 
     private lateinit var sortOrder: SortOrder
+
+    private val magnitudeFilter
+        get() = MagnitudeFilter(minMagnitude)
 
     private lateinit var minMagnitude: MagnitudeLevel
 
@@ -79,20 +85,21 @@ class FeedPresenter(
      * Loads a list of places and passes it to the view.
      */
     override fun loadPlaces() {
-        placesRepository.getPlaces(object : RepositoryCallback<List<Place>> {
-            override fun onResult(result: List<Place>) {
-                if (!view.isActive()) {
-                    return
-                }
+        CoroutineScope(Dispatchers.Main).launch {
+            loadPlacesInteractor().fold(::handlePlaces, ::handlePlacesFailure)
+        }
+    }
 
-                view.showPlaces(result, unitsLocaleRepository.preferredUnits)
-            }
+    private fun handlePlaces(result: List<Place>) {
+        if (!view.isActive()) {
+            return
+        }
 
-            override fun onFailure(t: Throwable?) {
-                // Unreachable callback
-                logger.error("Error loading places $t")
-            }
-        })
+        view.showPlaces(result, unitsLocaleRepository.preferredUnits)
+    }
+
+    private fun handlePlacesFailure(t: Throwable?) {
+        logger.error("Error loading places $t")
     }
 
     override fun loadEvents() {
@@ -127,65 +134,45 @@ class FeedPresenter(
     }
 
     private fun getPlaceAndEvents(forceLoad: Boolean) {
-        placesRepository.getPlace(object : RepositoryCallback<Place> {
-            override fun onResult(result: Place) {
-                // Place is loaded, proceed by loading events
-                view.showCurrentPlace(result)
-                getEvents(result, forceLoad)
+        fun handleEvents(result: List<RemoteEvent>) {
+            if (!view.isActive()) {
+                return
             }
+            view.showProgress(false)
 
-            override fun onFailure(t: Throwable?) {
-                // We might end up here only if we requested place representing current location
-                // and for some reason current location is not available at the moment
-                logger.warn("callback.onFailure(): $t")
-                if (t !is NoSuchElementException) {
-                    view.showErrorLocationNotAvailable()
+            if (result.isNotEmpty()) {
+                view.showEvents(result, unitsLocaleRepository.preferredUnits)
+            } else {
+                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+            }
+        }
+
+        fun handleFailure(t: Throwable) {
+            if (!view.isActive()) {
+                return
+            }
+            logger.error("Error loading events: $t")
+            view.showProgress(false)
+
+            if (t is NoNetworkConnectionException) {
+                if (forceLoad) {
+                    view.showErrorNoConnection()
+                } else {
+                    view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
                 }
-                setPlaceAndReload(Place.WORLD)
+            } else {
+                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
             }
-        }, placeId)
-    }
-
-    private fun getEvents(place: Place, forceLoad: Boolean) {
-        val filter = AndFilter(PlaceFilter(place), MagnitudeFilter(minMagnitude))
-        val sorting = SortStrategy(sortCriterion, sortOrder)
-        val params = LoadFeedInteractor.RequestValues(forceLoad, filter, sorting)
+        }
 
         view.showProgress(true)
-        feedLoaderInteractor.execute(
-                params,
-                object : InteractorCallback<List<RemoteEvent>> {
-                    override fun onResult(result: List<RemoteEvent>) {
-                        if (!view.isActive()) {
-                            return
-                        }
-                        view.showProgress(false)
-
-                        if (result.isNotEmpty()) {
-                            view.showEvents(result, unitsLocaleRepository.preferredUnits)
-                        } else {
-                            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
-                        }
-                    }
-
-                    override fun onFailure(t: Throwable?) {
-                        if (!view.isActive()) {
-                            return
-                        }
-                        logger.error("Error loading events: $t")
-                        view.showProgress(false)
-
-                        if (t is NoNetworkConnectionException) {
-                            if (forceLoad) {
-                                view.showErrorNoConnection()
-                            } else {
-                                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
-                            }
-                        } else {
-                            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
-                        }
-                    }
-                })
+        CoroutineScope(Dispatchers.Main).launch {
+            loadPlaceInteractor(placeId)
+                    .ifSuccess { place -> view.showCurrentPlace(place) }
+                    .map { place -> AndFilter(PlaceFilter(place), magnitudeFilter) }
+                    .flatMap { filter -> loadFeedInteractor(forceLoad, filter, sortStrategy) }
+                    .fold(::handleEvents, ::handleFailure)
+        }
     }
 
     override fun setPlaceAndReload(place: Place) {

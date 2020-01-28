@@ -20,6 +20,9 @@ import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
@@ -193,9 +196,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     val fragment = FeedFragment()
                     FeedPresenter(
                             fragment,
-                            eventsRepository,
-                            placesRepository,
-                            locationProvider
+                            LoadFeedInteractor(eventsRepository, locationProvider),
+                            LoadPlacesInteractor(placesRepository),
+                            LoadPlaceInteractor(placesRepository)
                     )
                     navigateTo(fragment)
                     true

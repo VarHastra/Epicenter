@@ -11,10 +11,10 @@ import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class EventLoaderInteractor(
+class LoadEventInteractor(
         private val eventsRepository: EventsRepository,
         private val locationRepository: LocationRepository
-) : Interactor<EventLoaderInteractor.RequestValues, RemoteEvent> {
+) : Interactor<LoadEventInteractor.RequestValues, RemoteEvent> {
 
     suspend operator fun invoke(
             eventId: String
@@ -24,7 +24,7 @@ class EventLoaderInteractor(
         eventsRepository.getEventSuspending(eventId).map { RemoteEvent.from(it, coordinates) }
     }
 
-    override fun execute(arg: EventLoaderInteractor.RequestValues, callback: InteractorCallback<RemoteEvent>) {
+    override fun execute(arg: LoadEventInteractor.RequestValues, callback: InteractorCallback<RemoteEvent>) {
 
         locationRepository.getLastLocation(object : RepositoryCallback<Position> {
             override fun onResult(result: Position) {

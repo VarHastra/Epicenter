@@ -1,8 +1,8 @@
 package com.github.varhastra.epicenter.presentation.details
 
 import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.domain.interactors.EventLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
+import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
@@ -13,7 +13,7 @@ import org.threeten.bp.temporal.ChronoUnit
 
 class DetailsPresenter(
         private val view: DetailsContract.View,
-        private val eventLoader: EventLoaderInteractor,
+        private val loadEventInteractor: LoadEventInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings
 ) : DetailsContract.Presenter {
 
@@ -36,8 +36,8 @@ class DetailsPresenter(
     }
 
     override fun loadEvent(eventId: String) {
-        val requestVals = EventLoaderInteractor.RequestValues(eventId)
-        eventLoader.execute(requestVals, object : InteractorCallback<RemoteEvent> {
+        val requestVals = LoadEventInteractor.RequestValues(eventId)
+        loadEventInteractor.execute(requestVals, object : InteractorCallback<RemoteEvent> {
             override fun onResult(result: RemoteEvent) {
                 if (!view.isActive()) {
                     return
@@ -74,8 +74,8 @@ class DetailsPresenter(
     override fun onMapReady() {
         val ev = event?.event
         if (ev == null) {
-            val requestVals = EventLoaderInteractor.RequestValues(eventId)
-            eventLoader.execute(requestVals, object : InteractorCallback<RemoteEvent> {
+            val requestVals = LoadEventInteractor.RequestValues(eventId)
+            loadEventInteractor.execute(requestVals, object : InteractorCallback<RemoteEvent> {
                 override fun onResult(result: RemoteEvent) {
                     if (!view.isActive()) {
                         return

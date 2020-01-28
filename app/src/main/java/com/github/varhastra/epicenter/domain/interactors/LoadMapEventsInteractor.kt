@@ -13,9 +13,9 @@ import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MapEventsLoaderInteractor(
+class LoadMapEventsInteractor(
         private val eventsRepository: EventsRepository,
-        private val locationRepository: LocationRepository) : FunctionalInteractor<MapEventsLoaderInteractor.RequestValues, List<RemoteEvent>> {
+        private val locationRepository: LocationRepository) : FunctionalInteractor<LoadMapEventsInteractor.RequestValues, List<RemoteEvent>> {
 
     override var onResult: ((List<RemoteEvent>) -> Unit)? = null
     override var onFailure: ((Throwable?) -> Unit)? = null

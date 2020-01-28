@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
-import com.github.varhastra.epicenter.domain.interactors.MapEventsLoaderInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
@@ -21,12 +21,12 @@ class MapPresenter(
     private var state: CameraState = CameraState()
     private var minMagnitude: MagnitudeLevel = MagnitudeLevel.ZERO_OR_LESS
     private var numberOfDaysToShow: Int = 1
-    private val mapEventsLoaderInteractor: MapEventsLoaderInteractor = MapEventsLoaderInteractor(eventsRepository, locationRepository)
+    private val loadMapEventsInteractor: LoadMapEventsInteractor = LoadMapEventsInteractor(eventsRepository, locationRepository)
 
     init {
         view.attachPresenter(this)
 
-        mapEventsLoaderInteractor.onResult = { events ->
+        loadMapEventsInteractor.onResult = { events ->
             if (view.isActive()) {
                 val markers = events.map { EventMarker.fromRemoteEvent(it) }
                 view.showProgress(false)
@@ -46,7 +46,7 @@ class MapPresenter(
             }
         }
 
-        mapEventsLoaderInteractor.onFailure = {
+        loadMapEventsInteractor.onFailure = {
             if (view.isActive()) {
                 view.showProgress(false)
             }
@@ -82,8 +82,8 @@ class MapPresenter(
         view.showProgress(true)
 
         val filter = AndFilter(MagnitudeFilter(minMagnitude), RecencyFilter(numberOfDaysToShow))
-        val requestValues = MapEventsLoaderInteractor.RequestValues(forceLoad, filter)
-        mapEventsLoaderInteractor.execute(requestValues)
+        val requestValues = LoadMapEventsInteractor.RequestValues(forceLoad, filter)
+        loadMapEventsInteractor.execute(requestValues)
     }
 
     override fun openFilters() {

@@ -13,10 +13,10 @@ import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FeedLoaderInteractor(
+class LoadFeedInteractor(
         private val eventsRepository: EventsRepository,
         private val locationRepository: LocationRepository
-) : Interactor<FeedLoaderInteractor.RequestValues, List<RemoteEvent>> {
+) : Interactor<LoadFeedInteractor.RequestValues, List<RemoteEvent>> {
 
     suspend operator fun invoke(
             forceLoad: Boolean,

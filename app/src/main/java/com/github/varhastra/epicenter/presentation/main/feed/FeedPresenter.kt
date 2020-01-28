@@ -3,8 +3,8 @@ package com.github.varhastra.epicenter.presentation.main.feed
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
-import com.github.varhastra.epicenter.domain.interactors.FeedLoaderInteractor
 import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
+import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.model.FeedFilter
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -32,7 +32,7 @@ class FeedPresenter(
 
     private val logger = AnkoLogger(this.javaClass)
 
-    private val feedLoaderInteractor = FeedLoaderInteractor(eventsRepository, locationRepository)
+    private val feedLoaderInteractor = LoadFeedInteractor(eventsRepository, locationRepository)
 
     private lateinit var filter: FeedFilter
 
@@ -149,7 +149,7 @@ class FeedPresenter(
     private fun getEvents(place: Place, forceLoad: Boolean) {
         val filter = AndFilter(PlaceFilter(place), MagnitudeFilter(minMagnitude))
         val sorting = SortStrategy(sortCriterion, sortOrder)
-        val params = FeedLoaderInteractor.RequestValues(forceLoad, filter, sorting)
+        val params = LoadFeedInteractor.RequestValues(forceLoad, filter, sorting)
 
         view.showProgress(true)
         feedLoaderInteractor.execute(

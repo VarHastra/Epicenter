@@ -38,7 +38,6 @@ import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 
 class FeedFragment : Fragment(), FeedContract.View {
@@ -287,27 +286,23 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlacesEditor() {
-        val host = activity
-        host?.let {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it).toBundle()
-            startActivity(activity?.intentFor<PlacesManagerActivity>(), options)
-        }
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
+        val intent = Intent(requireContext(), PlacesManagerActivity::class.java)
+        startActivity(intent, options)
     }
 
     override fun showEventDetails(eventId: String) {
-        val hostActivity = activity
-        hostActivity?.let {
-            val intent = Intent(hostActivity, DetailsActivity::class.java)
-            intent.putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(hostActivity).toBundle()
-            startActivityForResult(intent, REQUEST_DETAILS, options)
+        val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
+            putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
         }
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
+        startActivityForResult(intent, REQUEST_DETAILS, options)
     }
 
     private fun showAppSettings() {
         val intent = Intent().apply {
             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            data = Uri.fromParts("package", context?.packageName, null)
+            data = Uri.fromParts("package", requireContext().packageName, null)
         }
         startActivity(intent)
     }

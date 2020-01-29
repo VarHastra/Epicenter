@@ -16,6 +16,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.domain.model.Place
@@ -36,7 +37,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
-import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
@@ -277,13 +277,13 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showErrorLocationNotAvailable() {
-        view?.longSnackbar(R.string.feed_error_location_not_avaliable, R.string.app_settings) {
+        requireView().longSnackbar(R.string.feed_error_location_not_avaliable, R.string.app_settings) {
             showAppSettings()
         }
     }
 
     override fun showErrorNoConnection() {
-        view?.longSnackbar(R.string.app_error_no_connection)
+        requireView().longSnackbar(R.string.app_error_no_connection)
     }
 
     override fun showPlacesEditor() {

@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.common
+package com.github.varhastra.epicenter.common.extensions
 
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime

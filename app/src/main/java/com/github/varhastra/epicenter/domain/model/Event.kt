@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.domain.model
 
-import com.github.varhastra.epicenter.common.toLocalDateTime
+import com.github.varhastra.epicenter.common.extensions.toLocalDateTime
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 

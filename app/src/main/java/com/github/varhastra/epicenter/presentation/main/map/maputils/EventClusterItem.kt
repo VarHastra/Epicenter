@@ -1,6 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.map.maputils
 
-import com.github.varhastra.epicenter.common.toLocalDateTime
+import com.github.varhastra.epicenter.common.extensions.toLocalDateTime
 import com.github.varhastra.epicenter.presentation.main.map.AlertLevel
 import com.github.varhastra.epicenter.presentation.main.map.EventMarker
 import com.google.android.gms.maps.model.LatLng

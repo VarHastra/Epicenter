@@ -21,7 +21,7 @@ class LoadEventInteractor(
     ): Either<RemoteEvent, Throwable> = withContext(Dispatchers.IO) {
 
         val coordinates = locationRepository.getCoordinates().orNull()
-        eventsRepository.getEventSuspending(eventId).map { RemoteEvent.from(it, coordinates) }
+        eventsRepository.getEventSuspending(eventId).map { RemoteEvent.of(it, coordinates) }
     }
 
     override fun execute(arg: LoadEventInteractor.RequestValues, callback: InteractorCallback<RemoteEvent>) {
@@ -41,7 +41,7 @@ class LoadEventInteractor(
     private fun loadEvent(position: Position?, arg: RequestValues, callback: InteractorCallback<RemoteEvent>) {
         eventsRepository.getEvent(arg.eventId, object : RepositoryCallback<Event> {
             override fun onResult(result: Event) {
-                val remoteEvent = RemoteEvent.from(result, position?.coordinates)
+                val remoteEvent = RemoteEvent.of(result, position?.coordinates)
                 callback.onResult(remoteEvent)
             }
 

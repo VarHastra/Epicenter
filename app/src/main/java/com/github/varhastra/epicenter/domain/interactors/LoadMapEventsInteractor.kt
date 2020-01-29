@@ -30,7 +30,7 @@ class LoadMapEventsInteractor(
         val coordinates = locationRepository.getCoordinates().orNull()
         eventsRepository.getWeekFeedSuspending(forceLoad).map { events ->
             events.filter { filter(it) }
-                    .map { RemoteEvent.from(it, coordinates) }
+                    .map { RemoteEvent.of(it, coordinates) }
                     .sortedWith(sortingStrategy)
         }
     }
@@ -62,7 +62,7 @@ class LoadMapEventsInteractor(
         // Get events
         eventsRepository.getWeekFeed(object : RepositoryCallback<List<Event>> {
             override fun onResult(result: List<Event>) {
-                val events = result.map { RemoteEvent.from(it, coordinates) }
+                val events = result.map { RemoteEvent.of(it, coordinates) }
                         .filter { requestValues.filter(it) }
 
                 onResult?.invoke(events)

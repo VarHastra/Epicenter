@@ -13,10 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -28,7 +28,6 @@ import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.placesmanager.PlacesManagerActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.chip.Chip
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -97,13 +96,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         super.onResume()
         presenter.start()
 
-        magnitudeChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            group.children.forEach {
-                (it as? Chip)?.apply {
-                    isClickable = !isChecked
-                }
-            }
-
+        magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
                 R.id.magnitudeZeroChip -> MagnitudeLevel.ZERO_OR_LESS
                 R.id.magnitudeTwoChip -> MagnitudeLevel.TWO
@@ -115,13 +108,7 @@ class FeedFragment : Fragment(), FeedContract.View {
             presenter.setMinMagnitude(minMag)
         }
 
-        sortingChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            group.children.forEach {
-                (it as? Chip)?.apply {
-                    isClickable = !isChecked
-                }
-            }
-
+        sortingChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val sortCriterion = when (checkedId) {
                 R.id.sortByDateChip -> SortCriterion.DATE
                 R.id.sortByMagnitudeChip -> SortCriterion.MAGNITUDE

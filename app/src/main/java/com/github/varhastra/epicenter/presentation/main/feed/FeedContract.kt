@@ -9,7 +9,6 @@ import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 
 interface FeedContract {
 
@@ -56,7 +55,7 @@ interface FeedContract {
 
         fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel)
 
-        fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale)
+        fun showPlaces(places: List<PlaceViewBlock>)
 
         fun showEvents(events: List<EventViewBlock>)
 
@@ -83,6 +82,8 @@ interface FeedContract {
         fun refreshEvents()
 
         fun setPlaceAndReload(place: Place)
+
+        fun setPlaceAndReload(placeId: Int)
 
         fun setSortCriterion(sortCriterion: SortCriterion)
 

@@ -24,11 +24,10 @@ import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
 import com.github.varhastra.epicenter.presentation.main.feed.FeedPresenter
+import com.github.varhastra.epicenter.presentation.main.feed.PlaceViewBlock
 import com.github.varhastra.epicenter.presentation.main.map.MapFragment
 import com.github.varhastra.epicenter.presentation.main.map.MapPresenter
 import com.github.varhastra.epicenter.presentation.main.notifications.NotificationsFragment
@@ -59,13 +58,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     @BindView(R.id.bnv_main)
     lateinit var bottomNavigation: BottomNavigationView
 
-    var popupWindow: ListPopupWindow? = null
+    private var popupWindow: ListPopupWindow? = null
 
-    // Adapter for ListPopupWindow that displays a list of Places for FeedFragment
-    val placesAdapter = PlacesAdapter(this@MainActivity)
+    private val placesAdapter = PlacesAdapter()
 
-    var placesPopupListener: ((Place) -> Unit)? = null
-    var placesEditPopupListener: (() -> Unit)? = null
+    private var placesPopupListener: ((PlaceViewBlock) -> Unit)? = null
+    private var placesEditPopupListener: (() -> Unit)? = null
 
     private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
     private val placesRepository = PlacesDataSource.getInstance()
@@ -249,7 +247,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 if (position == parent.adapter.count - 1) {
                     placesEditPopupListener?.invoke()
                 } else {
-                    placesPopupListener?.invoke(parent.adapter.getItem(position) as Place)
+                    placesPopupListener?.invoke(parent.adapter.getItem(position) as PlaceViewBlock)
                 }
                 this.dismiss()
             }
@@ -259,7 +257,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         }
     }
 
-    override fun attachListener(listener: (Place) -> Unit) {
+    override fun attachListener(listener: (PlaceViewBlock) -> Unit) {
         placesPopupListener = listener
     }
 
@@ -267,8 +265,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         placesEditPopupListener = listener
     }
 
-    override fun setDropdownData(places: List<Place>, unitsLocale: UnitsLocale) {
-        placesAdapter.unitsLocale = unitsLocale
+    override fun setDropdownData(places: List<PlaceViewBlock>) {
         placesAdapter.places = places
         placesAdapter.notifyDataSetChanged()
     }

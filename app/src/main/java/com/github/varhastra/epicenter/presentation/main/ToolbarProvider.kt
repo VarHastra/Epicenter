@@ -1,7 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main
 
-import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
+import com.github.varhastra.epicenter.presentation.main.feed.PlaceViewBlock
 
 interface ToolbarProvider {
 
@@ -11,9 +10,9 @@ interface ToolbarProvider {
 
     fun showDropdown(show: Boolean)
 
-    fun attachListener(listener: (Place) -> Unit)
+    fun attachListener(listener: (PlaceViewBlock) -> Unit)
 
     fun attachOnEditListener(listener: () -> Unit)
 
-    fun setDropdownData(places: List<Place>, unitsLocale: UnitsLocale)
+    fun setDropdownData(places: List<PlaceViewBlock>)
 }

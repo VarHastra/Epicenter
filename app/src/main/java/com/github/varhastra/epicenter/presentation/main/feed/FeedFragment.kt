@@ -22,7 +22,6 @@ import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.placesmanager.PlacesManagerActivity
@@ -78,8 +77,8 @@ class FeedFragment : Fragment(), FeedContract.View {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         toolbarProvider = (context as ToolbarProvider).apply {
-            attachListener {
-                presenter.setPlaceAndReload(it)
+            attachListener { place ->
+                presenter.setPlaceAndReload(place.id)
             }
             attachOnEditListener {
                 presenter.openPlacesEditor()
@@ -195,8 +194,8 @@ class FeedFragment : Fragment(), FeedContract.View {
         magnitudeChipGroup.check(id)
     }
 
-    override fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale) {
-        toolbarProvider?.setDropdownData(places, unitsLocale)
+    override fun showPlaces(places: List<PlaceViewBlock>) {
+        toolbarProvider?.setDropdownData(places)
     }
 
     override fun showEvents(events: List<EventViewBlock>) {

@@ -20,6 +20,8 @@ import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
+import com.github.varhastra.epicenter.presentation.main.feed.mappers.PlaceMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,21 +88,27 @@ class FeedPresenter(
         loadEvents()
     }
 
-    /**
-     * Loads a list of places and passes it to the view.
-     */
     override fun loadPlaces() {
         CoroutineScope(Dispatchers.Main).launch {
-            loadPlacesInteractor().fold(::handlePlaces, ::handlePlacesFailure)
+            loadPlacesInteractor()
+                    .map { places -> mapPlacesToViews(places) }
+                    .fold(::handlePlaces, ::handlePlacesFailure)
         }
     }
 
-    private fun handlePlaces(result: List<Place>) {
+    private suspend fun mapPlacesToViews(places: List<Place>): List<PlaceViewBlock> {
+        return withContext(Dispatchers.Default) {
+            val mapper = PlaceMapper(context, unitsLocaleRepository.preferredUnits)
+            places.map { mapper.map(it) }
+        }
+    }
+
+    private fun handlePlaces(places: List<PlaceViewBlock>) {
         if (!view.isActive()) {
             return
         }
 
-        view.showPlaces(result, unitsLocaleRepository.preferredUnits)
+        view.showPlaces(places)
     }
 
     private fun handlePlacesFailure(t: Throwable?) {
@@ -196,14 +204,18 @@ class FeedPresenter(
     }
 
     private suspend fun mapEventsToViews(events: List<RemoteEvent>): List<EventViewBlock> {
-        val mapper = Mapper(context, unitsLocaleRepository.preferredUnits)
+        val mapper = EventMapper(context, unitsLocaleRepository.preferredUnits)
         return withContext(Dispatchers.Default) {
             events.map { mapper.map(it) }
         }
     }
 
     override fun setPlaceAndReload(place: Place) {
-        placeId = place.id
+        setPlaceAndReload(place.id)
+    }
+
+    override fun setPlaceAndReload(placeId: Int) {
+        this.placeId = placeId
         feedStateDataSource.selectedPlaceId = placeId
         loadEvents()
     }

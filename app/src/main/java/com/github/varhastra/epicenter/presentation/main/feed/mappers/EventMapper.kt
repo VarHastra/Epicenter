@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.presentation.main.feed
+package com.github.varhastra.epicenter.presentation.main.feed.mappers
 
 import android.content.Context
 import com.github.varhastra.epicenter.R
@@ -8,12 +8,13 @@ import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.presentation.common.AlertLevel
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
+import com.github.varhastra.epicenter.presentation.main.feed.EventViewBlock
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-class Mapper(context: Context, unitsLocale: UnitsLocale) {
+class EventMapper(context: Context, unitsLocale: UnitsLocale) {
 
     private val magnitudeDecimalFormat: DecimalFormat = DecimalFormat("0.0")
 

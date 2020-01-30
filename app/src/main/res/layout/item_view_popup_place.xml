@@ -8,7 +8,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/iv_item_view_popup_place_icon"
+        android:id="@+id/popupIconImageView"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginStart="@dimen/spacing_2x"
@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_item_view_popup_place"
+            android:id="@+id/popupTitleTextView"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             tools:text="San Francisco" />
 
         <TextView
-            android:id="@+id/tv_item_view_popup_place_radius"
+            android:id="@+id/popupRadiusTextView"
             style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

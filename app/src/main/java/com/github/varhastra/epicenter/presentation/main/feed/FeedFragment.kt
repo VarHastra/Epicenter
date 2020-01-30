@@ -208,30 +208,12 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedRecyclerView.scheduleLayoutAnimation()
     }
 
-    override fun showErrorNoData(reason: FeedContract.View.ErrorReason) {
-        val triple = when (reason) {
-            FeedContract.View.ErrorReason.ERR_NO_EVENTS -> Triple(
-                    R.string.app_error_no_events,
-                    R.string.app_error_no_events_capt,
-                    R.drawable.ic_error_earth_24px
-            )
-            FeedContract.View.ErrorReason.ERR_NO_CONNECTION -> Triple(
-                    R.string.app_error_no_connection,
-                    R.string.app_error_no_connection_capt,
-                    R.drawable.ic_error_wifi_off_24px
-            )
-            FeedContract.View.ErrorReason.ERR_UNKNOWN -> Triple(
-                    R.string.app_error_unknown,
-                    R.string.app_error_unknown_capt,
-                    R.drawable.ic_error_cloud_off_24dp
-            )
-        }
-        // TODO: consider showing "retry" button
+    override fun showErrorNoData(errorType: FeedContract.View.ErrorType) {
         feedRecyclerView.visibility = View.INVISIBLE
         emptyView.apply {
-            setTitle(triple.first)
-            setCaption(triple.second)
-            setImageDrawable(triple.third)
+            setTitle(errorType.titleResId)
+            setCaption(errorType.bodyResId)
+            setImageDrawable(errorType.iconResId)
             visibility = View.VISIBLE
         }
     }

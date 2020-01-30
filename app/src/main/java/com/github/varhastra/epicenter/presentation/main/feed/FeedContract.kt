@@ -1,5 +1,8 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
@@ -11,10 +14,26 @@ import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 interface FeedContract {
 
     interface View : BaseView<Presenter> {
-        enum class ErrorReason {
-            ERR_NO_EVENTS,
-            ERR_NO_CONNECTION,
-            ERR_UNKNOWN
+        enum class ErrorType(
+                @StringRes val titleResId: Int,
+                @StringRes val bodyResId: Int,
+                @DrawableRes val iconResId: Int
+        ) {
+            NO_EVENTS(
+                    R.string.app_error_no_events,
+                    R.string.app_error_no_events_capt,
+                    R.drawable.ic_error_earth_24px
+            ),
+            NO_CONNECTION(
+                    R.string.app_error_no_connection,
+                    R.string.app_error_no_connection_capt,
+                    R.drawable.ic_error_wifi_off_24px
+            ),
+            UNKNOWN(
+                    R.string.app_error_unknown,
+                    R.string.app_error_unknown_capt,
+                    R.drawable.ic_error_cloud_off_24dp
+            )
         }
 
         interface PermissionRequestCallback {
@@ -41,7 +60,7 @@ interface FeedContract {
 
         fun showEvents(events: List<EventViewBlock>)
 
-        fun showErrorNoData(reason: ErrorReason)
+        fun showErrorNoData(errorType: ErrorType)
 
         fun showLocationPermissionRequest(callback: PermissionRequestCallback)
 

@@ -160,7 +160,7 @@ class FeedPresenter(
         view.showProgress(false)
 
         if (newEvents.isEmpty()) {
-            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+            view.showErrorNoData(FeedContract.View.ErrorType.NO_EVENTS)
             this.events = newEvents
             return
         }
@@ -182,10 +182,10 @@ class FeedPresenter(
             if (forceLoad) {
                 view.showErrorNoConnection()
             } else {
-                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
+                view.showErrorNoData(FeedContract.View.ErrorType.NO_CONNECTION)
             }
         } else {
-            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
+            view.showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
         }
     }
 

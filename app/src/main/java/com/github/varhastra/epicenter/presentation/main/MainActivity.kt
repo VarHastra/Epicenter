@@ -12,6 +12,7 @@ import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppState
 import com.github.varhastra.epicenter.data.EventsDataSource
@@ -195,6 +196,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 R.id.navigation_feed -> {
                     val fragment = FeedFragment()
                     FeedPresenter(
+                            App.instance,
                             fragment,
                             LoadFeedInteractor(eventsRepository, locationProvider),
                             LoadPlacesInteractor(placesRepository),

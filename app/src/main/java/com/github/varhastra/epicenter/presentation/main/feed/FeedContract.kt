@@ -1,7 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
@@ -40,7 +39,7 @@ interface FeedContract {
 
         fun showPlaces(places: List<Place>, unitsLocale: UnitsLocale)
 
-        fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale)
+        fun showEvents(events: List<EventViewBlock>)
 
         fun showErrorNoData(reason: ErrorReason)
 

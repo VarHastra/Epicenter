@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
+import android.content.Context
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.AppSettings
@@ -22,10 +23,12 @@ import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 
 class FeedPresenter(
+        private val context: Context,
         private val view: FeedContract.View,
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlacesInteractor: LoadPlacesInteractor,
@@ -35,6 +38,8 @@ class FeedPresenter(
 ) : FeedContract.Presenter {
 
     private val logger = AnkoLogger(this.javaClass)
+
+    private var events = listOf<EventViewBlock>()
 
     private val sortStrategy
         get() = SortStrategy(sortCriterion, sortOrder)
@@ -134,44 +139,66 @@ class FeedPresenter(
     }
 
     private fun getPlaceAndEvents(forceLoad: Boolean) {
-        fun handleEvents(result: List<RemoteEvent>) {
-            if (!view.isActive()) {
-                return
-            }
-            view.showProgress(false)
-
-            if (result.isNotEmpty()) {
-                view.showEvents(result, unitsLocaleRepository.preferredUnits)
-            } else {
-                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
-            }
-        }
-
-        fun handleFailure(t: Throwable) {
-            if (!view.isActive()) {
-                return
-            }
-            logger.error("Error loading events: $t")
-            view.showProgress(false)
-
-            if (t is NoNetworkConnectionException) {
-                if (forceLoad) {
-                    view.showErrorNoConnection()
-                } else {
-                    view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
-                }
-            } else {
-                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
-            }
-        }
-
         view.showProgress(true)
         CoroutineScope(Dispatchers.Main).launch {
             loadPlaceInteractor(placeId)
                     .ifSuccess { place -> view.showCurrentPlace(place) }
                     .map { place -> AndFilter(PlaceFilter(place), magnitudeFilter) }
                     .flatMap { filter -> loadFeedInteractor(forceLoad, filter, sortStrategy) }
-                    .fold(::handleEvents, ::handleFailure)
+                    .map { events -> mapEventsToViews(events) }
+                    .fold(
+                            { eventViews -> handleEvents(eventViews) },
+                            { failure -> handleFailure(failure, forceLoad) }
+                    )
+        }
+    }
+
+    private suspend fun handleEvents(newEvents: List<EventViewBlock>) {
+        if (!view.isActive()) {
+            return
+        }
+        view.showProgress(false)
+
+        if (newEvents.isEmpty()) {
+            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_EVENTS)
+            this.events = newEvents
+            return
+        }
+
+        if (!areEventListsEqual(newEvents, this.events)) {
+            view.showEvents(newEvents)
+            this.events = newEvents
+        }
+    }
+
+    private fun handleFailure(t: Throwable, forceLoad: Boolean) {
+        if (!view.isActive()) {
+            return
+        }
+        logger.error("Error loading events: $t")
+        view.showProgress(false)
+
+        if (t is NoNetworkConnectionException) {
+            if (forceLoad) {
+                view.showErrorNoConnection()
+            } else {
+                view.showErrorNoData(FeedContract.View.ErrorReason.ERR_NO_CONNECTION)
+            }
+        } else {
+            view.showErrorNoData(FeedContract.View.ErrorReason.ERR_UNKNOWN)
+        }
+    }
+
+    private suspend fun areEventListsEqual(first: List<EventViewBlock>, second: List<EventViewBlock>): Boolean {
+        return withContext(Dispatchers.Default) {
+            first == second
+        }
+    }
+
+    private suspend fun mapEventsToViews(events: List<RemoteEvent>): List<EventViewBlock> {
+        val mapper = Mapper(context, unitsLocaleRepository.preferredUnits)
+        return withContext(Dispatchers.Default) {
+            events.map { mapper.map(it) }
         }
     }
 

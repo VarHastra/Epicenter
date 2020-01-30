@@ -18,9 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
-import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
@@ -37,8 +35,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class FeedFragment : Fragment(), FeedContract.View {
 
@@ -67,9 +63,9 @@ class FeedFragment : Fragment(), FeedContract.View {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        feedAdapter = FeedAdapter(requireActivity(), AppSettings.preferredUnits).apply {
-            setHasStableIds(true)
-            onEventClickListener = { remoteEvent, _ -> presenter.openEventDetails(remoteEvent.event.id) }
+        feedAdapter = FeedAdapter(requireActivity()).apply {
+            setHasStableIds(false)
+            onItemClickListener = { eventId, _ -> presenter.openEventDetails(eventId) }
         }
 
         feedRecyclerView.apply {
@@ -203,25 +199,13 @@ class FeedFragment : Fragment(), FeedContract.View {
         toolbarProvider?.setDropdownData(places, unitsLocale)
     }
 
-    override fun showEvents(events: List<RemoteEvent>, unitsLocale: UnitsLocale) {
+    override fun showEvents(events: List<EventViewBlock>) {
         emptyView.visibility = View.INVISIBLE
         feedRecyclerView.visibility = View.VISIBLE
-        feedAdapter.unitsLocale = unitsLocale
-        val oldEvents = feedAdapter.data
-        doAsync {
-            // Compare the old and the new list and animate rv if there is any difference
-            if (oldEvents != events) {
-                uiThread {
-                    feedAdapter.data = events
-                    feedRecyclerView.scrollToPosition(0)
-                    feedRecyclerView.scheduleLayoutAnimation()
-                }
-            } else {
-                uiThread {
-                    feedAdapter.data = events
-                }
-            }
-        }
+
+        feedAdapter.data = events
+        feedRecyclerView.scrollToPosition(0)
+        feedRecyclerView.scheduleLayoutAnimation()
     }
 
     override fun showErrorNoData(reason: FeedContract.View.ErrorReason) {

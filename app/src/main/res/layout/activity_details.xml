@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:fitsSystemWindows="false"
-                                                     tools:context=".presentation.details.DetailsActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context=".presentation.details.DetailsActivity">
 
     <!-- For some reason if CoordinatorLayout has a background,
          transitions doesn't work properly. So this is a workaround
@@ -32,7 +32,7 @@
             app:contentScrim="?colorSurface"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false"
-            app:toolbarId="@id/tb_details">
+            app:toolbarId="@id/toolbar">
 
             <include
                 layout="@layout/view_header_details"
@@ -43,7 +43,7 @@
                 app:layout_collapseParallaxMultiplier="0.5" />
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/tb_details"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 app:layout_collapseMode="pin" />
@@ -52,7 +52,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollview_details"
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionName="target"
@@ -64,7 +64,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_details_place_name"
+                android:id="@+id/titleTv"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 tools:text="257km W of Ferndale, California" />
 
             <TextView
-                android:id="@+id/tv_details_distance"
+                android:id="@+id/distanceFromUserTv"
                 style="@style/TextAppearance.MaterialComponents.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                 tools:text="Distance to your location: 1125km" />
 
             <TextView
-                android:id="@+id/tv_details_coordinates"
+                android:id="@+id/coordinatesTv"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 tools:textColor="@color/colorAlert4" />
 
             <TextView
-                android:id="@+id/tv_details_tsunami_alert"
+                android:id="@+id/tsunamiAlertTv"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
                 android:textColor="@color/colorTsunami" />
 
             <com.github.varhastra.epicenter.presentation.common.views.TileTwolineView
-                android:id="@+id/tile_details_datetime"
+                android:id="@+id/dateTimeTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_datetime_white_24px"
@@ -116,7 +116,7 @@
                 tools:textSecondLine="2 days ago" />
 
             <com.github.varhastra.epicenter.presentation.common.views.TileView
-                android:id="@+id/tile_depth_datetime"
+                android:id="@+id/depthTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_depth_white_24px"
@@ -124,7 +124,7 @@
                 tools:text="15 km" />
 
             <com.github.varhastra.epicenter.presentation.common.views.TileView
-                android:id="@+id/tile_details_dyfi"
+                android:id="@+id/feltReportsTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_dyfi_white_24px"
@@ -132,7 +132,7 @@
                 tools:text="4" />
 
             <com.github.varhastra.epicenter.presentation.common.views.TileView
-                android:id="@+id/tile_details_source_link"
+                android:id="@+id/sourceLinkTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_open_link_white_24px"

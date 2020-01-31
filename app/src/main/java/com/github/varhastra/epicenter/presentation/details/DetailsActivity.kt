@@ -2,135 +2,56 @@ package com.github.varhastra.epicenter.presentation.details
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.widget.NestedScrollView
-import butterknife.BindColor
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.extensions.setTextColorRes
+import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.EventsDataSource
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
-import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
-import com.github.varhastra.epicenter.presentation.common.views.TileTwolineView
-import com.github.varhastra.epicenter.presentation.common.views.TileView
+import com.github.varhastra.epicenter.presentation.common.EventMarker
+import com.github.varhastra.epicenter.presentation.common.toMarkerOptions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
-import org.jetbrains.anko.AnkoLogger
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
-import java.text.DecimalFormat
+import kotlinx.android.synthetic.main.activity_details.*
+import kotlinx.android.synthetic.main.view_header_details.*
 
 class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
 
-    val logger = AnkoLogger(this.javaClass)
-
-    @JvmField
-    @BindColor(R.color.colorAlert0)
-    @ColorInt
-    var colorAlert0: Int = 0
-
-    @JvmField
-    @BindColor(R.color.colorAlert2)
-    @ColorInt
-    var colorAlert2: Int = 0
-
-    @JvmField
-    @BindColor(R.color.colorAlert4)
-    @ColorInt
-    var colorAlert4: Int = 0
-
-    @JvmField
-    @BindColor(R.color.colorAlert6)
-    @ColorInt
-    var colorAlert6: Int = 0
-
-    @JvmField
-    @BindColor(R.color.colorAlert8)
-    @ColorInt
-    var colorAlert8: Int = 0
-
-    @BindView(R.id.tb_details)
-    lateinit var toolbar: Toolbar
-
-    @BindView(R.id.scrollview_details)
-    lateinit var scrollView: NestedScrollView
-
-    @BindView(R.id.tile_details_datetime)
-    lateinit var dateTile: TileTwolineView
-
-    @BindView(R.id.tile_depth_datetime)
-    lateinit var depthTile: TileView
-
-    @BindView(R.id.tile_details_dyfi)
-    lateinit var dyfiTile: TileView
-
-    @BindView(R.id.tile_details_source_link)
-    lateinit var sourceTile: TileView
-
-    @BindView(R.id.tv_details_header_magnitude)
-    lateinit var magnitudeTextView: TextView
-
-    @BindView(R.id.tv_details_header_magnitude_type)
-    lateinit var magnitudeTypeTextView: TextView
-
-    @BindView(R.id.tv_details_place_name)
-    lateinit var placeNameTextView: TextView
-
-    @BindView(R.id.tv_details_distance)
-    lateinit var distanceTextView: TextView
-
-    @BindView(R.id.tv_details_coordinates)
-    lateinit var coordinatesTextView: TextView
-
-    @BindView(R.id.tv_details_tsunami_alert)
-    lateinit var tsunamiAlertTextView: TextView
-
     private lateinit var presenter: DetailsContract.Presenter
+
     private lateinit var map: GoogleMap
-
-    private var alertAccentColor: Int = 0
-
-    private val magFormatter: DecimalFormat = DecimalFormat("0.0")
-    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
-        ButterKnife.bind(this)
         setUpAnimations()
-
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment
-        mapFragment?.getMapAsync(this)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sourceTile.setOnClickListener { presenter.openSourceLink() }
+        val presenter = DetailsPresenter(
+                App.instance,
+                this,
+                LoadEventInteractor(EventsDataSource.getInstance(), LocationProvider()),
+                AppSettings
+        )
 
+        sourceLinkTile.setOnClickListener { presenter.openSourceLink() }
 
-        val presenter = DetailsPresenter(this, LoadEventInteractor(EventsDataSource.getInstance(), LocationProvider()))
-        intent?.apply {
-            val eventId = getStringExtra(EXTRA_EVENT_ID)
-            presenter.init(eventId)
-        }
+        val eventId = intent.getStringExtra(EXTRA_EVENT_ID)
+                ?: throw IllegalStateException("Event id was expected as an intent extra with the DetailsActivity.EXTRA_EVENT_ID key.")
+        presenter.init(eventId)
     }
 
     private fun setUpAnimations() {
@@ -142,9 +63,11 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.start()
+    override fun onStart() {
+        super.onStart()
+        (supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment).run {
+            getMapAsync(this@DetailsActivity)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -153,7 +76,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
                 onBackPressed()
                 true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -163,22 +86,12 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        map.uiSettings.isMapToolbarEnabled = false
-        try {
-            val success = map.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.map_style
-                    )
-            )
-
-            if (!success) {
-                error("Error parsing map styles.")
-            }
-        } catch (e: Resources.NotFoundException) {
-            error("Map style resource not found. ${e.stackTrace}.")
+        map = googleMap.apply {
+            uiSettings.isMapToolbarEnabled = false
+            setMapStyle(MapStyleOptions.loadRawResourceStyle(this@DetailsActivity, R.raw.map_style))
         }
-        presenter.onMapReady()
+
+        presenter.start()
     }
 
     override fun attachPresenter(presenter: DetailsContract.Presenter) {
@@ -187,99 +100,53 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
 
     override fun isActive() = !(isFinishing || isDestroyed)
 
-    override fun showEventOnMap(coordinates: Coordinates, alertType: DetailsContract.View.AlertType) {
-        val markerPos = LatLng(coordinates.latitude, coordinates.longitude)
+    override fun showEvent(event: EventViewBlock) {
+        magnitudeValueTv.text = event.magnitudeValue
+        magnitudeTypeTv.text = event.magnitudeType
 
-        val marker = MarkerOptions()
-                .position(markerPos)
-                .icon(BitmapDescriptorFactory.fromResource(getMarkerResource(alertType)))
-                .anchor(0.5f, 0.5f)
+        magnitudeValueTv.setTextColorRes(event.alertLevel.colorResId)
+        magnitudeTypeTv.setTextColorRes(event.alertLevel.colorResId)
 
-        map.addMarker(marker)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPos, 2.4f))
+        titleTv.text = event.title
+
+        coordinatesTv.text = event.coordinates
+        coordinatesTv.setTextColorRes(event.alertLevel.colorResId)
+        distanceFromUserTv.text = event.distanceFromUser
+
+        dateTimeTile.setFirstLineText(event.dateTime)
+        dateTimeTile.setSecondLineText(event.daysAgo)
+
+        depthTile.setText(event.depth)
+
+        feltReportsTile.setText(event.feltReports)
+
+        sourceLinkTile.setText(event.sourceLink)
+
+        tsunamiAlertTv.visibility = if (event.tsunamiAlert) View.VISIBLE else View.GONE
     }
 
-    override fun setAlertColor(alertType: DetailsContract.View.AlertType) {
-        alertAccentColor = getAlertColor(alertType)
-    }
-
-    override fun showEventMagnitude(magnitude: Double, type: String) {
-        magnitudeTextView.text = magFormatter.format(magnitude)
-        magnitudeTypeTextView.text = type
-
-        magnitudeTextView.setTextColor(alertAccentColor)
-        magnitudeTypeTextView.setTextColor(alertAccentColor)
-    }
-
-    override fun showEventPlace(place: String) {
-        placeNameTextView.text = place
-    }
-
-    override fun showEventDistance(distance: Double?, unitsFormatter: UnitsFormatter) {
-        distanceTextView.text = getString(R.string.details_event_distance, unitsFormatter.getLocalizedDistanceString(distance?.toInt()))
-    }
-
-    override fun showEventCoordinates(coordinates: Coordinates) {
-        coordinatesTextView.text = getString(R.string.details_event_coordinates, coordinates.latitude, coordinates.longitude)
-        coordinatesTextView.setTextColor(alertAccentColor)
-    }
-
-    override fun showTsunamiAlert(show: Boolean) {
-        tsunamiAlertTextView.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    override fun showEventDate(localDateTime: LocalDateTime, daysAgo: Int) {
-        dateTile.setFirstLineText(dateTimeFormatter.format(localDateTime))
-        dateTile.setSecondLineText(resources.getQuantityString(R.plurals.plurals_details_days_ago, daysAgo, daysAgo))
-    }
-
-    override fun showEventDepth(depth: Double, unitsFormatter: UnitsFormatter) {
-        depthTile.setText(unitsFormatter.getLocalizedDistanceString(depth))
-    }
-
-    override fun showEventReports(reportsCount: Int) {
-        dyfiTile.setText(reportsCount.toString())
-    }
-
-    override fun showEventLink(linkUrl: String) {
-        sourceTile.setText(linkUrl)
+    override fun showEventMapMarker(marker: EventMarker) {
+        map.run {
+            addMarker(marker.toMarkerOptions())
+            moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                            LatLng(marker.latitude, marker.longitude),
+                            2.0f
+                    )
+            )
+        }
     }
 
     override fun showErrorNoData() {
-//        TODO("stub, not implemented")
+        // TODO: implement
     }
 
-    override fun showSourceLinkViewer(link: String) {
-        val uri = Uri.parse(link)
+    override fun openSourceLink(uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
     }
-
-    @ColorInt
-    private fun getAlertColor(alertType: DetailsContract.View.AlertType): Int {
-        return when (alertType) {
-            DetailsContract.View.AlertType.ALERT_0 -> colorAlert0
-            DetailsContract.View.AlertType.ALERT_2 -> colorAlert2
-            DetailsContract.View.AlertType.ALERT_4 -> colorAlert4
-            DetailsContract.View.AlertType.ALERT_6 -> colorAlert6
-            DetailsContract.View.AlertType.ALERT_8 -> colorAlert8
-            else -> colorAlert0
-        }
-    }
-
-    private fun getMarkerResource(alertType: DetailsContract.View.AlertType): Int {
-        return when (alertType) {
-            DetailsContract.View.AlertType.ALERT_0 -> R.drawable.marker_0
-            DetailsContract.View.AlertType.ALERT_2 -> R.drawable.marker_2
-            DetailsContract.View.AlertType.ALERT_4 -> R.drawable.marker_4
-            DetailsContract.View.AlertType.ALERT_6 -> R.drawable.marker_6
-            DetailsContract.View.AlertType.ALERT_8 -> R.drawable.marker_8
-            else -> R.drawable.marker_0
-        }
-    }
-
 
     companion object {
         const val EXTRA_EVENT_ID = "EVENT_ID"

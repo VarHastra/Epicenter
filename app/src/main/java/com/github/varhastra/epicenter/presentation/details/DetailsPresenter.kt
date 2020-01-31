@@ -1,26 +1,29 @@
 package com.github.varhastra.epicenter.presentation.details
 
-import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.domain.interactors.InteractorCallback
+import android.content.Context
+import android.net.Uri
+import android.webkit.URLUtil
 import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
-import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.temporal.ChronoUnit
+import com.github.varhastra.epicenter.presentation.common.AlertLevel
+import com.github.varhastra.epicenter.presentation.common.EventMarker
+import com.github.varhastra.epicenter.presentation.details.mappers.EventMapper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailsPresenter(
+        private val context: Context,
         private val view: DetailsContract.View,
         private val loadEventInteractor: LoadEventInteractor,
-        private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings
+        private val unitsLocaleRepository: UnitsLocaleRepository
 ) : DetailsContract.Presenter {
 
-    private val logger = AnkoLogger(this.javaClass)
     private lateinit var eventId: String
-    private var event: RemoteEvent? = null
-    private lateinit var unitsFormatter: UnitsFormatter
+
+    private var remoteEvent: RemoteEvent? = null
 
     init {
         view.attachPresenter(this)
@@ -32,87 +35,52 @@ class DetailsPresenter(
 
     override fun start() {
         loadEvent(eventId)
-        unitsFormatter = UnitsFormatter(unitsLocaleRepository.preferredUnits)
     }
 
     override fun loadEvent(eventId: String) {
-        val requestVals = LoadEventInteractor.RequestValues(eventId)
-        loadEventInteractor.execute(requestVals, object : InteractorCallback<RemoteEvent> {
-            override fun onResult(result: RemoteEvent) {
-                if (!view.isActive()) {
-                    return
-                }
-
-                event = result
-                with(result.event) {
-                    view.setAlertColor(getAlertType(magnitude.toInt()))
-                    view.showEventMagnitude(magnitude, magnitudeType)
-                    view.showEventPlace(placeName)
-                    view.showEventCoordinates(coordinates)
-                    view.showEventDepth(depth, unitsFormatter)
-                    view.showTsunamiAlert(tsunamiAlert)
-                    val days = ChronoUnit.DAYS.between(localDatetime, LocalDateTime.now())
-                    view.showEventDate(localDatetime, days.toInt())
-                    view.showEventReports(feltReportsCount)
-                    view.showEventLink(link)
-                }
-
-                view.showEventDistance(result.distance, unitsFormatter)
-            }
-
-            override fun onFailure(t: Throwable?) {
-                logger.error("Error retrieving event. ${t?.stackTrace}")
-                if (!view.isActive()) {
-                    return
-                }
-
-                view.showErrorNoData()
-            }
-        })
+        CoroutineScope(Dispatchers.Main).launch {
+            loadEventInteractor(eventId).fold(
+                    { handleEvent(it) },
+                    { handleFailure(it) }
+            )
+        }
     }
 
-    override fun onMapReady() {
-        val ev = event?.event
-        if (ev == null) {
-            val requestVals = LoadEventInteractor.RequestValues(eventId)
-            loadEventInteractor.execute(requestVals, object : InteractorCallback<RemoteEvent> {
-                override fun onResult(result: RemoteEvent) {
-                    if (!view.isActive()) {
-                        return
-                    }
+    private suspend fun mapEventToView(remoteEvent: RemoteEvent): EventViewBlock = withContext(Dispatchers.Default) {
+        val mapper = EventMapper(context, unitsLocaleRepository.preferredUnits)
+        mapper.map(remoteEvent)
+    }
 
-                    view.showEventOnMap(result.event.coordinates, getAlertType(result.event.magnitude.toInt()))
-                }
+    private suspend fun mapEventToMarker(remoteEvent: RemoteEvent): EventMarker = withContext(Dispatchers.Default) {
+        val (event, _) = remoteEvent
+        EventMarker(
+                event.id,
+                event.placeName,
+                "",
+                AlertLevel.from(event.magnitude),
+                event.latitude,
+                event.longitude
+        )
+    }
 
-                override fun onFailure(t: Throwable?) {
-                    logger.error("Error retrieving event. ${t?.stackTrace}")
-                    if (!view.isActive()) {
-                        return
-                    }
-
-                    view.showErrorNoData()
-                }
-            })
-        } else {
-            view.showEventOnMap(ev.coordinates, getAlertType(ev.magnitude.toInt()))
+    private suspend fun handleEvent(remoteEvent: RemoteEvent) {
+        this.remoteEvent = remoteEvent
+        val eventViewBlock = mapEventToView(remoteEvent)
+        val marker = mapEventToMarker(remoteEvent)
+        view.run {
+            showEvent(eventViewBlock)
+            showEventMapMarker(marker)
         }
+    }
+
+    private fun handleFailure(t: Throwable) {
+        view.showErrorNoData()
     }
 
     override fun openSourceLink() {
-        val e = event
-        e?.let {
-            view.showSourceLinkViewer(e.event.link)
-        }
-    }
-
-    private fun getAlertType(magnitude: Int): DetailsContract.View.AlertType {
-        return when (magnitude) {
-            in -2 until 2 -> DetailsContract.View.AlertType.ALERT_0
-            in 2 until 4 -> DetailsContract.View.AlertType.ALERT_2
-            in 4 until 6 -> DetailsContract.View.AlertType.ALERT_4
-            in 6 until 8 -> DetailsContract.View.AlertType.ALERT_6
-            in 8..10 -> DetailsContract.View.AlertType.ALERT_8
-            else -> DetailsContract.View.AlertType.ALERT_0
+        val urlStr = remoteEvent?.event?.link
+        if (urlStr != null && URLUtil.isNetworkUrl(urlStr)) {
+            view.openSourceLink(Uri.parse(urlStr))
         }
     }
 }

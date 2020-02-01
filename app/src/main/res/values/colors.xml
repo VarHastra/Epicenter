@@ -13,6 +13,7 @@
     <color name="colorBackground">#212121</color>
     <color name="colorOnBackground">#8affffff</color>
     <color name="colorSurface">#303030</color>
+    <color name="colorSemitransparentSurface">#99303030</color>
     <color name="colorOnSurface">#8affffff</color>
 
     <color name="colorSnackbar">#ffffff</color>

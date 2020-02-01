@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_tile_title"
         android:layout_marginStart="@dimen/spacing_9x"
-        android:layout_marginTop="@dimen/spacing_05x"
+        android:layout_marginTop="@dimen/spacing_1x"
         android:layout_marginEnd="@dimen/spacing_2x"
         android:autoLink="all"
         android:ellipsize="end"

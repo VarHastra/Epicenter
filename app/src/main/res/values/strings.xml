@@ -68,6 +68,7 @@
     <string name="feed_error_location_not_avaliable">Location services are not available. Showing world</string>
 
 
+    <string name="details_location">Location</string>
     <string name="details_datetime">Date and time</string>
     <string name="details_depth">Depth</string>
     <string name="details_dyfi">DYFI reports</string>

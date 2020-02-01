@@ -24,7 +24,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_details.*
-import kotlinx.android.synthetic.main.view_header_details.*
 
 class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
 
@@ -109,9 +108,8 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
 
         titleTv.text = event.title
 
-        coordinatesTv.text = event.coordinates
-        coordinatesTv.setTextColorRes(event.alertLevel.colorResId)
-        distanceFromUserTv.text = event.distanceFromUser
+        locationTile.setFirstLineText(event.coordinates)
+        locationTile.setSecondLineText(event.distanceFromUser)
 
         dateTimeTile.setFirstLineText(event.dateTime)
         dateTimeTile.setSecondLineText(event.daysAgo)

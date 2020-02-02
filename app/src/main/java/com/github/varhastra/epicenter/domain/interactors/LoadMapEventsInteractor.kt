@@ -23,15 +23,13 @@ class LoadMapEventsInteractor(
 
     suspend operator fun invoke(
             forceLoad: Boolean,
-            filter: Filter<Event>,
-            sortingStrategy: Comparator<RemoteEvent>
+            filter: Filter<RemoteEvent>
     ): Either<List<RemoteEvent>, Throwable> = withContext(Dispatchers.IO) {
 
         val coordinates = locationRepository.getCoordinates().orNull()
         eventsRepository.getWeekFeedSuspending(forceLoad).map { events ->
-            events.filter { filter(it) }
-                    .map { RemoteEvent.of(it, coordinates) }
-                    .sortedWith(sortingStrategy)
+            events.map { RemoteEvent.of(it, coordinates) }
+                    .filter { filter(it) }
         }
     }
 

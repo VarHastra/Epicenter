@@ -22,6 +22,7 @@ import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
@@ -208,8 +209,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                     MapPresenter(
                             fragment,
                             MapState,
-                            eventsRepository,
-                            locationProvider
+                            LoadMapEventsInteractor(eventsRepository, locationProvider)
                     )
                     navigateTo(fragment)
                     true

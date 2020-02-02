@@ -67,7 +67,6 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun onResume() {
         super.onResume()
-        presenter.start()
 
         magnitudeChipGroup.setOnCheckedChangeListener { group, checkedId ->
             group.children.forEach {
@@ -145,8 +144,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
             setOnInfoWindowClickListener(clusterManager)
         }
 
-        presenter.viewReady()
-        mapIsReady = true
+        presenter.start()
     }
 
     override fun setCameraPosition(coordinates: Coordinates, zoom: Float) {

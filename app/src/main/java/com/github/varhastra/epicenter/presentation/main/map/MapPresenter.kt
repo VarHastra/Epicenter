@@ -2,56 +2,31 @@ package com.github.varhastra.epicenter.presentation.main.map
 
 import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.filters.RecencyFilter
-import com.github.varhastra.epicenter.domain.repos.EventsRepository
-import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.state.CameraState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MapPresenter(
         private val view: MapContract.View,
         private val mapStateDataSource: MapStateDataSource,
-        private val eventsRepository: EventsRepository,
-        private val locationRepository: LocationRepository
+        private val loadEventsInteractor: LoadMapEventsInteractor
 ) : MapContract.Presenter {
 
     private var state: CameraState = CameraState()
+
     private var minMagnitude: MagnitudeLevel = MagnitudeLevel.ZERO_OR_LESS
+
     private var numberOfDaysToShow: Int = 1
-    private val loadMapEventsInteractor: LoadMapEventsInteractor = LoadMapEventsInteractor(eventsRepository, locationRepository)
 
     init {
         view.attachPresenter(this)
-
-        loadMapEventsInteractor.onResult = { events ->
-            if (view.isActive()) {
-                val markers = events.map { EventMarker.fromRemoteEvent(it) }
-                view.showProgress(false)
-                if (view.isReady()) {
-                    view.showEventMarkers(markers)
-                } else {
-                    Runnable {
-                        for (i in 1..3) {
-                            Thread.sleep(1000)
-                            if (view.isReady()) {
-                                view.showEventMarkers(markers)
-                                break
-                            }
-                        }
-                    }.run()
-                }
-            }
-        }
-
-        loadMapEventsInteractor.onFailure = {
-            if (view.isActive()) {
-                view.showProgress(false)
-            }
-            // TODO
-        }
     }
 
     override fun start() {
@@ -62,12 +37,9 @@ class MapPresenter(
         view.showTitle()
         view.showCurrentDaysFilter(numberOfDaysToShow)
         view.showCurrentMagnitudeFilter(minMagnitude)
+        view.setCameraPosition(state.position, state.zoomLevel)
 
         loadEvents()
-    }
-
-    override fun viewReady() {
-        view.setCameraPosition(state.position, state.zoomLevel)
     }
 
     override fun loadEvents() {
@@ -79,11 +51,30 @@ class MapPresenter(
     }
 
     private fun getEvents(forceLoad: Boolean) {
-        view.showProgress(true)
-
         val filter = AndFilter(MagnitudeFilter(minMagnitude), RecencyFilter(numberOfDaysToShow))
-        val requestValues = LoadMapEventsInteractor.RequestValues(forceLoad, filter)
-        loadMapEventsInteractor.execute(requestValues)
+
+        view.showProgress(true)
+        CoroutineScope(Dispatchers.Main).launch {
+            loadEventsInteractor(forceLoad, filter).fold(::handleResult, ::handleFailure)
+        }
+    }
+
+    private fun handleResult(events: List<RemoteEvent>) {
+        if (!view.isActive()) {
+            return
+        }
+
+        val markers = events.map { EventMarker.fromRemoteEvent(it) }
+        view.showProgress(false)
+        view.showEventMarkers(markers)
+    }
+
+    private fun handleFailure(t: Throwable) {
+        if (!view.isActive()) {
+            return
+        }
+
+        view.showProgress(false)
     }
 
     override fun openFilters() {

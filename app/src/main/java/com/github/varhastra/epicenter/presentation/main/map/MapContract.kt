@@ -40,8 +40,6 @@ interface MapContract {
 
         fun setNumberOfDaysToShow(days: Int)
 
-        fun viewReady()
-
         fun openEventDetails(eventId: String)
 
         fun saveCameraPosition(coordinates: Coordinates, zoom: Float)

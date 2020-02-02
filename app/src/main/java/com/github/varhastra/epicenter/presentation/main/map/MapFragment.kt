@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.children
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
@@ -29,8 +27,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.clustering.ClusterManager
+import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.android.synthetic.main.sheet_map.*
 import org.jetbrains.anko.*
 
 /**
@@ -41,19 +40,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     private val logger = AnkoLogger(this.javaClass)
 
-    @BindView(R.id.sheet_map)
-    lateinit var filtersBottomSheet: ViewGroup
-
-    @BindView(R.id.cg_map_filters_magnitude)
-    lateinit var magnitudeChipGroup: ChipGroup
-
-    @BindView(R.id.sb_map_filters_date)
-    lateinit var dateSeekBar: SeekBar
-
-    @BindView(R.id.pb_map)
-    lateinit var progressBar: ContentLoadingProgressBar
-
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     var map: GoogleMap? = null
     lateinit var clusterManager: ClusterManager<EventClusterItem>
@@ -62,19 +49,22 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
-        ButterKnife.bind(this, view)
 
         setHasOptionsMenu(true)
 
-        val mapView = view.findViewById<MapView>(R.id.map_view)
+        val mapView = view.findViewById<MapView>(R.id.map)
         onCreatingMapView(mapView, savedInstanceState)
         mapView.getMapAsync(this)
 
-        bottomSheetBehavior = BottomSheetBehavior.from(filtersBottomSheet)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet)
         bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        return view
     }
 
     override fun onResume() {
@@ -89,17 +79,17 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
             }
 
             val minMag = when (checkedId) {
-                R.id.chip_mag_0 -> MagnitudeLevel.ZERO_OR_LESS
-                R.id.chip_mag_2 -> MagnitudeLevel.TWO
-                R.id.chip_mag_4 -> MagnitudeLevel.FOUR
-                R.id.chip_mag_6 -> MagnitudeLevel.SIX
-                R.id.chip_mag_8 -> MagnitudeLevel.EIGHT
+                R.id.magnitudeZeroChip -> MagnitudeLevel.ZERO_OR_LESS
+                R.id.magnitudeTwoChip -> MagnitudeLevel.TWO
+                R.id.magnitudeFourChip -> MagnitudeLevel.FOUR
+                R.id.magnitudeSixChip -> MagnitudeLevel.SIX
+                R.id.magnitudeEightChip -> MagnitudeLevel.EIGHT
                 else -> MagnitudeLevel.ZERO_OR_LESS
             }
             presenter.setMinMagnitude(minMag)
         }
 
-        dateSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        numOfDaysSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // Do nothing
             }
@@ -196,18 +186,18 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel) {
         val id = when (magnitudeLevel) {
-            MagnitudeLevel.ZERO_OR_LESS -> R.id.chip_mag_0
-            MagnitudeLevel.TWO -> R.id.chip_mag_2
-            MagnitudeLevel.FOUR -> R.id.chip_mag_4
-            MagnitudeLevel.SIX -> R.id.chip_mag_6
-            MagnitudeLevel.EIGHT -> R.id.chip_mag_8
-            else -> R.id.chip_mag_0
+            MagnitudeLevel.ZERO_OR_LESS -> R.id.magnitudeZeroChip
+            MagnitudeLevel.TWO -> R.id.magnitudeTwoChip
+            MagnitudeLevel.FOUR -> R.id.magnitudeFourChip
+            MagnitudeLevel.SIX -> R.id.magnitudeSixChip
+            MagnitudeLevel.EIGHT -> R.id.magnitudeEightChip
+            else -> R.id.magnitudeZeroChip
         }
         magnitudeChipGroup.check(id)
     }
 
     override fun showCurrentDaysFilter(days: Int) {
-        dateSeekBar.progress = days - 1
+        numOfDaysSeekBar.progress = days - 1
     }
 
     override fun showEventMarkers(markers: List<EventMarker>) {

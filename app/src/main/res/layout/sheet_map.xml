@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sheet_map"
+    android:id="@+id/filtersSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?colorSurface"
@@ -34,7 +34,7 @@
         android:theme="@style/AppTheme.Gentle">
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cg_map_filters_magnitude"
+            android:id="@+id/magnitudeChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_1x"
@@ -44,7 +44,7 @@
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_0"
+                android:id="@+id/magnitudeZeroChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_0" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_2"
+                android:id="@+id/magnitudeTwoChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_2" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_4"
+                android:id="@+id/magnitudeFourChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_4" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_6"
+                android:id="@+id/magnitudeSixChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                 app:chipBackgroundColor="@color/bg_chip_alert_6" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_mag_8"
+                android:id="@+id/magnitudeEightChip"
                 style="@style/SelectableChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
 
 
     <SeekBar
-        android:id="@+id/sb_map_filters_date"
+        android:id="@+id/numOfDaysSeekBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_min_touch_target"
         android:layout_marginStart="@dimen/spacing_2x"

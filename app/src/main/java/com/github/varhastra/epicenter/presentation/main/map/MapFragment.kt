@@ -1,7 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -21,7 +20,6 @@ import com.github.varhastra.epicenter.presentation.main.map.maputils.EventCluste
 import com.github.varhastra.epicenter.presentation.main.map.maputils.EventsRenderer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -36,27 +34,27 @@ import org.jetbrains.anko.*
  * A [Fragment] subclass that displays a map
  * of recent earthquakes.
  */
-class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
+class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     private val logger = AnkoLogger(this.javaClass)
 
     lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
-    var map: GoogleMap? = null
+    lateinit var map: GoogleMap
+
     lateinit var clusterManager: ClusterManager<EventClusterItem>
 
     lateinit var presenter: MapContract.Presenter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
+    private var mapIsReady = false
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
 
-        val mapView = view.findViewById<MapView>(R.id.map)
-        onCreatingMapView(mapView, savedInstanceState)
-        mapView.getMapAsync(this)
-
-        return view
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,7 +120,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun onPause() {
-        map?.apply {
+        map.apply {
             val coordinates = Coordinates(cameraPosition.target.latitude, cameraPosition.target.longitude)
             presenter.saveCameraPosition(coordinates, cameraPosition.zoom)
         }
@@ -130,34 +128,29 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        googleMap.uiSettings.isMapToolbarEnabled = false
-        try {
-            val success = googleMap.setMapStyle(
+        clusterManager = ClusterManager<EventClusterItem>(requireContext(), googleMap).apply {
+            renderer = EventsRenderer(requireContext(), googleMap, this)
+            setOnClusterItemInfoWindowClickListener { onMarkerInfoWindowClick(it) }
+        }
+
+        this.map = googleMap.apply {
+            uiSettings.isMapToolbarEnabled = false
+            setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             activity, R.raw.map_style
                     )
             )
-
-            if (!success) {
-                error("Error parsing map styles.")
-            }
-        } catch (e: Resources.NotFoundException) {
-            error("Map style resource not found. ${e.stackTrace}.")
+            setOnCameraIdleListener(clusterManager)
+            setOnMarkerClickListener(clusterManager)
+            setOnInfoWindowClickListener(clusterManager)
         }
 
-        clusterManager = ClusterManager(activity, googleMap)
-        clusterManager.renderer = EventsRenderer(activity!!, googleMap, clusterManager)
-        clusterManager.setOnClusterItemInfoWindowClickListener { onMarkerInfoWindowClick(it) }
-        googleMap.setOnCameraIdleListener(clusterManager)
-        googleMap.setOnMarkerClickListener(clusterManager)
-        googleMap.setOnInfoWindowClickListener(clusterManager)
-
-        this.map = googleMap
         presenter.viewReady()
+        mapIsReady = true
     }
 
     override fun setCameraPosition(coordinates: Coordinates, zoom: Float) {
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
     }
 
     override fun attachPresenter(presenter: MapContract.Presenter) {
@@ -166,7 +159,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun isActive() = isAdded
 
-    override fun isReady() = map != null
+    override fun isReady() = mapIsReady
 
     override fun showTitle() {
         activity?.apply {
@@ -201,7 +194,7 @@ class MapFragment : BaseGmapsFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventMarkers(markers: List<EventMarker>) {
-        map?.apply {
+        map.apply {
             doAsync {
                 val clusterItems = markers.map { EventClusterItem.from(it) }
                 uiThread {

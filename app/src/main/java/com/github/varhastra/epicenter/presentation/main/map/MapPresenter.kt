@@ -111,4 +111,8 @@ class MapPresenter(
     override fun openEventDetails(eventId: String) {
         view.showEventDetails(eventId)
     }
+
+    override fun onZoomIn(latitude: Double, longitude: Double) {
+        view.zoomIn(latitude, longitude)
+    }
 }

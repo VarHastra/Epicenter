@@ -99,6 +99,11 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
         clusterManager = ClusterManager<EventMarker>(requireContext(), googleMap).apply {
             renderer = EventsRenderer(requireContext(), googleMap, this)
             setOnClusterItemInfoWindowClickListener { onMarkerInfoWindowClick(it) }
+            setOnClusterClickListener { cluster ->
+                val position = cluster.position
+                presenter.onZoomIn(position.latitude, position.longitude)
+                true
+            }
         }
 
         this.map = googleMap.apply {
@@ -169,6 +174,12 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
         }
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
         startActivity(intent, options)
+    }
+
+    override fun zoomIn(latitude: Double, longitude: Double) {
+        val position = LatLng(latitude, longitude)
+        val zoom = map.cameraPosition.zoom + 2
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom))
     }
 
     private fun onMarkerInfoWindowClick(eventMarker: EventMarker) {

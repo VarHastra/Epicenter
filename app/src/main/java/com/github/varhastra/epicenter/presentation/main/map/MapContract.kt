@@ -26,6 +26,8 @@ interface MapContract {
         fun showCurrentDaysFilter(days: Int)
 
         fun setCameraPosition(coordinates: Coordinates, zoom: Float)
+
+        fun zoomIn(latitude: Double, longitude: Double)
     }
 
     interface Presenter : BasePresenter {
@@ -42,5 +44,7 @@ interface MapContract {
         fun openEventDetails(eventId: String)
 
         fun saveCameraPosition(coordinates: Coordinates, zoom: Float)
+
+        fun onZoomIn(latitude: Double, longitude: Double)
     }
 }

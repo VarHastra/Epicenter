@@ -15,8 +15,6 @@ interface MapContract {
 
         fun isActive(): Boolean
 
-        fun isReady(): Boolean
-
         fun showProgress(show: Boolean)
 
         fun showEventDetails(eventId: String)

@@ -1,17 +1,17 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.children
-import androidx.fragment.app.Fragment
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.extensions.onStopTrackingTouch
+import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.common.EventMarker
@@ -23,31 +23,19 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.chip.Chip
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.sheet_map.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.intentFor
 
-// FIXME: redundant comments
-/**
- * A [Fragment] subclass that displays a map
- * of recent earthquakes.
- */
 class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
-    private val logger = AnkoLogger(this.javaClass)
+    private lateinit var presenter: MapContract.Presenter
 
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var map: GoogleMap
 
-    lateinit var map: GoogleMap
+    private lateinit var clusterManager: ClusterManager<EventMarker>
 
-    lateinit var clusterManager: ClusterManager<EventMarker>
-
-    lateinit var presenter: MapContract.Presenter
-
-    private var mapIsReady = false
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,18 +52,8 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
         bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet)
         bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-    }
 
-    override fun onResume() {
-        super.onResume()
-
-        magnitudeChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            group.children.forEach {
-                (it as? Chip)?.apply {
-                    isClickable = !isChecked
-                }
-            }
-
+        magnitudeChipGroup.setRestrictiveCheckListener { group, checkedId ->
             val minMag = when (checkedId) {
                 R.id.magnitudeZeroChip -> MagnitudeLevel.ZERO_OR_LESS
                 R.id.magnitudeTwoChip -> MagnitudeLevel.TWO
@@ -87,19 +65,9 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
             presenter.setMinMagnitude(minMag)
         }
 
-        numOfDaysSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                // Do nothing
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // Do nothing
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                presenter.setNumberOfDaysToShow(seekBar.progress + 1)
-            }
-        })
+        numOfDaysSeekBar.onStopTrackingTouch { seekBar ->
+            presenter.setNumberOfDaysToShow(seekBar.progress + 1)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -120,10 +88,10 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun onPause() {
-        map.apply {
-            val coordinates = Coordinates(cameraPosition.target.latitude, cameraPosition.target.longitude)
-            presenter.saveCameraPosition(coordinates, cameraPosition.zoom)
-        }
+        val cameraPosition = map.cameraPosition
+        val cameraTarget = cameraPosition.target
+        val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
+        presenter.saveCameraPosition(coordinates, cameraPosition.zoom)
         super.onPause()
     }
 
@@ -158,11 +126,8 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     override fun isActive() = isAdded
 
-    override fun isReady() = mapIsReady
-
     override fun showTitle() {
-        activity?.apply {
-            this as ToolbarProvider
+        (requireActivity() as ToolbarProvider).run {
             showDropdown(false)
             setTitleText(getString(R.string.app_map))
         }
@@ -199,11 +164,11 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventDetails(eventId: String) {
-        val host = activity
-        host?.let {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(it).toBundle()
-            startActivity(activity?.intentFor<DetailsActivity>(DetailsActivity.EXTRA_EVENT_ID to eventId), options)
+        val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
+            putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
         }
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
+        startActivity(intent, options)
     }
 
     private fun onMarkerInfoWindowClick(eventMarker: EventMarker) {

@@ -4,6 +4,7 @@ import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
+import com.github.varhastra.epicenter.presentation.common.EventMarker
 
 interface MapContract {
 

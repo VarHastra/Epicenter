@@ -121,6 +121,7 @@
     <string name="map_filters_7_days">7 days</string>
     <string name="map_filters_1_day">1 day</string>
     <string name="map_filters_4_days">4 days</string>
+    <string name="map_format_marker_title">%s %s</string>
 
     <string name="places_title">Places manager</string>
     <string name="places_infinite">Infinity</string>

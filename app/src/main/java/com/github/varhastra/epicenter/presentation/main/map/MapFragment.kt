@@ -14,10 +14,9 @@ import androidx.fragment.app.Fragment
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
+import com.github.varhastra.epicenter.presentation.common.EventMarker
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
-import com.github.varhastra.epicenter.presentation.main.map.maputils.EventClusterItem
-import com.github.varhastra.epicenter.presentation.main.map.maputils.EventsRenderer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -28,8 +27,10 @@ import com.google.android.material.chip.Chip
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.sheet_map.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.intentFor
 
+// FIXME: redundant comments
 /**
  * A [Fragment] subclass that displays a map
  * of recent earthquakes.
@@ -42,7 +43,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     lateinit var map: GoogleMap
 
-    lateinit var clusterManager: ClusterManager<EventClusterItem>
+    lateinit var clusterManager: ClusterManager<EventMarker>
 
     lateinit var presenter: MapContract.Presenter
 
@@ -127,7 +128,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        clusterManager = ClusterManager<EventClusterItem>(requireContext(), googleMap).apply {
+        clusterManager = ClusterManager<EventMarker>(requireContext(), googleMap).apply {
             renderer = EventsRenderer(requireContext(), googleMap, this)
             setOnClusterItemInfoWindowClickListener { onMarkerInfoWindowClick(it) }
         }
@@ -192,17 +193,9 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventMarkers(markers: List<EventMarker>) {
-        map.apply {
-            doAsync {
-                val clusterItems = markers.map { EventClusterItem.from(it) }
-                uiThread {
-                    logger.info("uiThread ${clusterItems.size}")
-                    clusterManager.clearItems()
-                    clusterManager.addItems(clusterItems)
-                    clusterManager.cluster()
-                }
-            }
-        }
+        clusterManager.clearItems()
+        clusterManager.addItems(markers)
+        clusterManager.cluster()
     }
 
     override fun showEventDetails(eventId: String) {
@@ -213,7 +206,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
         }
     }
 
-    private fun onMarkerInfoWindowClick(eventsClusterItem: EventClusterItem) {
-        presenter.openEventDetails(eventsClusterItem.eventId)
+    private fun onMarkerInfoWindowClick(eventMarker: EventMarker) {
+        presenter.openEventDetails(eventMarker.eventId)
     }
 }

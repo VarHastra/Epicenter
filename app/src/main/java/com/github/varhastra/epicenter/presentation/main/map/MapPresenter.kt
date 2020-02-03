@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
+import android.content.Context
 import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
@@ -9,11 +10,15 @@ import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.filters.RecencyFilter
 import com.github.varhastra.epicenter.domain.state.CameraState
 import com.github.varhastra.epicenter.domain.state.MapStateDataSource
+import com.github.varhastra.epicenter.presentation.common.EventMarker
+import com.github.varhastra.epicenter.presentation.common.Mapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MapPresenter(
+        private val context: Context,
         private val view: MapContract.View,
         private val mapStateDataSource: MapStateDataSource,
         private val loadEventsInteractor: LoadMapEventsInteractor
@@ -55,16 +60,21 @@ class MapPresenter(
 
         view.showProgress(true)
         CoroutineScope(Dispatchers.Main).launch {
-            loadEventsInteractor(forceLoad, filter).fold(::handleResult, ::handleFailure)
+            loadEventsInteractor(forceLoad, filter).map { events -> mapEventsToMarkers(events) }
+                    .fold(::handleResult, ::handleFailure)
         }
     }
 
-    private fun handleResult(events: List<RemoteEvent>) {
+    private suspend fun mapEventsToMarkers(events: List<RemoteEvent>) = withContext(Dispatchers.Default) {
+        val mapper = Mapper(context)
+        events.map { mapper.map(it) }
+    }
+
+    private fun handleResult(markers: List<EventMarker>) {
         if (!view.isActive()) {
             return
         }
 
-        val markers = events.map { EventMarker.fromRemoteEvent(it) }
         view.showProgress(false)
         view.showEventMarkers(markers)
     }

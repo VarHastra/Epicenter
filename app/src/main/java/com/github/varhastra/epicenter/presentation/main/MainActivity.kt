@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 R.id.navigation_map -> {
                     val fragment = MapFragment()
                     MapPresenter(
+                            App.instance,
                             fragment,
                             MapState,
                             LoadMapEventsInteractor(eventsRepository, locationProvider)

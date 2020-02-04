@@ -72,7 +72,7 @@ class PlacesManagerPresenter(
     }
 
     override fun undoDeletion() {
-        deletionQueue.poll()
+        deletionQueue.clear()
         fetchPlaces()
     }
 }

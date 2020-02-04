@@ -17,7 +17,7 @@ interface PlacesManagerContract {
     }
 
     interface Presenter : BasePresenter {
-        fun loadPlaces()
+        fun fetchPlaces()
 
         fun openEditor(placeId: Int?)
 

@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
+import com.github.varhastra.epicenter.domain.interactors.DeletePlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
+import com.github.varhastra.epicenter.domain.interactors.UpdatePlacesOrderInteractor
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -53,7 +56,13 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
         addFab.setOnClickListener { presenter.openEditor(null) }
 
-        PlacesManagerPresenter(this, PlacesDataSource.getInstance())
+        val placesRepository = PlacesDataSource.getInstance()
+        PlacesManagerPresenter(
+                this,
+                LoadPlacesInteractor(placesRepository),
+                DeletePlaceInteractor(placesRepository),
+                UpdatePlacesOrderInteractor(placesRepository)
+        )
     }
 
     override fun attachPresenter(presenter: PlacesManagerContract.Presenter) {

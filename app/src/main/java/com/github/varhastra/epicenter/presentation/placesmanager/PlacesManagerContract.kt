@@ -11,7 +11,9 @@ interface PlacesManagerContract {
 
         fun isActive(): Boolean
 
-        fun showEditor(placeId: Int?)
+        fun showPlaceEditor(placeId: Int)
+
+        fun showPlaceCreator()
 
         fun showUndoDeleteOption()
     }
@@ -19,7 +21,9 @@ interface PlacesManagerContract {
     interface Presenter : BasePresenter {
         fun fetchPlaces()
 
-        fun openEditor(placeId: Int?)
+        fun editPlace(placeId: Int)
+
+        fun addPlace()
 
         fun saveOrder(places: List<Place>)
 

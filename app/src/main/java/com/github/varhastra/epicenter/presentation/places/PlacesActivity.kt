@@ -16,22 +16,22 @@ import com.github.varhastra.epicenter.domain.interactors.UpdatePlacesOrderIntera
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_places_manager.*
+import kotlinx.android.synthetic.main.activity_places.*
 
-class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
+class PlacesActivity : AppCompatActivity(), PlacesContract.View {
 
-    private lateinit var presenter: PlacesManagerContract.Presenter
+    private lateinit var presenter: PlacesContract.Presenter
 
     private lateinit var placesAdapter: PlacesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_places_manager)
+        setContentView(R.layout.activity_places)
 
         setUpViews()
 
         val placesRepository = PlacesDataSource.getInstance()
-        PlacesManagerPresenter(
+        PlacesPresenter(
                 this,
                 this,
                 LoadPlacesInteractor(placesRepository),
@@ -52,7 +52,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         }
 
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@PlacesManagerActivity)
+            layoutManager = LinearLayoutManager(this@PlacesActivity)
             adapter = placesAdapter
             setHasFixedSize(true)
         }
@@ -60,7 +60,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         addFab.setOnClickListener { presenter.addPlace() }
     }
 
-    override fun attachPresenter(presenter: PlacesManagerContract.Presenter) {
+    override fun attachPresenter(presenter: PlacesContract.Presenter) {
         this.presenter = presenter
     }
 

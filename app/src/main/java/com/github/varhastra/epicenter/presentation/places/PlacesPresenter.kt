@@ -12,14 +12,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class PlacesManagerPresenter(
+class PlacesPresenter(
         private val context: Context,
-        private val view: PlacesManagerContract.View,
+        private val view: PlacesContract.View,
         private val loadPlaces: LoadPlacesInteractor,
         private val deletePlace: DeletePlaceInteractor,
         private val updatePlacesOrder: UpdatePlacesOrderInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository
-) : PlacesManagerContract.Presenter {
+) : PlacesContract.Presenter {
 
     private val deletionQueue: Queue<Int> = LinkedList()
 

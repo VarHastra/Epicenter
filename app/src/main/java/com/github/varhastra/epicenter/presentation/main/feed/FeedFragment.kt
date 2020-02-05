@@ -24,7 +24,7 @@ import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
-import com.github.varhastra.epicenter.presentation.places.PlacesManagerActivity
+import com.github.varhastra.epicenter.presentation.places.PlacesActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -252,7 +252,7 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showPlacesEditor() {
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
-        val intent = Intent(requireContext(), PlacesManagerActivity::class.java)
+        val intent = Intent(requireContext(), PlacesActivity::class.java)
         startActivity(intent, options)
     }
 

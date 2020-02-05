@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.presentation.placesmanager
+package com.github.varhastra.epicenter.presentation.places
 
 import android.content.Intent
 import android.os.Bundle

@@ -37,7 +37,7 @@
             android:label=""
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".presentation.placesmanager.PlacesManagerActivity"
+            android:name=".presentation.places.PlacesManagerActivity"
             android:label="@string/places_title" />
         <activity
             android:name=".presentation.placeeditor.PlaceEditorActivity"

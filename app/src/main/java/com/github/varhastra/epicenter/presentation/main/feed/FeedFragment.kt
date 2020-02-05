@@ -24,7 +24,7 @@ import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
-import com.github.varhastra.epicenter.presentation.placesmanager.PlacesManagerActivity
+import com.github.varhastra.epicenter.presentation.places.PlacesManagerActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken

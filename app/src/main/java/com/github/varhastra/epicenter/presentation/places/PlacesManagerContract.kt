@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.presentation.placesmanager
+package com.github.varhastra.epicenter.presentation.places
 
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView

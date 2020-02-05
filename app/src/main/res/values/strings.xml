@@ -125,6 +125,7 @@
 
     <string name="places_title">Places manager</string>
     <string name="places_infinite">Infinity</string>
+    <string name="places_radius_dash">-</string>
     <string name="place_editor_radius">Radius</string>
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -13,6 +13,8 @@ interface PlacesRepository {
 
     fun deletePlace(place: Place)
 
+    fun deleteById(id: Int)
+
     fun updateOrder(places: List<Place>)
 
     suspend fun getPlacesSuspending(): Either<List<Place>, Throwable>
@@ -24,4 +26,6 @@ interface PlacesRepository {
     suspend fun deletePlaceSuspending(place: Place)
 
     suspend fun updateOrderSuspending(places: List<Place>)
+
+    suspend fun updateOrderById(ids: List<Int>)
 }

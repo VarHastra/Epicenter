@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_item_two_line"
@@ -8,7 +7,7 @@
     android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/dragHandleView"
+        android:id="@+id/placeIconIv"
         android:layout_width="@dimen/size_min_touch_target"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/spacing_05x"
@@ -25,7 +24,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/placeNameTextView"
+            android:id="@+id/placeTitleTextView"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +33,7 @@
             tools:text="Santa Cruz, Ca" />
 
         <TextView
-            android:id="@+id/radiusTextView"
+            android:id="@+id/placeCaptionTextView"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/removeButton"
+        android:id="@+id/placeRemoveBtn"
         android:layout_width="@dimen/size_min_touch_target"
         android:layout_height="match_parent"
         android:background="@null"

@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.snackbar
 import com.github.varhastra.epicenter.data.AppSettings
@@ -15,7 +13,6 @@ import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.domain.interactors.DeletePlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.domain.interactors.UpdatePlacesOrderInteractor
-import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -27,8 +24,6 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
     private lateinit var placesAdapter: PlacesAdapter
 
-    private lateinit var itemTouchHelper: ItemTouchHelper
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_places_manager)
@@ -38,9 +33,11 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         val placesRepository = PlacesDataSource.getInstance()
         PlacesManagerPresenter(
                 this,
+                this,
                 LoadPlacesInteractor(placesRepository),
                 DeletePlaceInteractor(placesRepository),
-                UpdatePlacesOrderInteractor(placesRepository)
+                UpdatePlacesOrderInteractor(placesRepository),
+                AppSettings
         )
     }
 
@@ -48,27 +45,16 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        placesAdapter = PlacesAdapter(this, AppSettings.preferredUnits).apply {
+        placesAdapter = PlacesAdapter(this).apply {
             setHasStableIds(true)
-            onStartDrag = this@PlacesManagerActivity::onStartDrag
-            onItemClick = { presenter.editPlace(it.id) }
-            onDeleteItemClick = { presenter.tryDeletePlace(it) }
-            onItemMoved = { presenter.saveOrder(placesAdapter.data) }
+            onItemClick = { presenter.editPlace(it) }
+            onDeleteItem = { presenter.tryDeletePlace(it) }
         }
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@PlacesManagerActivity)
             adapter = placesAdapter
             setHasFixedSize(true)
-        }
-
-        val dragHelperCallback = DragHelperCallback().apply {
-            onMove = placesAdapter::onItemMove
-            onPrepareItemMove = placesAdapter::onPrepareItemMove
-        }
-
-        itemTouchHelper = ItemTouchHelper(dragHelperCallback).apply {
-            attachToRecyclerView(recyclerView)
         }
 
         addFab.setOnClickListener { presenter.addPlace() }
@@ -105,7 +91,7 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
 
     override fun isActive() = !isFinishing && !isDestroyed
 
-    override fun showPlaces(places: List<Place>) {
+    override fun showPlaces(places: List<PlaceViewBlock>) {
         placesAdapter.data = places.toMutableList()
     }
 
@@ -134,9 +120,5 @@ class PlacesManagerActivity : AppCompatActivity(), PlacesManagerContract.View {
                 }
             }
         })
-    }
-
-    private fun onStartDrag(holder: RecyclerView.ViewHolder) {
-        itemTouchHelper.startDrag(holder)
     }
 }

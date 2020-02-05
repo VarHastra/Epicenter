@@ -119,12 +119,24 @@ class PlacesDataSource private constructor(
         placeDao.delete(place.toPlaceEntity())
     }
 
+    override fun deleteById(id: Int) {
+        placeDao.deleteById(id)
+    }
+
     override suspend fun updateOrderSuspending(places: List<Place>) {
         val updatedList = places
                 .filterNot { it.id == Place.CURRENT_LOCATION.id || it.id == Place.WORLD.id }
                 .mapIndexed { index, place -> place.copy(order = index).toPlaceEntity() }
                 .toList()
         placeDao.update(updatedList)
+    }
+
+    override suspend fun updateOrderById(ids: List<Int>) {
+        ids.forEachIndexed { index, id ->
+            if (id != Place.WORLD.id && id != Place.CURRENT_LOCATION.id) {
+                placeDao.updateOrder(id, index)
+            }
+        }
     }
 
 

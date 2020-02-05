@@ -5,25 +5,53 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.DOWN
+import androidx.recyclerview.widget.ItemTouchHelper.UP
 import androidx.recyclerview.widget.RecyclerView
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.domain.model.kmToMi
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import kotlinx.android.synthetic.main.item_view_place.view.*
-import kotlin.math.roundToInt
 
-class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : RecyclerView.Adapter<PlacesAdapter.PlaceHolder>() {
+class PlacesAdapter(
+        private val context: Context
+) : RecyclerView.Adapter<PlacesAdapter.PlaceHolder>() {
 
-    var data: MutableList<Place> = mutableListOf()
+    var data: MutableList<PlaceViewBlock> = mutableListOf()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var onStartDrag: ((RecyclerView.ViewHolder) -> Unit)? = null
-    var onItemClick: ((Place) -> Unit)? = null
-    var onDeleteItemClick: ((Place) -> Unit)? = null
-    var onItemMoved: (() -> Unit)? = null
+
+    var onItemClick: ((Int) -> Unit)? = null
+
+    var onDeleteItem: ((Int) -> Unit)? = null
+
+    private val touchHelperCallback = object : ItemTouchHelper.SimpleCallback(UP or DOWN, 0) {
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val from = viewHolder.adapterPosition
+            val to = target.adapterPosition
+
+            return if (!(data[from].isDraggable && data[to].isDraggable)) {
+                false
+            } else {
+                data.add(to, data.removeAt(from))
+                notifyItemMoved(from, to)
+                true
+            }
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            // Intentionally do nothing
+        }
+    }
+
+    private val itemTouchHelper = ItemTouchHelper(touchHelperCallback)
+
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_view_place, parent, false)
@@ -36,73 +64,44 @@ class PlacesAdapter(val context: Context, val unitsLocale: UnitsLocale) : Recycl
         holder.bindPlace(data[position])
     }
 
-    fun onItemMove(from: Int, to: Int) {
-        val item = data.removeAt(from)
-        data.add(to, item)
-
-        notifyItemMoved(from, to)
-        onItemMoved?.invoke()
-    }
-
     override fun getItemId(position: Int): Long {
         return data[position].id.toLong()
     }
 
-    fun onPrepareItemMove(from: Int, to: Int) = !(from in 0..1 || to in 0..1)
-
 
     inner class PlaceHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindPlace(place: Place) {
-            val radiusStr = if (place.radiusKm == null) {
-                context.getString(R.string.places_infinite)
-            } else {
-                val localizedRadius = getLocalizedDistance(place.radiusKm)
-                getLocalizedUnitsString(localizedRadius)
-            }
+        private val titleTextView = itemView.placeTitleTextView
 
-            itemView.setOnClickListener { onItemClick?.invoke(place) }
+        private val captionTextView = itemView.placeCaptionTextView
 
-            itemView.placeNameTextView.text = place.name
-            itemView.radiusTextView.text = radiusStr
+        private val iconIv = itemView.placeIconIv
 
-            val touchListener: ((View, MotionEvent) -> Boolean)? = if (adapterPosition <= 1) null else { _, event ->
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    onStartDrag?.invoke(this)
-                }
-                false
-            }
-            itemView.dragHandleView.setOnTouchListener(touchListener)
+        private val removeBtn = itemView.placeRemoveBtn
 
-            itemView.removeButton.visibility = if (adapterPosition <= 1) View.INVISIBLE else View.VISIBLE
-            itemView.removeButton.setOnClickListener {
+        fun bindPlace(place: PlaceViewBlock) {
+            itemView.setOnClickListener { onItemClick?.invoke(place.id) }
+            itemView.placeRemoveBtn.setOnClickListener {
                 val removedPlace = data.removeAt(adapterPosition)
                 notifyItemRemoved(adapterPosition)
-                onDeleteItemClick?.invoke(removedPlace)
+                onDeleteItem?.invoke(removedPlace.id)
             }
-            itemView.dragHandleView.setImageDrawable(
-                    when (adapterPosition) {
-                        0 -> context.getDrawable(R.drawable.ic_place_near_me_24px)
-                        1 -> context.getDrawable(R.drawable.ic_place_world_24px)
-                        else -> context.getDrawable(R.drawable.ic_drag_handle_24px)
+
+            titleTextView.text = place.title
+            captionTextView.text = place.caption
+
+            iconIv.setImageResource(place.iconResId)
+            if (place.isDraggable) {
+                iconIv.setOnTouchListener { _, event ->
+                    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                        itemTouchHelper.startDrag(this@PlaceHolder)
                     }
-            )
-        }
-
-        private fun getLocalizedDistance(distanceInKm: Double): Int {
-            return when (unitsLocale) {
-                UnitsLocale.METRIC -> distanceInKm.roundToInt()
-                UnitsLocale.IMPERIAL -> kmToMi(distanceInKm.toDouble()).roundToInt()
-                else -> distanceInKm.roundToInt()
+                    false
+                }
             }
-        }
 
-        private fun getLocalizedUnitsString(distance: Int): String {
-            return when (unitsLocale) {
-                UnitsLocale.METRIC -> context.getString(R.string.app_format_kilometers, distance)
-                UnitsLocale.IMPERIAL -> context.getString(R.string.app_format_miles, distance)
-                else -> context.getString(R.string.app_format_kilometers, distance)
-            }
+
+            removeBtn.isVisible = place.isDeletable
         }
     }
 }

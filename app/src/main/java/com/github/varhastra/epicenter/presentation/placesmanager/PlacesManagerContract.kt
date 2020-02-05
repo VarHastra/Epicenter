@@ -1,13 +1,12 @@
 package com.github.varhastra.epicenter.presentation.placesmanager
 
-import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
 
 interface PlacesManagerContract {
 
     interface View : BaseView<Presenter> {
-        fun showPlaces(places: List<Place>)
+        fun showPlaces(places: List<PlaceViewBlock>)
 
         fun isActive(): Boolean
 
@@ -25,9 +24,9 @@ interface PlacesManagerContract {
 
         fun addPlace()
 
-        fun saveOrder(places: List<Place>)
+        fun saveOrder(places: List<PlaceViewBlock>)
 
-        fun tryDeletePlace(place: Place)
+        fun tryDeletePlace(placeId: Int)
 
         fun deletePlace()
 

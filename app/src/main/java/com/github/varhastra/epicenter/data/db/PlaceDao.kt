@@ -23,8 +23,14 @@ abstract class PlaceDao {
     @Update
     abstract fun update(list: List<PlaceEntity>)
 
+    @Query("UPDATE place SET 'order' = :order WHERE id = :id")
+    abstract fun updateOrder(id: Int, order: Int)
+
     @Delete
     abstract fun delete(place: PlaceEntity)
+
+    @Query("DELETE FROM place WHERE id = :id")
+    abstract fun deleteById(id: Int)
 
     fun save(place: PlaceEntity) {
         if (unsafeInsert(place) == -1L) {

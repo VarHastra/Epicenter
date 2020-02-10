@@ -49,7 +49,7 @@ abstract class BaseMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onStop() {
-        mapView.onPause()
+        mapView.onStop()
         super.onStop()
     }
 

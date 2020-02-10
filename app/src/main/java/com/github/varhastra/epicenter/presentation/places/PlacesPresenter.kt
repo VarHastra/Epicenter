@@ -57,7 +57,7 @@ class PlacesPresenter(
 
 
     override fun editPlace(placeId: Int) {
-        if (placeId != Place.WORLD.id) {
+        if (placeId != Place.WORLD.id && placeId != Place.CURRENT_LOCATION.id) {
             view.showPlaceEditor(placeId)
         }
     }

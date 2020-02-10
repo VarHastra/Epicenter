@@ -3,14 +3,12 @@ package com.github.varhastra.epicenter.presentation.placeeditor
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.annotation.ColorInt
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import butterknife.BindColor
 import butterknife.ButterKnife
@@ -24,7 +22,6 @@ import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePick
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.karumi.dexter.Dexter
@@ -37,14 +34,14 @@ import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.sheet_place_editor.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.dip
-import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 
 
-class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditorContract.View {
+class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorContract.View {
 
     private val logger = AnkoLogger(this.javaClass)
-    private var map: GoogleMap? = null
+
+    private lateinit var map: GoogleMap
     private var areaCircle: Circle? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
     private lateinit var presenter: PlaceEditorContract.Presenter
@@ -83,7 +80,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
             if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                 nextFab.show()
                 bottomSheetBehavior.isHideable = false
-                map?.setPadding(0, dip(56 + 16), 0, bottomSheet.height)
+                map.setPadding(0, dip(56 + 16), 0, bottomSheet.height)
             }
         }
     }
@@ -121,11 +118,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
                     supportFragmentManager.beginTransaction().add(this, TAG_STATE_FRAGMENT).commit()
                 }
 
-        val mapFragment = SupportMapFragment.newInstance()
-        supportFragmentManager.beginTransaction()
-                .add(R.id.mapContainer, mapFragment)
-                .commit()
-        mapFragment.getMapAsync(this)
+        initMapView(savedInstanceState)
 
 
         nextFab.hide()
@@ -165,29 +158,19 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        logger.info("onMapReady")
-        googleMap.uiSettings.isMapToolbarEnabled = false
-        googleMap.setPadding(0, dip(56 + 16), 0, 0)
-        try {
-            val success = googleMap.setMapStyle(
+        this.map = googleMap.apply {
+            uiSettings.isMapToolbarEnabled = false
+            setPadding(0, dip(56 + 16), 0, 0)
+            setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.map_style
+                            this@PlaceEditorActivity, R.raw.map_style
                     )
             )
-
-            if (!success) {
-                error("Error parsing map styles.")
+            setOnMapClickListener {
+                presenter.createArea(Coordinates(it.latitude, it.longitude))
             }
-        } catch (e: Resources.NotFoundException) {
-            error("Map style resource not found. ${e.stackTrace}.")
+            setOnMarkerDragListener(markerDragListener)
         }
-
-        googleMap.setOnMapClickListener {
-            presenter.createArea(Coordinates(it.latitude, it.longitude))
-        }
-        googleMap.setOnMarkerDragListener(markerDragListener)
-
-        this.map = googleMap
 
         presenter.start()
     }
@@ -230,27 +213,23 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
     }
 
     override fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean) {
-        map?.apply {
-            val markerOptions = MarkerOptions()
-                    .position(LatLng(coordinates.latitude, coordinates.longitude))
-                    .draggable(draggable)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_b))
-                    .anchor(0.5f, 0.5f)
-            addMarker(markerOptions)
-        }
+        val markerOptions = MarkerOptions()
+                .position(LatLng(coordinates.latitude, coordinates.longitude))
+                .draggable(draggable)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_b))
+                .anchor(0.5f, 0.5f)
+        map.addMarker(markerOptions)
     }
 
     override fun drawArea(coordinates: Coordinates, radiusMeters: Double) {
-        map?.apply {
-            val circleOptions = CircleOptions()
-                    .center(LatLng(coordinates.latitude, coordinates.longitude))
-                    .radius(radiusMeters)
-                    .fillColor(areaColor)
-                    .strokeColor(areaStrokeColor)
-                    .strokeWidth(dip(2).toFloat())
-                    .visible(true)
-            areaCircle = addCircle(circleOptions)
-        }
+        val circleOptions = CircleOptions()
+                .center(LatLng(coordinates.latitude, coordinates.longitude))
+                .radius(radiusMeters)
+                .fillColor(areaColor)
+                .strokeColor(areaStrokeColor)
+                .strokeWidth(dip(2).toFloat())
+                .visible(true)
+        areaCircle = map.addCircle(circleOptions)
     }
 
     override fun showTooltip(show: Boolean) {
@@ -279,7 +258,7 @@ class PlaceEditorActivity : AppCompatActivity(), OnMapReadyCallback, PlaceEditor
         val l = LatLng(left.latitude, left.longitude)
         val r = LatLng(right.latitude, right.longitude)
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(LatLngBounds(l, r), dip(16))
-        map?.animateCamera(cameraUpdate)
+        map.animateCamera(cameraUpdate)
     }
 
     override fun showNamePicker(coordinates: Coordinates) {

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:fitsSystemWindows="false"
-                                                     tools:context=".presentation.placeeditor.PlaceEditorActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context=".presentation.placeeditor.PlaceEditorActivity">
 
-    <FrameLayout
-        android:id="@+id/mapContainer"
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
@@ -24,15 +24,15 @@
 
     <TextView
         android:id="@+id/tooltipTextView"
+        style="@style/MapTooltipTextAppearance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Tap to select a place"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/spacing_9x"
         android:text="@string/place_editor_tap_to_select"
         android:visibility="invisible"
-        tools:visibility="visible"
-        style="@style/MapTooltipTextAppearance"/>
+        tools:text="Tap to select a place"
+        tools:visibility="visible" />
 
     <include layout="@layout/sheet_place_editor" />
 

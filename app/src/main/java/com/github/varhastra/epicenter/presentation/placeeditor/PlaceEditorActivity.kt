@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.annotation.ColorInt
 import androidx.core.app.ActivityOptionsCompat
@@ -23,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -31,7 +29,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_place_editor.*
-import kotlinx.android.synthetic.main.sheet_place_editor.*
+import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.intentFor
@@ -43,7 +41,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     private lateinit var map: GoogleMap
     private var areaCircle: Circle? = null
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ViewGroup>
     private lateinit var presenter: PlaceEditorContract.Presenter
     private lateinit var stateFragment: StateFragment<PlaceEditorState>
 
@@ -72,18 +69,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
     }
 
-    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-        }
-
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                nextFab.show()
-                bottomSheetBehavior.isHideable = false
-                map.setPadding(0, dip(56 + 16), 0, bottomSheet.height)
-            }
-        }
-    }
 
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -120,14 +105,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
         initMapView(savedInstanceState)
 
-
-        nextFab.hide()
         nextFab.setOnClickListener { presenter.openNamePicker() }
-
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetRootView)
-        bottomSheetBehavior.isHideable = true
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.setBottomSheetCallback(bottomSheetCallback)
 
         radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
@@ -233,7 +211,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     }
 
     override fun showTooltip(show: Boolean) {
-        tooltipTextView.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        // Do nothing, will be deleted in the future
     }
 
     override fun updateAreaRadius(radiusMeters: Double) {
@@ -249,9 +227,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     }
 
     override fun showRadiusControls(show: Boolean) {
-        if (show) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
+        // Do nothing, this method will be deleted in the future
     }
 
     override fun adjustCameraToFitBounds(left: Coordinates, right: Coordinates) {

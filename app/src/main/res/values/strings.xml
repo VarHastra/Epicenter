@@ -136,4 +136,5 @@
     <string name="app_undo">Undo</string>
 
     <string name="place_editor_tap_to_select">Tap anywhere to select a place</string>
+    <string name="place_editor_hint_move_map">Move the map to select the desired place</string>
 </resources>

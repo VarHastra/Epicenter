@@ -7,11 +7,20 @@
     android:fitsSystemWindows="false"
     tools:context=".presentation.placeeditor.PlaceEditorActivity">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false" />
+        android:orientation="vertical">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fitsSystemWindows="false" />
+
+        <include layout="@layout/layout_place_editor_controls" />
+    </LinearLayout>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -21,20 +30,6 @@
         android:background="@android:color/transparent"
         android:elevation="0dp"
         android:fitsSystemWindows="true" />
-
-    <TextView
-        android:id="@+id/tooltipTextView"
-        style="@style/MapTooltipTextAppearance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/spacing_9x"
-        android:text="@string/place_editor_tap_to_select"
-        android:visibility="invisible"
-        tools:text="Tap to select a place"
-        tools:visibility="visible" />
-
-    <include layout="@layout/sheet_place_editor" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextFab"

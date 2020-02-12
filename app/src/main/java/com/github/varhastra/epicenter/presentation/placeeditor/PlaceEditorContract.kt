@@ -10,15 +10,11 @@ interface PlaceEditorContract {
     interface View : BaseView<Presenter> {
         fun allowNameEditor(allow: Boolean)
 
-        fun showRadiusControls(show: Boolean)
-
         fun showRequestLocationPermission(onGranted: () -> Unit, onDenied: () -> Unit)
 
         fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean = true)
 
         fun drawArea(coordinates: Coordinates, radiusMeters: Double)
-
-        fun showTooltip(show: Boolean)
 
         fun updateAreaRadius(radiusMeters: Double)
 

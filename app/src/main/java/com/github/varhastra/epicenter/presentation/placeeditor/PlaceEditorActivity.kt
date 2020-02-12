@@ -210,10 +210,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         areaCircle = map.addCircle(circleOptions)
     }
 
-    override fun showTooltip(show: Boolean) {
-        // Do nothing, will be deleted in the future
-    }
-
     override fun updateAreaRadius(radiusMeters: Double) {
         areaCircle?.radius = radiusMeters
     }
@@ -224,10 +220,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     override fun setRadius(value: Int) {
         radiusSeekBar.progress = value
-    }
-
-    override fun showRadiusControls(show: Boolean) {
-        // Do nothing, this method will be deleted in the future
     }
 
     override fun adjustCameraToFitBounds(left: Coordinates, right: Coordinates) {

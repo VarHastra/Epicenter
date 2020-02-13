@@ -1,18 +1,16 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
+import android.os.Bundle
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
 
 interface PlaceEditorContract {
 
     interface View : BaseView<Presenter> {
-        fun allowNameEditor(allow: Boolean)
+        fun loadMap()
 
-        fun showRequestLocationPermission(onGranted: () -> Unit, onDenied: () -> Unit)
-
-        fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean = true)
+        fun drawAreaCenter(coordinates: Coordinates)
 
         fun drawArea(coordinates: Coordinates, radiusMeters: Double)
 
@@ -32,13 +30,7 @@ interface PlaceEditorContract {
     }
 
     interface Presenter : BasePresenter {
-        var state: PlaceEditorState
-
-        fun initialize(placeId: Int)
-
-        fun initialize(placeEditorState: PlaceEditorState)
-
-        fun createArea(coordinates: Coordinates)
+        fun initialize(placeId: Int?)
 
         fun setAreaCenter(coordinates: Coordinates)
 
@@ -47,5 +39,9 @@ interface PlaceEditorContract {
         fun openNamePicker()
 
         fun saveWithName(placeName: String)
+
+        fun onSaveState(outState: Bundle)
+
+        fun onRestoreState(state: Bundle)
     }
 }

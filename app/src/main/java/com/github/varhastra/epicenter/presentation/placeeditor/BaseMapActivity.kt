@@ -14,8 +14,11 @@ abstract class BaseMapActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapViewBundle = savedInstanceState?.getBundle(STATE_MAP_VIEW_BUNDLE)
         mapView = findViewById<MapView>(R.id.map).apply {
             onCreate(mapViewBundle)
-            getMapAsync(this@BaseMapActivity)
         }
+    }
+
+    fun loadMapAsync() {
+        mapView.getMapAsync(this@BaseMapActivity)
     }
 
     override fun onStart() {

@@ -1,6 +1,5 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -15,19 +14,11 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
-import com.github.varhastra.epicenter.presentation.StateFragment
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import org.jetbrains.anko.AnkoLogger
@@ -42,7 +33,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     private lateinit var map: GoogleMap
     private var areaCircle: Circle? = null
     private lateinit var presenter: PlaceEditorContract.Presenter
-    private lateinit var stateFragment: StateFragment<PlaceEditorState>
 
     @BindColor(R.color.colorSelectedArea)
     @JvmField
@@ -69,7 +59,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
     }
 
-
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             // Update area radius
@@ -88,6 +77,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_editor)
@@ -97,12 +87,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        @Suppress("UNCHECKED_CAST")
-        stateFragment = supportFragmentManager.findFragmentByTag(TAG_STATE_FRAGMENT) as? StateFragment<PlaceEditorState>
-                ?: StateFragment<PlaceEditorState>().apply {
-                    supportFragmentManager.beginTransaction().add(this, TAG_STATE_FRAGMENT).commit()
-                }
-
         initMapView(savedInstanceState)
 
         nextFab.setOnClickListener { presenter.openNamePicker() }
@@ -110,14 +94,13 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
 
         val presenter = PlaceEditorPresenter(this, PlacesDataSource.getInstance(), AppSettings.preferredUnits)
-        if (stateFragment.data != null) {
-            presenter.initialize(stateFragment.data!!)
-        } else {
-            val placeId = intent.getIntExtra(EXTRA_PLACE_ID, 0)
-            if (placeId != 0) {
-                presenter.initialize(placeId)
-            }
+        if (savedInstanceState != null) {
+            presenter.onRestoreState(savedInstanceState)
+            return
         }
+
+        val placeId = if (intent.hasExtra(EXTRA_PLACE_ID)) intent.getIntExtra(EXTRA_PLACE_ID, 0) else null
+        presenter.initialize(placeId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,11 +113,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        stateFragment.data = presenter.state
-    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         this.map = googleMap.apply {
             uiSettings.isMapToolbarEnabled = false
@@ -144,56 +122,32 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
                             this@PlaceEditorActivity, R.raw.map_style
                     )
             )
-            setOnMapClickListener {
-                presenter.createArea(Coordinates(it.latitude, it.longitude))
-            }
             setOnMarkerDragListener(markerDragListener)
         }
 
         presenter.start()
     }
 
-    override fun showRequestLocationPermission(onGranted: () -> Unit, onDenied: () -> Unit) {
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                        onGranted.invoke()
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
-                        token.continuePermissionRequest()
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                        onDenied.invoke()
-                    }
-                })
-                .check()
+    override fun onSaveInstanceState(outState: Bundle) {
+        presenter.onSaveState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     override fun attachPresenter(presenter: PlaceEditorContract.Presenter) {
         this.presenter = presenter
     }
 
-    override fun allowNameEditor(allow: Boolean) {
-        if (allow) {
-            nextFab.setImageResource(R.drawable.ic_next_fab_dark_24px)
-            nextFab.setOnClickListener { presenter.openNamePicker() }
-        } else {
-            nextFab.setImageResource(R.drawable.ic_save_fab_dark_24px)
-            nextFab.setOnClickListener { presenter.saveWithName("") }
-        }
+    override fun loadMap() {
+        loadMapAsync()
     }
 
     override fun setMaxRadiusValue(maxRadius: Int) {
         radiusSeekBar.max = maxRadius
     }
 
-    override fun drawAreaCenter(coordinates: Coordinates, draggable: Boolean) {
+    override fun drawAreaCenter(coordinates: Coordinates) {
         val markerOptions = MarkerOptions()
                 .position(LatLng(coordinates.latitude, coordinates.longitude))
-                .draggable(draggable)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_b))
                 .anchor(0.5f, 0.5f)
         map.addMarker(markerOptions)
@@ -259,8 +213,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     companion object {
         const val EXTRA_PLACE_ID = "EXTRA_PLACE_ID"
-        const val EXTRA_MODE = "EXTRA_MODE"
-        const val TAG_STATE_FRAGMENT = "STATE_FRAGMENT"
         const val REQUEST_PLACE_NAME: Int = 100
     }
 }

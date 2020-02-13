@@ -1,11 +1,11 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
+import android.os.Bundle
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.repos.PlacesRepository
 import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
-import com.github.varhastra.epicenter.domain.state.placeeditor.PlaceEditorState
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
@@ -18,93 +18,71 @@ class PlaceEditorPresenter(
         unitsLocale: UnitsLocale
 ) : PlaceEditorContract.Presenter {
 
-    override var state: PlaceEditorState = PlaceEditorState(0, -10, null)
+    private var placeId: Int? = null
+
+    private var areaCenter = Coordinates(0.0, 0.0)
+
+    private var areaRadiusKm = Area.MIN_RADIUS_KM
+
+    private val areaRadiusMeters get() = areaRadiusKm * 1000
+
+    private var placeOrder = -10
+
     private val unitsFormatter = UnitsFormatter(unitsLocale, 0)
 
     init {
         view.attachPresenter(this)
     }
 
-    override fun initialize(placeId: Int) {
-        state = state.copy(placeId = placeId)
-        if (placeId == Place.CURRENT_LOCATION.id) {
-            view.allowNameEditor(false)
+    override fun initialize(placeId: Int?) {
+        this.placeId = placeId
+
+        if (placeId == null) {
+            view.loadMap()
+            return
         }
+
+        placesRepository.getPlace(object : RepositoryCallback<Place> {
+            override fun onResult(result: Place) {
+                areaCenter = result.coordinates
+                areaRadiusKm = result.radiusKm!!
+                placeOrder = result.order
+                view.loadMap()
+            }
+
+            override fun onFailure(t: Throwable?) {
+                // TODO: notify the user about the error
+                view.navigateBack()
+            }
+        }, placeId = placeId)
     }
 
-    override fun initialize(placeEditorState: PlaceEditorState) {
-        state = placeEditorState
-        if (state.placeId == Place.CURRENT_LOCATION.id) {
-            view.allowNameEditor(false)
+    override fun onRestoreState(state: Bundle) {
+        state.let {
+            placeId = it.getSerializable(STATE_PLACE_ID) as Int?
+            areaCenter = it.getSerializable(STATE_AREA_CENTER) as Coordinates
+            areaRadiusKm = it.getDouble(STATE_AREA_RADIUS, Area.MIN_RADIUS_KM)
+            placeOrder = it.getInt(STATE_PLACE_ORDER, -10)
         }
+        view.loadMap()
     }
 
     override fun start() {
         view.setMaxRadiusValue((Area.MAX_RADIUS_KM - Area.MIN_RADIUS_KM).roundToInt() - 1)
-
-        if (state.placeId == 0) {
-            drawCurrentState()
-            return
-        }
-
-        if (state.placeId == Place.CURRENT_LOCATION.id) {
-            view.showRequestLocationPermission(onGranted = {
-                getAndDrawPlace()
-            }, onDenied = {
-                view.navigateBack()
-            })
-
-        } else {
-            getAndDrawPlace()
-        }
-
-    }
-
-    private fun getAndDrawPlace() {
-        placesRepository.getPlace(object : RepositoryCallback<Place> {
-            override fun onResult(result: Place) {
-                state = state.copy(area = Area(result.coordinates, result.radiusKm!!), order = result.order)
-                drawCurrentState()
-                adjustCameraToAreaBounds()
-            }
-
-            override fun onFailure(t: Throwable?) {
-                // TODO: find a better solution
-                // If location is not available, show area with zero coordinates
-                state = state.copy(area = Area(Coordinates(0.0, 0.0), Area.MIN_RADIUS_KM))
-                if (state.placeId == Place.CURRENT_LOCATION.id) state = state.copy(order = Place.CURRENT_LOCATION.order)
-                drawCurrentState()
-            }
-        }, placeId = state.placeId)
+        drawCurrentState()
+        adjustCameraToAreaBounds()
     }
 
     private fun drawCurrentState() {
-        state.area?.apply {
-            view.drawAreaCenter(center, state.placeId != Place.CURRENT_LOCATION.id)
-            view.drawArea(center, radiusM)
-            view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(radiusKm))
-            view.setRadius((radiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
-        }
-    }
-
-    override fun createArea(coordinates: Coordinates) {
-        if (state.area != null) {
-            return
-        }
-
-        state = state.copy(area = Area(coordinates, Area.MIN_RADIUS_KM))
-        state.area?.apply {
-            drawCurrentState()
-            adjustCameraToAreaBounds()
-        }
+        view.drawAreaCenter(areaCenter)
+        view.drawArea(areaCenter, areaRadiusMeters)
+        view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
+        view.setRadius((areaRadiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
     }
 
     private fun adjustCameraToAreaBounds() {
-        state.area?.apply {
-            val bounds = computeBounds(center, radiusM)
-            view.adjustCameraToFitBounds(bounds.first, bounds.second)
-
-        }
+        val bounds = computeBounds(areaCenter, areaRadiusMeters)
+        view.adjustCameraToFitBounds(bounds.first, bounds.second)
     }
 
     private fun computeBounds(coordinates: Coordinates, radiusMeters: Double): Pair<Coordinates, Coordinates> {
@@ -119,32 +97,42 @@ class PlaceEditorPresenter(
     }
 
     override fun setAreaCenter(coordinates: Coordinates) {
-        state = state.copy(area = state.area?.copy(center = coordinates))
+        areaCenter = coordinates
     }
 
     override fun setAreaRadius(value: Int, lastUpdate: Boolean) {
-        val newRadiusKm = value + Area.MIN_RADIUS_KM + 1
-        state = state.copy(area = state.area?.copy(radiusKm = newRadiusKm))
-        state.area?.apply {
-            view.updateAreaRadius(radiusM)
-            view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(radiusKm.roundToInt()))
-        }
+        areaRadiusKm = value + Area.MIN_RADIUS_KM + 1
+        view.updateAreaRadius(areaRadiusMeters)
+        view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
 
         if (lastUpdate) {
             adjustCameraToAreaBounds()
         }
     }
 
-    override fun openNamePicker() {
-        state.area?.apply {
-            view.showNamePicker(center)
+    override fun onSaveState(outState: Bundle) {
+        outState.run {
+            putSerializable(STATE_PLACE_ID, placeId)
+            putSerializable(STATE_AREA_CENTER, areaCenter)
+            putDouble(STATE_AREA_RADIUS, areaRadiusKm)
+            putInt(STATE_PLACE_ORDER, placeOrder)
         }
     }
 
+    override fun openNamePicker() {
+        view.showNamePicker(areaCenter)
+    }
+
     override fun saveWithName(placeName: String) {
-        state.area?.apply {
-            placesRepository.savePlace(Place(state.placeId, placeName, center, radiusKm, state.order))
-        }
+        placesRepository.savePlace(Place(placeId
+                ?: 0, placeName, areaCenter, areaRadiusKm, placeOrder))
         view.navigateBack()
+    }
+
+    companion object {
+        private const val STATE_PLACE_ID = "PLACE_ID"
+        private const val STATE_AREA_CENTER = "AREA_CENTER"
+        private const val STATE_AREA_RADIUS = "AREA_RADIUS"
+        private const val STATE_PLACE_ORDER = "PLACE_ORDER"
     }
 }

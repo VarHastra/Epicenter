@@ -31,7 +31,9 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     private val logger = AnkoLogger(this.javaClass)
 
     private lateinit var map: GoogleMap
-    private var areaCircle: Circle? = null
+
+    private lateinit var areaCircle: Circle
+
     private lateinit var presenter: PlaceEditorContract.Presenter
 
     @BindColor(R.color.colorSelectedArea)
@@ -44,26 +46,12 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     @ColorInt
     var areaStrokeColor: Int = 0
 
-    private val markerDragListener = object : GoogleMap.OnMarkerDragListener {
-        override fun onMarkerDragEnd(marker: Marker) {
-            presenter.setAreaCenter(Coordinates(marker.position.latitude, marker.position.longitude))
-            areaCircle?.center = marker.position
-        }
-
-        override fun onMarkerDragStart(marker: Marker) {
-            // Do nothing
-        }
-
-        override fun onMarkerDrag(marker: Marker) {
-            areaCircle?.center = marker.position
-        }
-    }
 
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             // Update area radius
             if (fromUser) {
-                presenter.setAreaRadius(progress, false)
+                presenter.onChangeAreaRadius(progress, false)
             }
         }
 
@@ -73,7 +61,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             // Update area radius
-            presenter.setAreaRadius(seekBar.progress, true)
+            presenter.onChangeAreaRadius(seekBar.progress, true)
         }
     }
 
@@ -122,8 +110,20 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
                             this@PlaceEditorActivity, R.raw.map_style
                     )
             )
-            setOnMarkerDragListener(markerDragListener)
+            setOnCameraMoveListener {
+                val cameraTarget = map.cameraPosition.target
+                presenter.onChangeAreaCenter(Coordinates(cameraTarget.latitude, cameraTarget.longitude))
+            }
         }
+
+        val areaCircleOptions = CircleOptions()
+                .center(LatLng(0.0, 0.0))
+                .radius(1.0)
+                .fillColor(areaColor)
+                .strokeColor(areaStrokeColor)
+                .strokeWidth(dip(2).toFloat())
+                .visible(false)
+        this.areaCircle = googleMap.addCircle(areaCircleOptions)
 
         presenter.start()
     }
@@ -145,27 +145,12 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         radiusSeekBar.max = maxRadius
     }
 
-    override fun drawAreaCenter(coordinates: Coordinates) {
-        val markerOptions = MarkerOptions()
-                .position(LatLng(coordinates.latitude, coordinates.longitude))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_b))
-                .anchor(0.5f, 0.5f)
-        map.addMarker(markerOptions)
-    }
-
-    override fun drawArea(coordinates: Coordinates, radiusMeters: Double) {
-        val circleOptions = CircleOptions()
-                .center(LatLng(coordinates.latitude, coordinates.longitude))
-                .radius(radiusMeters)
-                .fillColor(areaColor)
-                .strokeColor(areaStrokeColor)
-                .strokeWidth(dip(2).toFloat())
-                .visible(true)
-        areaCircle = map.addCircle(circleOptions)
-    }
-
-    override fun updateAreaRadius(radiusMeters: Double) {
-        areaCircle?.radius = radiusMeters
+    override fun renderArea(center: Coordinates, radiusMeters: Double) {
+        areaCircle.let {
+            it.center = LatLng(center.latitude, center.longitude)
+            it.radius = radiusMeters
+            it.isVisible = true
+        }
     }
 
     override fun showAreaRadiusText(radiusText: String) {

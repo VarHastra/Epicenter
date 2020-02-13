@@ -10,11 +10,7 @@ interface PlaceEditorContract {
     interface View : BaseView<Presenter> {
         fun loadMap()
 
-        fun drawAreaCenter(coordinates: Coordinates)
-
-        fun drawArea(coordinates: Coordinates, radiusMeters: Double)
-
-        fun updateAreaRadius(radiusMeters: Double)
+        fun renderArea(center: Coordinates, radiusMeters: Double)
 
         fun showAreaRadiusText(radiusText: String)
 
@@ -32,9 +28,9 @@ interface PlaceEditorContract {
     interface Presenter : BasePresenter {
         fun initialize(placeId: Int?)
 
-        fun setAreaCenter(coordinates: Coordinates)
+        fun onChangeAreaCenter(coordinates: Coordinates)
 
-        fun setAreaRadius(value: Int, lastUpdate: Boolean)
+        fun onChangeAreaRadius(value: Int, lastUpdate: Boolean)
 
         fun openNamePicker()
 

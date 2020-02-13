@@ -68,16 +68,13 @@ class PlaceEditorPresenter(
     }
 
     override fun start() {
-        view.setMaxRadiusValue((Area.MAX_RADIUS_KM - Area.MIN_RADIUS_KM).roundToInt() - 1)
-        drawCurrentState()
+        view.apply {
+            setMaxRadiusValue((Area.MAX_RADIUS_KM - Area.MIN_RADIUS_KM).roundToInt() - 1)
+            renderArea(areaCenter, areaRadiusMeters)
+            showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
+            setRadius((areaRadiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
+        }
         adjustCameraToAreaBounds()
-    }
-
-    private fun drawCurrentState() {
-        view.drawAreaCenter(areaCenter)
-        view.drawArea(areaCenter, areaRadiusMeters)
-        view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
-        view.setRadius((areaRadiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
     }
 
     private fun adjustCameraToAreaBounds() {
@@ -96,14 +93,17 @@ class PlaceEditorPresenter(
         )
     }
 
-    override fun setAreaCenter(coordinates: Coordinates) {
+    override fun onChangeAreaCenter(coordinates: Coordinates) {
         areaCenter = coordinates
+        view.renderArea(areaCenter, areaRadiusMeters)
     }
 
-    override fun setAreaRadius(value: Int, lastUpdate: Boolean) {
+    override fun onChangeAreaRadius(value: Int, lastUpdate: Boolean) {
         areaRadiusKm = value + Area.MIN_RADIUS_KM + 1
-        view.updateAreaRadius(areaRadiusMeters)
-        view.showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
+        view.apply {
+            renderArea(areaCenter, areaRadiusMeters)
+            showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
+        }
 
         if (lastUpdate) {
             adjustCameraToAreaBounds()

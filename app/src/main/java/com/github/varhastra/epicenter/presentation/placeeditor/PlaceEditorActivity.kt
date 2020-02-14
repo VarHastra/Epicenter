@@ -31,7 +31,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            // Update area radius
             if (fromUser) {
                 presenter.onChangeAreaRadius(progress)
             }
@@ -42,7 +41,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
-            // Update area radius
             presenter.onStopChangingAreaRadius(map.projection.visibleRegion.latLngBounds)
         }
     }
@@ -52,24 +50,27 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_editor)
 
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-
         initMapView(savedInstanceState)
-
-        nextFab.setOnClickListener { presenter.openNamePicker() }
-
-        radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
+        setUpViews()
 
         val presenter = PlaceEditorPresenter(this, PlacesDataSource.getInstance(), AppSettings.preferredUnits)
         if (savedInstanceState != null) {
             presenter.onRestoreState(savedInstanceState)
-            return
+        } else {
+            val placeId = if (intent.hasExtra(EXTRA_PLACE_ID)) intent.getIntExtra(EXTRA_PLACE_ID, 0) else null
+            presenter.initialize(placeId)
         }
+    }
 
-        val placeId = if (intent.hasExtra(EXTRA_PLACE_ID)) intent.getIntExtra(EXTRA_PLACE_ID, 0) else null
-        presenter.initialize(placeId)
+    private fun setUpViews() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+        nextFab.setOnClickListener { presenter.openNamePicker() }
+
+        radiusSeekBar.setOnSeekBarChangeListener(seekBarListener)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

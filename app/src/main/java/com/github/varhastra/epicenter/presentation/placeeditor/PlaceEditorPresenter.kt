@@ -89,22 +89,6 @@ class PlaceEditorPresenter(
         adjustCameraToFitBounds(areaBounds, false)
     }
 
-    private fun adjustCameraToAreaBounds() {
-        val bounds = computeBounds(areaCenter, areaRadiusMeters)
-        view.adjustCameraToFitBounds(bounds.first, bounds.second)
-    }
-
-    private fun computeBounds(coordinates: Coordinates, radiusMeters: Double): Pair<Coordinates, Coordinates> {
-        val from = LatLng(coordinates.latitude, coordinates.longitude)
-        val rightmost = SphericalUtil.computeOffset(from, radiusMeters, 90.0)
-        val leftmost = SphericalUtil.computeOffset(from, radiusMeters, 270.0)
-
-        return Coordinates(leftmost.latitude, leftmost.longitude) to Coordinates(
-                rightmost.latitude,
-                rightmost.longitude
-        )
-    }
-
     override fun onChangeAreaCenter(coordinates: Coordinates) {
         areaCenter = coordinates
         view.renderArea(areaCenter, areaRadiusMeters)

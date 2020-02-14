@@ -19,5 +19,6 @@ data class Area(
     companion object {
         const val MIN_RADIUS_KM = 500.0
         const val MAX_RADIUS_KM = 5_000.0
+        const val RADIUS_DELTA_KM = MAX_RADIUS_KM - MIN_RADIUS_KM
     }
 }

@@ -15,9 +15,7 @@ interface PlaceEditorContract {
 
         fun showAreaRadiusText(radiusText: String)
 
-        fun setRadius(value: Int)
-
-        fun setMaxRadiusValue(maxRadius: Int)
+        fun showRadius(percentage: Int)
 
         fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean)
 
@@ -31,7 +29,7 @@ interface PlaceEditorContract {
 
         fun onChangeAreaCenter(coordinates: Coordinates)
 
-        fun onChangeAreaRadius(value: Int)
+        fun onChangeAreaRadius(percentage: Int)
 
         fun onStopChangingAreaRadius(mapBounds: LatLngBounds)
 

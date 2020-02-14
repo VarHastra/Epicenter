@@ -143,10 +143,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         loadMapAsync()
     }
 
-    override fun setMaxRadiusValue(maxRadius: Int) {
-        radiusSeekBar.max = maxRadius
-    }
-
     override fun renderArea(center: Coordinates, radiusMeters: Double) {
         areaCircle.let {
             it.center = LatLng(center.latitude, center.longitude)
@@ -159,8 +155,8 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         radiusTextView.text = radiusText
     }
 
-    override fun setRadius(value: Int) {
-        radiusSeekBar.progress = value
+    override fun showRadius(percentage: Int) {
+        radiusSeekBar.progress = percentage
     }
 
     override fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean) {

@@ -81,10 +81,10 @@ class PlaceEditorPresenter(
 
     override fun start() {
         view.apply {
-            setMaxRadiusValue((Area.MAX_RADIUS_KM - Area.MIN_RADIUS_KM).roundToInt() - 1)
             renderArea(areaCenter, areaRadiusMeters)
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
-            setRadius((areaRadiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
+            val radiusPercentage = convertAreaRadiusToPercentage(areaRadiusKm)
+            showRadius(radiusPercentage.roundToInt())
         }
         adjustCameraToFitBounds(areaBounds, false)
     }
@@ -94,8 +94,8 @@ class PlaceEditorPresenter(
         view.renderArea(areaCenter, areaRadiusMeters)
     }
 
-    override fun onChangeAreaRadius(value: Int) {
-        areaRadiusKm = value + Area.MIN_RADIUS_KM + 1
+    override fun onChangeAreaRadius(percentage: Int) {
+        areaRadiusKm = convertPercentageToAreaRadius(percentage.toDouble())
         view.apply {
             renderArea(areaCenter, areaRadiusMeters)
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
@@ -138,5 +138,13 @@ class PlaceEditorPresenter(
         private const val STATE_AREA_CENTER = "AREA_CENTER"
         private const val STATE_AREA_RADIUS = "AREA_RADIUS"
         private const val STATE_PLACE_ORDER = "PLACE_ORDER"
+
+        private fun convertAreaRadiusToPercentage(radiusKm: Double): Double {
+            return (radiusKm - Area.MIN_RADIUS_KM) / Area.RADIUS_DELTA_KM * 100
+        }
+
+        private fun convertPercentageToAreaRadius(percentage: Double): Double {
+            return percentage / 100.0 * Area.RADIUS_DELTA_KM + Area.MIN_RADIUS_KM
+        }
     }
 }

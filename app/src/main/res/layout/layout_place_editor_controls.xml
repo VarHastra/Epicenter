@@ -37,7 +37,7 @@
         android:layout_marginEnd="@dimen/spacing_1x"
         android:layout_marginBottom="@dimen/spacing_2x"
         android:indeterminateTint="?colorPrimary"
-        android:max="999"
+        android:max="100"
         android:progressBackgroundTint="?colorPrimary"
         android:progressTint="?colorPrimary"
         android:thumbTint="?colorPrimary" />

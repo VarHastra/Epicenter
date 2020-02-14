@@ -18,14 +18,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.layout_place_editor_controls.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.intentFor
 
 
 class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorContract.View {
-
-    private val logger = AnkoLogger(this.javaClass)
 
     private lateinit var map: GoogleMap
 
@@ -90,7 +85,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     override fun onMapReady(googleMap: GoogleMap) {
         this.map = googleMap.apply {
             uiSettings.isMapToolbarEnabled = false
-            setPadding(0, dip(56 + 16), 0, 0)
             setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             this@PlaceEditorActivity, R.raw.map_style
@@ -113,7 +107,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
                 .radius(1.0)
                 .fillColor(areaColor)
                 .strokeColor(areaStrokeColor)
-                .strokeWidth(dip(2).toFloat())
+                .strokeWidth(2.dp.toFloat())
                 .visible(false)
     }
 
@@ -152,7 +146,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     }
 
     override fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean) {
-        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, dip(16))
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 16.dp)
         if (animate) {
             map.animateCamera(cameraUpdate)
         } else {
@@ -162,14 +156,11 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     override fun showNamePicker(latLng: LatLng) {
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-        startActivityForResult(
-                intentFor<PlaceNamePickerActivity>(
-                        PlaceNamePickerActivity.EXTRA_LAT to latLng.latitude,
-                        PlaceNamePickerActivity.EXTRA_LNG to latLng.longitude
-                ),
-                REQUEST_PLACE_NAME,
-                options
-        )
+        val intent = Intent(this, PlaceNamePickerActivity::class.java).apply {
+            putExtra(PlaceNamePickerActivity.EXTRA_LAT, latLng.latitude)
+            putExtra(PlaceNamePickerActivity.EXTRA_LNG, latLng.longitude)
+        }
+        startActivityForResult(intent, REQUEST_PLACE_NAME, options)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -187,6 +178,10 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     override fun navigateBack() {
         finish()
     }
+
+
+    private val Int.dp
+        get() = (this * resources.displayMetrics.density).toInt()
 
     companion object {
         const val EXTRA_PLACE_ID = "EXTRA_PLACE_ID"

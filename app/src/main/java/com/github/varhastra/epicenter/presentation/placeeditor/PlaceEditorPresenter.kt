@@ -9,6 +9,7 @@ import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.SphericalUtil
 import kotlin.math.roundToInt
 
@@ -25,6 +26,17 @@ class PlaceEditorPresenter(
     private var areaRadiusKm = Area.MIN_RADIUS_KM
 
     private val areaRadiusMeters get() = areaRadiusKm * 1000
+
+    private val areaBounds: LatLngBounds
+        get() {
+            val from = LatLng(areaCenter.latitude, areaCenter.longitude)
+            val southwestDeg = 265.0
+            val northeastDeg = 85.0
+            val west = SphericalUtil.computeOffset(from, areaRadiusMeters, southwestDeg)
+            val east = SphericalUtil.computeOffset(from, areaRadiusMeters, northeastDeg)
+
+            return LatLngBounds(west, east)
+        }
 
     private var placeOrder = -10
 
@@ -74,7 +86,7 @@ class PlaceEditorPresenter(
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
             setRadius((areaRadiusKm - Area.MIN_RADIUS_KM - 1).roundToInt())
         }
-        adjustCameraToAreaBounds()
+        adjustCameraToFitBounds(areaBounds, false)
     }
 
     private fun adjustCameraToAreaBounds() {
@@ -98,15 +110,18 @@ class PlaceEditorPresenter(
         view.renderArea(areaCenter, areaRadiusMeters)
     }
 
-    override fun onChangeAreaRadius(value: Int, lastUpdate: Boolean) {
+    override fun onChangeAreaRadius(value: Int) {
         areaRadiusKm = value + Area.MIN_RADIUS_KM + 1
         view.apply {
             renderArea(areaCenter, areaRadiusMeters)
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
         }
+    }
 
-        if (lastUpdate) {
-            adjustCameraToAreaBounds()
+    override fun onStopChangingAreaRadius(mapBounds: LatLngBounds) {
+        val areaBounds = areaBounds
+        if (areaBounds.northeast !in mapBounds || areaBounds.southwest !in mapBounds) {
+            adjustCameraToFitBounds(areaBounds, true)
         }
     }
 
@@ -128,6 +143,11 @@ class PlaceEditorPresenter(
                 ?: 0, placeName, areaCenter, areaRadiusKm, placeOrder))
         view.navigateBack()
     }
+
+    private fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean) {
+        view.adjustCameraToFitBounds(bounds, animate)
+    }
+
 
     companion object {
         private const val STATE_PLACE_ID = "PLACE_ID"

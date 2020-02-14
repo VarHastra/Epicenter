@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
+import com.google.android.gms.maps.model.LatLngBounds
 
 interface PlaceEditorContract {
 
@@ -18,7 +19,7 @@ interface PlaceEditorContract {
 
         fun setMaxRadiusValue(maxRadius: Int)
 
-        fun adjustCameraToFitBounds(left: Coordinates, right: Coordinates)
+        fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean)
 
         fun showNamePicker(coordinates: Coordinates)
 
@@ -30,7 +31,9 @@ interface PlaceEditorContract {
 
         fun onChangeAreaCenter(coordinates: Coordinates)
 
-        fun onChangeAreaRadius(value: Int, lastUpdate: Boolean)
+        fun onChangeAreaRadius(value: Int)
+
+        fun onStopChangingAreaRadius(mapBounds: LatLngBounds)
 
         fun openNamePicker()
 

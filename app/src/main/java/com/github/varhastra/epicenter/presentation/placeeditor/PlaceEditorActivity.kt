@@ -51,7 +51,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             // Update area radius
             if (fromUser) {
-                presenter.onChangeAreaRadius(progress, false)
+                presenter.onChangeAreaRadius(progress)
             }
         }
 
@@ -61,7 +61,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             // Update area radius
-            presenter.onChangeAreaRadius(seekBar.progress, true)
+            presenter.onStopChangingAreaRadius(map.projection.visibleRegion.latLngBounds)
         }
     }
 
@@ -110,10 +110,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
                             this@PlaceEditorActivity, R.raw.map_style
                     )
             )
-            setOnCameraMoveListener {
-                val cameraTarget = map.cameraPosition.target
-                presenter.onChangeAreaCenter(Coordinates(cameraTarget.latitude, cameraTarget.longitude))
-            }
+            setOnCameraMoveListener(::onMapCameraMove)
         }
 
         val areaCircleOptions = CircleOptions()
@@ -126,6 +123,11 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         this.areaCircle = googleMap.addCircle(areaCircleOptions)
 
         presenter.start()
+    }
+
+    private fun onMapCameraMove() {
+        val cameraTarget = map.cameraPosition.target
+        presenter.onChangeAreaCenter(Coordinates(cameraTarget.latitude, cameraTarget.longitude))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -161,11 +163,13 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         radiusSeekBar.progress = value
     }
 
-    override fun adjustCameraToFitBounds(left: Coordinates, right: Coordinates) {
-        val l = LatLng(left.latitude, left.longitude)
-        val r = LatLng(right.latitude, right.longitude)
-        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(LatLngBounds(l, r), dip(16))
-        map.animateCamera(cameraUpdate)
+    override fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean) {
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, dip(16))
+        if (animate) {
+            map.animateCamera(cameraUpdate)
+        } else {
+            map.moveCamera(cameraUpdate)
+        }
     }
 
     override fun showNamePicker(coordinates: Coordinates) {

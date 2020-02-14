@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import androidx.annotation.ColorInt
 import androidx.core.app.ActivityOptionsCompat
-import butterknife.BindColor
-import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
+import com.github.varhastra.epicenter.common.extensions.getColorCompat
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
@@ -35,16 +33,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     private lateinit var presenter: PlaceEditorContract.Presenter
 
-    @BindColor(R.color.colorSelectedArea)
-    @JvmField
-    @ColorInt
-    var areaColor: Int = 0
-
-    @BindColor(R.color.colorSelectedAreaStroke)
-    @JvmField
-    @ColorInt
-    var areaStrokeColor: Int = 0
-
 
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -68,7 +56,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_editor)
-        ButterKnife.bind(this)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -112,16 +99,22 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
             setOnCameraMoveListener(::onMapCameraMove)
         }
 
-        val areaCircleOptions = CircleOptions()
+        val areaCircleOptions = createAreaCircleOptions()
+        this.areaCircle = googleMap.addCircle(areaCircleOptions)
+
+        presenter.start()
+    }
+
+    private fun createAreaCircleOptions(): CircleOptions? {
+        val areaColor = getColorCompat(R.color.colorSelectedArea)
+        val areaStrokeColor = getColorCompat(R.color.colorSelectedAreaStroke)
+        return CircleOptions()
                 .center(LatLng(0.0, 0.0))
                 .radius(1.0)
                 .fillColor(areaColor)
                 .strokeColor(areaStrokeColor)
                 .strokeWidth(dip(2).toFloat())
                 .visible(false)
-        this.areaCircle = googleMap.addCircle(areaCircleOptions)
-
-        presenter.start()
     }
 
     private fun onMapCameraMove() {

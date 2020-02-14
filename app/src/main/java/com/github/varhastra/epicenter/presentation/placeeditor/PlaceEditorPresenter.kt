@@ -81,7 +81,7 @@ class PlaceEditorPresenter(
 
     override fun start() {
         view.apply {
-            renderArea(areaCenter, areaRadiusMeters)
+            renderArea(areaCenter.toLatLng(), areaRadiusMeters)
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm))
             val radiusPercentage = convertAreaRadiusToPercentage(areaRadiusKm)
             showRadius(radiusPercentage.roundToInt())
@@ -89,15 +89,15 @@ class PlaceEditorPresenter(
         adjustCameraToFitBounds(areaBounds, false)
     }
 
-    override fun onChangeAreaCenter(coordinates: Coordinates) {
-        areaCenter = coordinates
-        view.renderArea(areaCenter, areaRadiusMeters)
+    override fun onChangeAreaCenter(latLng: LatLng) {
+        areaCenter = latLng.toCoordinates()
+        view.renderArea(latLng, areaRadiusMeters)
     }
 
     override fun onChangeAreaRadius(percentage: Int) {
         areaRadiusKm = convertPercentageToAreaRadius(percentage.toDouble())
         view.apply {
-            renderArea(areaCenter, areaRadiusMeters)
+            renderArea(areaCenter.toLatLng(), areaRadiusMeters)
             showAreaRadiusText(unitsFormatter.getLocalizedDistanceString(areaRadiusKm.roundToInt()))
         }
     }
@@ -119,7 +119,7 @@ class PlaceEditorPresenter(
     }
 
     override fun openNamePicker() {
-        view.showNamePicker(areaCenter)
+        view.showNamePicker(areaCenter.toLatLng())
     }
 
     override fun saveWithName(placeName: String) {
@@ -131,6 +131,11 @@ class PlaceEditorPresenter(
     private fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean) {
         view.adjustCameraToFitBounds(bounds, animate)
     }
+
+
+    private fun Coordinates.toLatLng() = LatLng(latitude, longitude)
+
+    private fun LatLng.toCoordinates() = Coordinates(latitude, longitude)
 
 
     companion object {

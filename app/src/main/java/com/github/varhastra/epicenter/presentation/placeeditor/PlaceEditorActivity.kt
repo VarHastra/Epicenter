@@ -13,7 +13,6 @@ import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -127,7 +126,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
 
     private fun onMapCameraMove() {
         val cameraTarget = map.cameraPosition.target
-        presenter.onChangeAreaCenter(Coordinates(cameraTarget.latitude, cameraTarget.longitude))
+        presenter.onChangeAreaCenter(cameraTarget)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -143,9 +142,9 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         loadMapAsync()
     }
 
-    override fun renderArea(center: Coordinates, radiusMeters: Double) {
+    override fun renderArea(center: LatLng, radiusMeters: Double) {
         areaCircle.let {
-            it.center = LatLng(center.latitude, center.longitude)
+            it.center = center
             it.radius = radiusMeters
             it.isVisible = true
         }
@@ -168,12 +167,12 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         }
     }
 
-    override fun showNamePicker(coordinates: Coordinates) {
+    override fun showNamePicker(latLng: LatLng) {
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
         startActivityForResult(
                 intentFor<PlaceNamePickerActivity>(
-                        PlaceNamePickerActivity.EXTRA_LAT to coordinates.latitude,
-                        PlaceNamePickerActivity.EXTRA_LNG to coordinates.longitude
+                        PlaceNamePickerActivity.EXTRA_LAT to latLng.latitude,
+                        PlaceNamePickerActivity.EXTRA_LNG to latLng.longitude
                 ),
                 REQUEST_PLACE_NAME,
                 options

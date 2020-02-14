@@ -1,9 +1,9 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
 import android.os.Bundle
-import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.presentation.BasePresenter
 import com.github.varhastra.epicenter.presentation.BaseView
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 
 interface PlaceEditorContract {
@@ -11,7 +11,7 @@ interface PlaceEditorContract {
     interface View : BaseView<Presenter> {
         fun loadMap()
 
-        fun renderArea(center: Coordinates, radiusMeters: Double)
+        fun renderArea(center: LatLng, radiusMeters: Double)
 
         fun showAreaRadiusText(radiusText: String)
 
@@ -19,7 +19,7 @@ interface PlaceEditorContract {
 
         fun adjustCameraToFitBounds(bounds: LatLngBounds, animate: Boolean)
 
-        fun showNamePicker(coordinates: Coordinates)
+        fun showNamePicker(latLng: LatLng)
 
         fun navigateBack()
     }
@@ -27,7 +27,7 @@ interface PlaceEditorContract {
     interface Presenter : BasePresenter {
         fun initialize(placeId: Int?)
 
-        fun onChangeAreaCenter(coordinates: Coordinates)
+        fun onChangeAreaCenter(latLng: LatLng)
 
         fun onChangeAreaRadius(percentage: Int)
 

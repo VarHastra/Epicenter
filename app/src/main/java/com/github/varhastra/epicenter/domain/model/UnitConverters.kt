@@ -17,8 +17,6 @@ fun mToKm(m: Double) = m / KM_TO_M_RATIO
 
 fun latDegToKm(latDegree: Double) = latDegree * LAT_DEG_TO_KM_RATIO
 
-fun latDegToMi(latDegree: Double) = kmToMi(latDegToKm(latDegree))
-
 fun lngDegToKm(lngDeg: Double, latDegree: Double) = lngDeg * cos(toRadians(latDegree)) * LAT_DEG_TO_KM_RATIO
 
 fun toRadians(deg: Double) = deg / 180.0 * PI

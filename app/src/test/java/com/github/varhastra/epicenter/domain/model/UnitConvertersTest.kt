@@ -1,7 +1,6 @@
 package com.github.varhastra.epicenter.domain.model
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
 
@@ -30,15 +29,6 @@ class UnitConvertersTest {
         assertThat(distanceInMi).isWithin(fiveThousandths).of(0.621)
     }
 
-    @Test
-    fun `kmToMi throws on negative argument`() {
-        val distanceInKm = -1.0
-
-        assertThrows(IllegalArgumentException::class.java) {
-            kmToMi(distanceInKm)
-        }
-    }
-
 
     @Test
     fun `miToKm converts 0 miles to kilometers`() {
@@ -56,15 +46,6 @@ class UnitConvertersTest {
         val distanceInKm = miToKm(distanceInMi)
 
         assertThat(distanceInKm).isWithin(fiveThousandths).of(1.609)
-    }
-
-    @Test
-    fun `miToKm throws on negative argument`() {
-        val distanceInMi = -1.0
-
-        assertThrows(IllegalArgumentException::class.java) {
-            miToKm(distanceInMi)
-        }
     }
 
 
@@ -86,15 +67,6 @@ class UnitConvertersTest {
         assertThat(distanceInMeters).isWithin(fiveThousandths).of(1000.0)
     }
 
-    @Test
-    fun `kmToM throws on negative argument`() {
-        val distanceInKm = -1.0
-
-        assertThrows(IllegalArgumentException::class.java) {
-            kmToM(distanceInKm)
-        }
-    }
-
 
     @Test
     fun `mToKm converts 0 meters to kilometers`() {
@@ -112,15 +84,6 @@ class UnitConvertersTest {
         val distanceInKm = mToKm(distanceInMeters)
 
         assertThat(distanceInKm).isWithin(fiveThousandths).of(1.0)
-    }
-
-    @Test
-    fun `mToKm throws on negative argument`() {
-        val distanceInKm = -1.0
-
-        assertThrows(IllegalArgumentException::class.java) {
-            mToKm(distanceInKm)
-        }
     }
 
 

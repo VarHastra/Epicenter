@@ -138,6 +138,10 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     }
 
     override suspend fun getLocationName(coordinates: Coordinates): Either<String, Throwable> {
+        if (!Geocoder.isPresent()) {
+            return Either.Failure(GeocoderIsNotAvailableException())
+        }
+
         val (lat, lon) = coordinates
         val addresses = geocoder.getFromLocation(lat, lon, 1)
         return if (addresses.isEmpty()) {
@@ -170,6 +174,11 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
 
     class EmptyAddressListException(
             message: String = "Empty address list.",
+            cause: Throwable? = null
+    ) : RuntimeException(message, cause)
+
+    class GeocoderIsNotAvailableException(
+            message: String = "Geocoder is not available.",
             cause: Throwable? = null
     ) : RuntimeException(message, cause)
 

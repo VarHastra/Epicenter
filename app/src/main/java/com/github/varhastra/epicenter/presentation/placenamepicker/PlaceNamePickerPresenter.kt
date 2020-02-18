@@ -1,15 +1,18 @@
 package com.github.varhastra.epicenter.presentation.placenamepicker
 
+import com.github.varhastra.epicenter.domain.interactors.LoadLocationNameInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
-import com.github.varhastra.epicenter.domain.repos.LocationRepository
-import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PlaceNamePickerPresenter(
-        val view: PlaceNamePickerContract.View,
-        val locationRepository: LocationRepository
+        private val view: PlaceNamePickerContract.View,
+        private val loadLocationName: LoadLocationNameInteractor
 ) : PlaceNamePickerContract.Presenter {
 
-    private var coordinates: Coordinates? = null
+    private lateinit var coordinates: Coordinates
+
     private var placeName = ""
 
     init {
@@ -20,33 +23,30 @@ class PlaceNamePickerPresenter(
         loadSuggestedName()
     }
 
-    override fun initialize(coordinates: Coordinates) {
-        this.coordinates = coordinates
+    override fun initialize(latitude: Double, longitude: Double) {
+        this.coordinates = Coordinates(latitude, longitude)
     }
 
     override fun loadSuggestedName() {
-        if (!locationRepository.isGeoCodingAvailable()) {
+        CoroutineScope(Dispatchers.Main).launch {
+            loadLocationName(coordinates).fold(::handleLocationName, ::handleFailure)
+        }
+    }
+
+    private fun handleLocationName(locationName: String) {
+        if (!view.isActive()) {
             return
         }
 
-        val cord = coordinates ?: return
-        locationRepository.getLocationName(cord, object : RepositoryCallback<String> {
-            override fun onResult(result: String) {
-                if (!view.isActive()) {
-                    return
-                }
+        view.showSuggestedName(locationName)
+    }
 
-                view.showSuggestedName(result)
-            }
+    private fun handleFailure(t: Throwable) {
+        if (!view.isActive()) {
+            return
+        }
 
-            override fun onFailure(t: Throwable?) {
-                if (!view.isActive()) {
-                    return
-                }
-
-                view.showSuggestedName("")
-            }
-        })
+        view.showSuggestedName("")
     }
 
     override fun setPlaceName(name: String) {

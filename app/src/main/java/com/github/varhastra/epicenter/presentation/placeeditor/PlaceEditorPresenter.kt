@@ -66,7 +66,7 @@ class PlaceEditorPresenter(
     private fun handlePlace(place: Place) {
         place.let {
             areaCenter = it.coordinates
-            areaRadiusKm = it.radiusKm!!
+            areaRadiusKm = it.radiusKm
         }
         view.loadMap()
     }

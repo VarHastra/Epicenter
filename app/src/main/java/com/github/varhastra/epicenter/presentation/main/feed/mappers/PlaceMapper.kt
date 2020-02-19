@@ -17,7 +17,7 @@ class PlaceMapper(context: Context, unitsLocale: UnitsLocale) {
     fun map(place: Place): PlaceViewBlock {
         val titleText = place.name
 
-        val radiusText = if (place.radiusKm == null) {
+        val radiusText = if (place.radiusKm.isInfinite()) {
             nullRadiusStr
         } else {
             unitsFormatter.getLocalizedDistanceString(place.radiusKm.roundToInt())

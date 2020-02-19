@@ -10,6 +10,6 @@ import kotlinx.coroutines.withContext
 class LoadPlacesInteractor(private val placesRepository: PlacesRepository) {
 
     suspend operator fun invoke(): Either<List<Place>, Throwable> = withContext(Dispatchers.DB) {
-        placesRepository.getPlacesSuspending()
+        placesRepository.getAll()
     }
 }

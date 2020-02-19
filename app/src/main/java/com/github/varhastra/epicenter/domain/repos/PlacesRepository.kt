@@ -6,29 +6,11 @@ import com.github.varhastra.epicenter.domain.model.Place
 
 interface PlacesRepository {
 
-    fun getPlaces(callback: RepositoryCallback<List<Place>>)
-
-    fun getPlace(callback: RepositoryCallback<Place>, placeId: Int)
-
-    fun savePlace(place: Place)
-
-    fun deletePlace(place: Place)
-
-    fun deleteById(id: Int)
-
-    fun updateOrder(places: List<Place>)
-
-    suspend fun getPlacesSuspending(): Either<List<Place>, Throwable>
-
-    suspend fun getPlaceSuspending(placeId: Int): Either<Place, Throwable>
-
-    suspend fun savePlaceSuspending(place: Place)
-
     suspend fun insert(name: String, areaCenter: Coordinates, areaRadiusKm: Double)
 
-    suspend fun deletePlaceSuspending(place: Place)
+    suspend fun getAll(): Either<List<Place>, Throwable>
 
-    suspend fun updateOrderSuspending(places: List<Place>)
+    suspend fun get(placeId: Int): Either<Place, Throwable>
 
     suspend fun update(id: Int, areaCenter: Coordinates, areaRadiusKm: Double)
 
@@ -37,4 +19,6 @@ interface PlacesRepository {
     suspend fun update(id: Int, name: String, areaCenter: Coordinates, areaRadiusKm: Double)
 
     suspend fun updateOrderById(ids: List<Int>)
+
+    suspend fun deleteById(id: Int)
 }

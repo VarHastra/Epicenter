@@ -1,21 +1,27 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
 import android.os.Bundle
+import com.github.varhastra.epicenter.domain.interactors.InsertPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.domain.repos.PlacesRepository
-import com.github.varhastra.epicenter.domain.repos.RepositoryCallback
 import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.SphericalUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class PlaceEditorPresenter(
         private val view: PlaceEditorContract.View,
-        private val placesRepository: PlacesRepository,
+        private val loadPlace: LoadPlaceInteractor,
+        private val insertPlace: InsertPlaceInteractor,
+        private val updatePlace: UpdatePlaceInteractor,
         unitsLocale: UnitsLocale
 ) : PlaceEditorContract.Presenter {
 
@@ -54,19 +60,23 @@ class PlaceEditorPresenter(
             return
         }
 
-        placesRepository.getPlace(object : RepositoryCallback<Place> {
-            override fun onResult(result: Place) {
-                areaCenter = result.coordinates
-                areaRadiusKm = result.radiusKm!!
-                placeOrder = result.order
-                view.loadMap()
-            }
+        CoroutineScope(Dispatchers.Main).launch {
+            loadPlace(placeId).fold(::handlePlace, ::handleFailure)
+        }
+    }
 
-            override fun onFailure(t: Throwable?) {
-                // TODO: notify the user about the error
-                view.navigateBack()
-            }
-        }, placeId = placeId)
+    private fun handlePlace(place: Place) {
+        place.let {
+            areaCenter = it.coordinates
+            areaRadiusKm = it.radiusKm!!
+            placeOrder = it.order
+        }
+        view.loadMap()
+    }
+
+    private fun handleFailure(t: Throwable) {
+        // TODO: notify the user about the error
+        view.navigateBack()
     }
 
     override fun onRestoreState(state: Bundle) {
@@ -123,8 +133,14 @@ class PlaceEditorPresenter(
     }
 
     override fun saveWithName(placeName: String) {
-        placesRepository.savePlace(Place(placeId
-                ?: 0, placeName, areaCenter, areaRadiusKm, placeOrder))
+        CoroutineScope(Dispatchers.Main).launch {
+            val id = placeId
+            if (id == null) {
+                insertPlace(placeName, areaCenter, areaRadiusKm)
+            } else {
+                updatePlace(id, placeName, areaCenter, areaRadiusKm)
+            }
+        }
         view.navigateBack()
     }
 

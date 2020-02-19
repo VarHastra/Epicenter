@@ -11,6 +11,9 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.getColorCompat
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.PlacesDataSource
+import com.github.varhastra.epicenter.domain.interactors.InsertPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -53,7 +56,14 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         initMapView(savedInstanceState)
         setUpViews()
 
-        val presenter = PlaceEditorPresenter(this, PlacesDataSource.getInstance(), AppSettings.preferredUnits)
+        val placesDataSource = PlacesDataSource.getInstance()
+        val presenter = PlaceEditorPresenter(
+                this,
+                LoadPlaceInteractor(placesDataSource),
+                InsertPlaceInteractor(placesDataSource),
+                UpdatePlaceInteractor(placesDataSource),
+                AppSettings.preferredUnits
+        )
         if (savedInstanceState != null) {
             presenter.onRestoreState(savedInstanceState)
         } else {

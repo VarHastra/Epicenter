@@ -31,7 +31,7 @@ data class Place(
 
     companion object {
         private const val MIN_RADIUS = 500.0
-        val CURRENT_LOCATION = Place(1, "Current location", Coordinates(37.757815, -122.5076402), MIN_RADIUS, -100)
-        val WORLD = Place(2, "World", Coordinates(37.757815, -122.5076402), null, -99)
+        val CURRENT_LOCATION = Place(999998, "Current location", Coordinates(37.757815, -122.5076402), MIN_RADIUS, -100)
+        val WORLD = Place(999999, "World", Coordinates(37.757815, -122.5076402), null, -99)
     }
 }

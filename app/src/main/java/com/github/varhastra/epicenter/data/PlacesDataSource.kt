@@ -21,6 +21,8 @@ class PlacesDataSource private constructor(
 
     private val context = context.applicationContext
 
+    private val defaultPlaces = listOf(Place.CURRENT_LOCATION, Place.WORLD).map { substituteWithLocalizedName(it) }
+
 
     override suspend fun insert(name: String, areaCenter: Coordinates, areaRadiusKm: Double) {
         placeDao.insert(
@@ -34,18 +36,25 @@ class PlacesDataSource private constructor(
     }
 
     override suspend fun getAll(): Either<List<Place>, Throwable> {
-        val places = placeDao.getAll().map { substituteWithLocalizedName(it.toPlace()) }.toList()
+        val places = defaultPlaces + placeDao.getAll().map { it.toPlace() }
         return Either.Success(places)
     }
 
     override suspend fun get(placeId: Int): Either<Place, Throwable> {
-        val p = placeDao.get(placeId)
+        val place = getFromDefaultsOrDb(placeId)
                 ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
-        val place = substituteWithLocalizedName(p.toPlace())
         return if (placeId == Place.CURRENT_LOCATION.id) {
             locationRepository.getLastCoordinates().map { place.copy(coordinates = it) }
         } else {
             Either.success(place)
+        }
+    }
+
+    private fun getFromDefaultsOrDb(placeId: Int): Place? {
+        return when (placeId) {
+            Place.CURRENT_LOCATION.id -> Place.CURRENT_LOCATION
+            Place.WORLD.id -> Place.WORLD
+            else -> placeDao.get(placeId)?.toPlace()
         }
     }
 

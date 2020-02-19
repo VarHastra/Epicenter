@@ -11,5 +11,7 @@ data class PlaceEntity(
         @ColumnInfo(name = "latitude") val latitude: Double,
         @ColumnInfo(name = "longitude") val longitude: Double,
         @ColumnInfo(name = "radius") val radiusKm: Double?,
-        @ColumnInfo(name = "order") val order: Int = 0
+        @ColumnInfo(name = "order") val order: Int = defaultOrder
 )
+
+private const val defaultOrder = -100

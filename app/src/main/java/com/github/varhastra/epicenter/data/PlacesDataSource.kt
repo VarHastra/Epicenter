@@ -8,6 +8,7 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
+import com.github.varhastra.epicenter.data.db.PlaceEntity
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
@@ -114,6 +115,17 @@ class PlacesDataSource private constructor(
 
     override suspend fun savePlaceSuspending(place: Place) {
         placeDao.save(place.toPlaceEntity())
+    }
+
+    override suspend fun insert(name: String, areaCenter: Coordinates, areaRadiusKm: Double) {
+        placeDao.insert(
+                PlaceEntity(
+                        name = name,
+                        latitude = areaCenter.latitude,
+                        longitude = areaCenter.longitude,
+                        radiusKm = areaRadiusKm
+                )
+        )
     }
 
     override suspend fun deletePlaceSuspending(place: Place) {

@@ -24,6 +24,8 @@ interface PlacesRepository {
 
     suspend fun savePlaceSuspending(place: Place)
 
+    suspend fun insert(name: String, areaCenter: Coordinates, areaRadiusKm: Double)
+
     suspend fun deletePlaceSuspending(place: Place)
 
     suspend fun updateOrderSuspending(places: List<Place>)

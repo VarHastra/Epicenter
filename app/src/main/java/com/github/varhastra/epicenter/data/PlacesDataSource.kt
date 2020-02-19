@@ -10,6 +10,7 @@ import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.data.db.PlaceEntity
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.GeoArea
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.PlacesRepository
@@ -44,7 +45,9 @@ class PlacesDataSource private constructor(
         val place = getFromDefaultsOrDb(placeId)
                 ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
         return if (placeId == Place.CURRENT_LOCATION.id) {
-            locationRepository.getLastCoordinates().map { place.copy(coordinates = it) }
+            locationRepository.getLastCoordinates().map { lastCoordinates ->
+                place.copy(geoArea = GeoArea(lastCoordinates, place.radiusKm))
+            }
         } else {
             Either.success(place)
         }

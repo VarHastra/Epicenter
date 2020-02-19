@@ -20,6 +20,20 @@ abstract class PlaceDao {
     @Update
     abstract fun update(place: PlaceEntity)
 
+    @Query("UPDATE place SET latitude = :latitude, longitude = :longitude, radius = :areaRadiusKm WHERE id = :id")
+    abstract fun update(id: Int, latitude: Double, longitude: Double, areaRadiusKm: Double)
+
+    @Query("UPDATE place SET name = :name WHERE id = :id")
+    abstract fun update(id: Int, name: String)
+
+    @Query("""UPDATE place SET 
+                    name = :name, 
+                    latitude = :latitude,
+                    longitude = :longitude, 
+                    radius = :areaRadiusKm 
+                    WHERE id = :id""")
+    abstract fun update(id: Int, name: String, latitude: Double, longitude: Double, areaRadiusKm: Double)
+
     @Update
     abstract fun update(list: List<PlaceEntity>)
 

@@ -1,6 +1,7 @@
 package com.github.varhastra.epicenter.domain.repos
 
 import com.github.varhastra.epicenter.common.functionaltypes.Either
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 
 interface PlacesRepository {
@@ -26,6 +27,12 @@ interface PlacesRepository {
     suspend fun deletePlaceSuspending(place: Place)
 
     suspend fun updateOrderSuspending(places: List<Place>)
+
+    suspend fun update(id: Int, areaCenter: Coordinates, areaRadiusKm: Double)
+
+    suspend fun update(id: Int, name: String)
+
+    suspend fun update(id: Int, name: String, areaCenter: Coordinates, areaRadiusKm: Double)
 
     suspend fun updateOrderById(ids: List<Int>)
 }

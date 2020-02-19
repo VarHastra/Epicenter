@@ -9,6 +9,7 @@ import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.Position
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
@@ -129,6 +130,18 @@ class PlacesDataSource private constructor(
                 .mapIndexed { index, place -> place.copy(order = index).toPlaceEntity() }
                 .toList()
         placeDao.update(updatedList)
+    }
+
+    override suspend fun update(id: Int, areaCenter: Coordinates, areaRadiusKm: Double) {
+        placeDao.update(id, areaCenter.latitude, areaCenter.longitude, areaRadiusKm)
+    }
+
+    override suspend fun update(id: Int, name: String) {
+        placeDao.update(id, name)
+    }
+
+    override suspend fun update(id: Int, name: String, areaCenter: Coordinates, areaRadiusKm: Double) {
+        placeDao.update(id, name, areaCenter.latitude, areaCenter.longitude, areaRadiusKm)
     }
 
     override suspend fun updateOrderById(ids: List<Int>) {

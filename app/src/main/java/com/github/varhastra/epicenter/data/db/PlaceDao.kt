@@ -11,7 +11,7 @@ abstract class PlaceDao {
     @Insert
     abstract fun insert(list: List<PlaceEntity>)
 
-    @Query("SELECT * FROM place ORDER BY `order` ASC")
+    @Query("SELECT * FROM place ORDER BY `position` ASC")
     abstract fun getAll(): List<PlaceEntity>
 
     @Query("SELECT * FROM place WHERE id=:id")
@@ -37,8 +37,8 @@ abstract class PlaceDao {
     @Update
     abstract fun update(list: List<PlaceEntity>)
 
-    @Query("UPDATE place SET 'order' = :order WHERE id = :id")
-    abstract fun updateOrder(id: Int, order: Int)
+    @Query("UPDATE place SET 'position' = :position WHERE id = :id")
+    abstract fun updateOrder(id: Int, position: Int)
 
     @Delete
     abstract fun delete(place: PlaceEntity)

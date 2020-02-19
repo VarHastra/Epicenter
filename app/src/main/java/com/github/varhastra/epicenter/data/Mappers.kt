@@ -9,8 +9,7 @@ fun PlaceEntity.toPlace(): Place {
             id,
             name,
             Coordinates(latitude, longitude),
-            radiusKm,
-            order
+            radiusKm
     )
 }
 
@@ -20,7 +19,6 @@ fun Place.toPlaceEntity(): PlaceEntity {
             name,
             latitude,
             longitude,
-            radiusKm,
-            order
+            radiusKm
     )
 }

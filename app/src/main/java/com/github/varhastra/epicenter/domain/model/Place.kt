@@ -6,8 +6,7 @@ data class Place(
         val id: Int = 100,
         val name: String,
         val coordinates: Coordinates,
-        val radiusKm: Double?,
-        val order: Int = -10
+        val radiusKm: Double?
 ) {
     val latitude: Double
         get() = coordinates.latitude
@@ -31,7 +30,7 @@ data class Place(
 
     companion object {
         private const val MIN_RADIUS = 500.0
-        val CURRENT_LOCATION = Place(999998, "Current location", Coordinates(37.757815, -122.5076402), MIN_RADIUS, -100)
-        val WORLD = Place(999999, "World", Coordinates(37.757815, -122.5076402), null, -99)
+        val CURRENT_LOCATION = Place(999998, "Current location", Coordinates(37.757815, -122.5076402), MIN_RADIUS)
+        val WORLD = Place(999999, "World", Coordinates(37.757815, -122.5076402), null)
     }
 }

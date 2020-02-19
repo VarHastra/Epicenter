@@ -44,8 +44,6 @@ class PlaceEditorPresenter(
             return LatLngBounds(west, east)
         }
 
-    private var placeOrder = -10
-
     private val unitsFormatter = UnitsFormatter(unitsLocale, 0)
 
     init {
@@ -69,7 +67,6 @@ class PlaceEditorPresenter(
         place.let {
             areaCenter = it.coordinates
             areaRadiusKm = it.radiusKm!!
-            placeOrder = it.order
         }
         view.loadMap()
     }
@@ -84,7 +81,6 @@ class PlaceEditorPresenter(
             placeId = it.getSerializable(STATE_PLACE_ID) as Int?
             areaCenter = it.getSerializable(STATE_AREA_CENTER) as Coordinates
             areaRadiusKm = it.getDouble(STATE_AREA_RADIUS, Area.MIN_RADIUS_KM)
-            placeOrder = it.getInt(STATE_PLACE_ORDER, -10)
         }
         view.loadMap()
     }
@@ -124,7 +120,6 @@ class PlaceEditorPresenter(
             putSerializable(STATE_PLACE_ID, placeId)
             putSerializable(STATE_AREA_CENTER, areaCenter)
             putDouble(STATE_AREA_RADIUS, areaRadiusKm)
-            putInt(STATE_PLACE_ORDER, placeOrder)
         }
     }
 
@@ -158,7 +153,6 @@ class PlaceEditorPresenter(
         private const val STATE_PLACE_ID = "PLACE_ID"
         private const val STATE_AREA_CENTER = "AREA_CENTER"
         private const val STATE_AREA_RADIUS = "AREA_RADIUS"
-        private const val STATE_PLACE_ORDER = "PLACE_ORDER"
 
         private fun convertAreaRadiusToPercentage(radiusKm: Double): Double {
             return (radiusKm - Area.MIN_RADIUS_KM) / Area.RADIUS_DELTA_KM * 100

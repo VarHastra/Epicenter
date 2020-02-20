@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.github.varhastra.epicenter.R
-import org.jetbrains.anko.find
+import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -12,15 +12,14 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        setSupportActionBar(find(R.id.tb_settings))
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame_content_settings, SettingsFragment())
+                    .commit()
         }
-
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_content_settings, SettingsFragment())
-                .commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -31,6 +30,5 @@ class SettingsActivity : AppCompatActivity() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
-
     }
 }

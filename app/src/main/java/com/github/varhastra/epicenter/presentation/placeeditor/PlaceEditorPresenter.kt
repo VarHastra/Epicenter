@@ -6,7 +6,6 @@ import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
-import com.github.varhastra.epicenter.domain.state.placeeditor.Area
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
@@ -29,7 +28,7 @@ class PlaceEditorPresenter(
 
     private var areaCenter = Coordinates(0.0, 0.0)
 
-    private var areaRadiusKm = Area.MIN_RADIUS_KM
+    private var areaRadiusKm = MIN_RADIUS_KM
 
     private val areaRadiusMeters get() = areaRadiusKm * 1000
 
@@ -80,7 +79,7 @@ class PlaceEditorPresenter(
         state.let {
             placeId = it.getSerializable(STATE_PLACE_ID) as Int?
             areaCenter = it.getSerializable(STATE_AREA_CENTER) as Coordinates
-            areaRadiusKm = it.getDouble(STATE_AREA_RADIUS, Area.MIN_RADIUS_KM)
+            areaRadiusKm = it.getDouble(STATE_AREA_RADIUS, MIN_RADIUS_KM)
         }
         view.loadMap()
     }
@@ -150,16 +149,20 @@ class PlaceEditorPresenter(
 
 
     companion object {
+        private const val MIN_RADIUS_KM = 500.0
+        private const val MAX_RADIUS_KM = 5000.0
+        private const val RADIUS_DELTA_KM = MAX_RADIUS_KM - MIN_RADIUS_KM
+
         private const val STATE_PLACE_ID = "PLACE_ID"
         private const val STATE_AREA_CENTER = "AREA_CENTER"
         private const val STATE_AREA_RADIUS = "AREA_RADIUS"
 
         private fun convertAreaRadiusToPercentage(radiusKm: Double): Double {
-            return (radiusKm - Area.MIN_RADIUS_KM) / Area.RADIUS_DELTA_KM * 100
+            return (radiusKm - MIN_RADIUS_KM) / RADIUS_DELTA_KM * 100
         }
 
         private fun convertPercentageToAreaRadius(percentage: Double): Double {
-            return percentage / 100.0 * Area.RADIUS_DELTA_KM + Area.MIN_RADIUS_KM
+            return percentage / 100.0 * RADIUS_DELTA_KM + MIN_RADIUS_KM
         }
     }
 }

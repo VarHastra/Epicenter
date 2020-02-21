@@ -76,11 +76,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         }
 
         bottomNavigation.setOnNavigationItemSelectedListener(BottomNavListener())
-        if (savedInstanceState != null) {
-            savedInstanceState.apply {
-                bottomNavigation.selectedItemId = getInt(STATE_SELECTED_PAGE, R.id.navigation_feed)
-            }
-        } else {
+        if (savedInstanceState == null) {
             bottomNavigation.selectedItemId = R.id.navigation_feed
         }
     }
@@ -97,14 +93,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.apply {
-            putInt(STATE_SELECTED_PAGE, bottomNavigation.selectedItemId)
         }
     }
 
@@ -230,10 +218,5 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     override fun setDropdownData(places: List<PlaceViewBlock>) {
         placesAdapter.places = places
         placesAdapter.notifyDataSetChanged()
-    }
-
-
-    companion object {
-        private const val STATE_SELECTED_PAGE = "STATE_SEL_PAGE"
     }
 }

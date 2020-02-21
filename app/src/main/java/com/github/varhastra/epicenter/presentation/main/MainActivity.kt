@@ -12,25 +12,12 @@ import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppState
-import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.MapState
-import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.device.ConnectivityProvider
-import com.github.varhastra.epicenter.device.LocationProvider
-import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
-import com.github.varhastra.epicenter.presentation.main.feed.FeedPresenter
 import com.github.varhastra.epicenter.presentation.main.feed.PlaceViewBlock
 import com.github.varhastra.epicenter.presentation.main.map.MapFragment
-import com.github.varhastra.epicenter.presentation.main.map.MapPresenter
 import com.github.varhastra.epicenter.presentation.main.notifications.NotificationsFragment
 import com.github.varhastra.epicenter.presentation.main.search.SearchFragment
 import com.github.varhastra.epicenter.presentation.settings.SettingsActivity
@@ -66,10 +53,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     private var placesPopupListener: ((PlaceViewBlock) -> Unit)? = null
     private var placesEditPopupListener: (() -> Unit)? = null
 
-    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
-    private val placesRepository = PlacesDataSource.getInstance()
-    private val locationProvider = LocationProvider()
-    private val connectivityProvider = ConnectivityProvider()
     private lateinit var fragmentEnterTransition: Transition
     private lateinit var fragmentExitTransition: Transition
 
@@ -194,36 +177,14 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
             return when (item.itemId) {
                 R.id.navigation_feed -> {
                     val fragment = FeedFragment()
-                    FeedPresenter(
-                            App.instance,
-                            fragment,
-                            LoadFeedInteractor(eventsRepository, locationProvider),
-                            LoadPlacesInteractor(placesRepository),
-                            LoadPlaceInteractor(placesRepository)
-                    )
                     navigateTo(fragment)
                     true
                 }
                 R.id.navigation_map -> {
                     val fragment = MapFragment()
-                    MapPresenter(
-                            App.instance,
-                            fragment,
-                            MapState,
-                            LoadMapEventsInteractor(eventsRepository, locationProvider)
-                    )
                     navigateTo(fragment)
                     true
                 }
-                // TODO: implement later
-//                R.id.navigation_search -> {
-//                    navigateTo(SearchFragment())
-//                    true
-//                }
-//                R.id.navigation_notifications -> {
-//                    navigateTo(NotificationsFragment())
-//                    true
-//                }
                 else -> false
             }
         }

@@ -15,9 +15,17 @@ import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
+import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.PlacesDataSource
+import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
@@ -45,9 +53,23 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     private var toolbarProvider: ToolbarProvider? = null
 
+    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
+
+    private val placesRepository = PlacesDataSource.getInstance()
+
+    private val locationProvider = LocationProvider()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        FeedPresenter(
+                App.instance,
+                this,
+                LoadFeedInteractor(eventsRepository, locationProvider),
+                LoadPlacesInteractor(placesRepository),
+                LoadPlaceInteractor(placesRepository)
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

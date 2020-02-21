@@ -9,9 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
+import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.onStopTrackingTouch
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
+import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.MapState
+import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
+import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.common.EventMarker
@@ -37,9 +43,20 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
+    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
+
+    private val locationProvider = LocationProvider()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        MapPresenter(
+                App.instance,
+                this,
+                MapState,
+                LoadMapEventsInteractor(eventsRepository, locationProvider)
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

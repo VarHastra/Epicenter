@@ -15,8 +15,6 @@ import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
 import com.github.varhastra.epicenter.presentation.main.feed.PlaceViewBlock
 import com.github.varhastra.epicenter.presentation.main.map.MapFragment
-import com.github.varhastra.epicenter.presentation.main.notifications.NotificationsFragment
-import com.github.varhastra.epicenter.presentation.main.search.SearchFragment
 import com.github.varhastra.epicenter.presentation.settings.SettingsActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability

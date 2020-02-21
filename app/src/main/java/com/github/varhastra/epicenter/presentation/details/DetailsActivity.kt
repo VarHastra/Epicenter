@@ -8,6 +8,7 @@ import android.transition.TransitionInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.setTextColorRes
@@ -147,6 +148,14 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
     }
 
     companion object {
-        const val EXTRA_EVENT_ID = "EVENT_ID"
+        private const val EXTRA_EVENT_ID = "EVENT_ID"
+
+        fun start(sourceActivity: Activity, eventId: String, requestCode: Int = -1) {
+            val intent = Intent(sourceActivity, DetailsActivity::class.java).apply {
+                putExtra(EXTRA_EVENT_ID, eventId)
+            }
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
+            sourceActivity.startActivityForResult(intent, requestCode, options)
+        }
     }
 }

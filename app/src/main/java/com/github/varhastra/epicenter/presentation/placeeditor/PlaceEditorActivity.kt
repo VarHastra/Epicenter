@@ -166,12 +166,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     }
 
     override fun showNamePicker(latLng: LatLng) {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-        val intent = Intent(this, PlaceNamePickerActivity::class.java).apply {
-            putExtra(PlaceNamePickerActivity.EXTRA_LAT, latLng.latitude)
-            putExtra(PlaceNamePickerActivity.EXTRA_LNG, latLng.longitude)
-        }
-        startActivityForResult(intent, REQUEST_PLACE_NAME, options)
+        PlaceNamePickerActivity.start(this, latLng, REQUEST_PLACE_NAME)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -195,7 +190,14 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         get() = (this * resources.displayMetrics.density).toInt()
 
     companion object {
-        const val EXTRA_PLACE_ID = "EXTRA_PLACE_ID"
-        const val REQUEST_PLACE_NAME: Int = 100
+        private const val EXTRA_PLACE_ID = "EXTRA_PLACE_ID"
+        private const val REQUEST_PLACE_NAME: Int = 100
+
+        fun start(sourceActivity: Activity, placeId: Int? = null) {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
+            val intent = Intent(sourceActivity, PlaceEditorActivity::class.java)
+            placeId?.let { intent.putExtra(EXTRA_PLACE_ID, it) }
+            sourceActivity.startActivity(intent, options)
+        }
     }
 }

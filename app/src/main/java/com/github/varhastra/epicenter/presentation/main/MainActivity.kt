@@ -1,15 +1,12 @@
 package com.github.varhastra.epicenter.presentation.main
 
 import android.Manifest
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.Fragment
-import androidx.transition.Transition
-import androidx.transition.TransitionInflater
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
@@ -53,9 +50,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     private var placesPopupListener: ((PlaceViewBlock) -> Unit)? = null
     private var placesEditPopupListener: (() -> Unit)? = null
 
-    private lateinit var fragmentEnterTransition: Transition
-    private lateinit var fragmentExitTransition: Transition
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,9 +57,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
         setSupportActionBar(toolbar)
         toolbar.setOnDropdownClickListener { showDropdownPopup() }
-
-        fragmentEnterTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_main_enter)
-        fragmentExitTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_main_exit)
 
         info("onCreate")
 
@@ -89,7 +80,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                SettingsActivity.start(this)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -103,16 +94,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         popupWindow?.setOnItemClickListener(null)
         popupWindow = null
         super.onStop()
-    }
-
-    private fun navigateTo(fragment: Fragment) {
-        fragment.apply {
-            enterTransition = fragmentEnterTransition
-            exitTransition = fragmentExitTransition
-        }
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_content_main, fragment)
-                .commit()
     }
 
     private fun checkPlayApiAvailability(): Boolean {
@@ -160,17 +141,21 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
                 }).check()
     }
 
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_content_main, fragment)
+                .commit()
+    }
+
     inner class BottomNavListener : BottomNavigationView.OnNavigationItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
             return when (item.itemId) {
                 R.id.navigation_feed -> {
-                    val fragment = FeedFragment()
-                    navigateTo(fragment)
+                    replaceFragment(FeedFragment.newInstance(this@MainActivity))
                     true
                 }
                 R.id.navigation_map -> {
-                    val fragment = MapFragment()
-                    navigateTo(fragment)
+                    replaceFragment(MapFragment.newInstance(this@MainActivity))
                     true
                 }
                 else -> false

@@ -12,9 +12,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.TransitionInflater
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
@@ -273,17 +273,11 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlacesEditor() {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
-        val intent = Intent(requireContext(), PlacesActivity::class.java)
-        startActivity(intent, options)
+        PlacesActivity.start(requireActivity())
     }
 
     override fun showEventDetails(eventId: String) {
-        val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
-            putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
-        }
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
-        startActivityForResult(intent, REQUEST_DETAILS, options)
+        DetailsActivity.start(requireActivity(), eventId, REQUEST_DETAILS)
     }
 
     private fun showAppSettings() {
@@ -297,5 +291,15 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     companion object {
         private const val REQUEST_DETAILS = 100
+
+        fun newInstance(context: Context): FeedFragment {
+            val transitionInflater = TransitionInflater.from(context)
+            val enterAnim = transitionInflater.inflateTransition(R.transition.transition_main_enter)
+            val exitAnim = transitionInflater.inflateTransition(R.transition.transition_main_exit)
+            return FeedFragment().apply {
+                enterTransition = enterAnim
+                exitTransition = exitAnim
+            }
+        }
     }
 }

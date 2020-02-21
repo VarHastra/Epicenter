@@ -1,14 +1,14 @@
 package com.github.varhastra.epicenter.presentation.main.map
 
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.core.app.ActivityOptionsCompat
+import androidx.transition.TransitionInflater
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.onStopTrackingTouch
@@ -186,11 +186,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun showEventDetails(eventId: String) {
-        val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
-            putExtra(DetailsActivity.EXTRA_EVENT_ID, eventId)
-        }
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity()).toBundle()
-        startActivity(intent, options)
+        DetailsActivity.start(requireActivity(), eventId)
     }
 
     override fun zoomIn(latitude: Double, longitude: Double) {
@@ -201,5 +197,19 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     private fun onMarkerInfoWindowClick(eventMarker: EventMarker) {
         presenter.openEventDetails(eventMarker.eventId)
+    }
+
+
+    companion object {
+
+        fun newInstance(context: Context): MapFragment {
+            val transitionInflater = TransitionInflater.from(context)
+            val enterAnim = transitionInflater.inflateTransition(R.transition.transition_main_enter)
+            val exitAnim = transitionInflater.inflateTransition(R.transition.transition_main_exit)
+            return MapFragment().apply {
+                enterTransition = enterAnim
+                exitTransition = exitAnim
+            }
+        }
     }
 }

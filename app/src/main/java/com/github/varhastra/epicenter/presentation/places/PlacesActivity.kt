@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.presentation.places
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -96,17 +97,11 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
     }
 
     override fun showPlaceEditor(placeId: Int) {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-        val intent = Intent(this, PlaceEditorActivity::class.java).apply {
-            putExtra(PlaceEditorActivity.EXTRA_PLACE_ID, placeId)
-        }
-        startActivity(intent, options)
+        PlaceEditorActivity.start(this, placeId)
     }
 
     override fun showPlaceCreator() {
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-        val intent = Intent(this, PlaceEditorActivity::class.java)
-        startActivity(intent, options)
+        PlaceEditorActivity.start(this)
     }
 
     override fun showUndoDeleteOption() {
@@ -120,5 +115,15 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
                 }
             }
         })
+    }
+
+
+    companion object {
+
+        fun start(sourceActivity: Activity) {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
+            val intent = Intent(sourceActivity, PlacesActivity::class.java)
+            sourceActivity.startActivity(intent, options)
+        }
     }
 }

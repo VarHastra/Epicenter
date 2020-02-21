@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.doAfterTextChanged
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadLocationNameInteractor
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_place_name_picker.*
 
 class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.View {
@@ -67,8 +69,17 @@ class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.Vie
     }
 
     companion object {
-        const val EXTRA_LAT = "EXTRA_LAT"
-        const val EXTRA_LNG = "EXTRA_LNG"
+        private const val EXTRA_LAT = "EXTRA_LAT"
+        private const val EXTRA_LNG = "EXTRA_LNG"
         const val RESULT_NAME = "RESULT_NAME"
+
+        fun start(sourceActivity: Activity, location: LatLng, requestCode: Int = -1) {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
+            val intent = Intent(sourceActivity, PlaceNamePickerActivity::class.java).apply {
+                putExtra(EXTRA_LAT, location.latitude)
+                putExtra(EXTRA_LNG, location.longitude)
+            }
+            sourceActivity.startActivityForResult(intent, requestCode, options)
+        }
     }
 }

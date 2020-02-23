@@ -109,6 +109,7 @@ class FeedPresenter(
         }
 
         view.showPlaces(places)
+        view.showCurrentPlace(placeId)
     }
 
     private fun handlePlacesFailure(t: Throwable?) {
@@ -215,6 +216,9 @@ class FeedPresenter(
     }
 
     override fun setPlaceAndReload(placeId: Int) {
+        if (placeId == this.placeId) {
+            return
+        }
         this.placeId = placeId
         feedStateDataSource.selectedPlaceId = placeId
         loadEvents()

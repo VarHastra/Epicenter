@@ -49,7 +49,11 @@ class PlacesAdapter : BaseAdapter() {
         fun bind(place: PlaceViewBlock) {
             titleTextView.text = place.titleText
             radiusTextView.text = place.radiusText
-            iconImgView.setImageResource(place.iconResId)
+            if (place.iconResId != null) {
+                iconImgView.setImageResource(place.iconResId)
+            } else {
+                iconImgView.setImageResource(R.drawable.ic_place_empty)
+            }
         }
 
         fun bindButton() {

@@ -37,6 +37,8 @@
     <string name="app_error_unknown_capt">Can\'t connect to the server.</string>
 
 
+    <string name="feed_filters_location">Location</string>
+    <string name="feed_filters_edit_locations">Edit locations</string>
     <string name="feed_filters_magnitude">Magnitude</string>
     <string name="feed_filters_chip_mag_0">0+</string>
     <string name="feed_filters_chip_mag_2">2.0+</string>

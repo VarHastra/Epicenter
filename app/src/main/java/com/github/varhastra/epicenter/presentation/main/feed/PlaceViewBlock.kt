@@ -6,5 +6,5 @@ class PlaceViewBlock(
         val id: Int,
         val titleText: String,
         val radiusText: String,
-        @DrawableRes val iconResId: Int
+        @DrawableRes val iconResId: Int?
 )

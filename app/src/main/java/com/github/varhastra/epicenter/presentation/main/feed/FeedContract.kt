@@ -49,6 +49,8 @@ interface FeedContract {
 
         fun showCurrentPlace(place: Place)
 
+        fun showCurrentPlace(placeId: Int)
+
         fun showCurrentSortCriterion(sortCriterion: SortCriterion)
 
         fun showCurrentSortOrder(sortOrder: SortOrder)

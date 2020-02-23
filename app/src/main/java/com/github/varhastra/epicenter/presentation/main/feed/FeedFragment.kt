@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
@@ -34,6 +34,7 @@ import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.places.PlacesActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -45,7 +46,7 @@ import kotlinx.android.synthetic.main.sheet_feed.*
 
 class FeedFragment : Fragment(), FeedContract.View {
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
     private lateinit var presenter: FeedContract.Presenter
 
@@ -94,6 +95,10 @@ class FeedFragment : Fragment(), FeedContract.View {
             layoutManager = LinearLayoutManager(activity)
             adapter = feedAdapter
         }
+
+        editLocationBtn.setOnClickListener {
+            presenter.openPlacesEditor()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -111,6 +116,10 @@ class FeedFragment : Fragment(), FeedContract.View {
     override fun onResume() {
         super.onResume()
         presenter.start()
+
+        locationChipGroup.setRestrictiveCheckListener { _, checkedId ->
+            presenter.setPlaceAndReload(checkedId)
+        }
 
         magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
@@ -191,6 +200,11 @@ class FeedFragment : Fragment(), FeedContract.View {
         toolbarProvider?.setDropdownText(place.name)
     }
 
+    override fun showCurrentPlace(placeId: Int) {
+        locationChipGroup.clearCheck()
+        locationChipGroup.check(placeId)
+    }
+
     override fun showCurrentSortCriterion(sortCriterion: SortCriterion) {
         val id = when (sortCriterion) {
             SortCriterion.DATE -> R.id.sortByDateChip
@@ -218,6 +232,20 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun showPlaces(places: List<PlaceViewBlock>) {
         toolbarProvider?.setDropdownData(places)
+
+        locationChipGroup.removeAllViews()
+        places.map { createLocationChipFor(it) }.forEach { locationChipGroup.addView(it) }
+    }
+
+    private fun createLocationChipFor(place: PlaceViewBlock): Chip {
+        return (layoutInflater.inflate(R.layout.layout_location_chip, null) as Chip).apply {
+            id = place.id
+            text = place.titleText
+            place.iconResId?.let { iconResId ->
+                chipIcon = requireContext().getDrawable(iconResId)
+            }
+            isChipIconVisible = true
+        }
     }
 
     override fun showEvents(events: List<EventViewBlock>) {

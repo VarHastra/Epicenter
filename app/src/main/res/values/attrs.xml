@@ -6,12 +6,6 @@
     <attr name="iconAlpha" format="float" />
     <attr name="text" format="string" />
 
-    <declare-styleable name="ToolbarDropdown">
-        <attr name="titleText" format="string" />
-        <attr name="dropDownText" format="string" />
-        <attr name="displayDropdown" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="EmptyView">
         <attr name="text" />
         <attr name="captionText" format="string" />

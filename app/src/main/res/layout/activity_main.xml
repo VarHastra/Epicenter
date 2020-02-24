@@ -18,7 +18,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:elevation="@dimen/elevation_toolbar"
-            app:displayDropdown="true"
             app:titleTextColor="@color/colorTextPrimary" />
 
         <FrameLayout

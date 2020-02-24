@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppState
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
@@ -23,43 +20,28 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.info
-import org.jetbrains.anko.warn
+import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
-/**
- * Primary activity of the app that holds
- * the bottom navigation and hosts [FeedFragment],
- * [MapFragment], [NotificationsFragment] and [SearchFragment].
- */
-class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
-    @BindView(R.id.tb_main)
-    lateinit var toolbar: Toolbar
-
-    @BindView(R.id.bnv_main)
-    lateinit var bottomNavigation: BottomNavigationView
+class MainActivity : AppCompatActivity(), ToolbarProvider {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ButterKnife.bind(this)
 
         setSupportActionBar(toolbar)
 
-        info("onCreate")
+        checkPlayApiAvailability()
 
-        if (checkPlayApiAvailability()) {
-            if (AppState.isFirstLaunch) {
-                checkLocationPermission()
-            }
+        if (AppState.isFirstLaunch) {
+            checkLocationPermission()
         }
 
-        bottomNavigation.setOnNavigationItemSelectedListener(BottomNavListener())
+        bottomNavigationView.setOnNavigationItemSelectedListener(BottomNavListener())
         if (savedInstanceState == null) {
-            bottomNavigation.selectedItemId = R.id.navigation_feed
+            bottomNavigationView.selectedItemId = R.id.navigation_feed
         }
     }
 
@@ -78,31 +60,26 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         }
     }
 
-    private fun checkPlayApiAvailability(): Boolean {
-        val api = GoogleApiAvailability.getInstance()
-        val availability = api.isGooglePlayServicesAvailable(this)
-        when (availability) {
-            ConnectionResult.SERVICE_MISSING,
-            ConnectionResult.SERVICE_UPDATING,
-            ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED,
-            ConnectionResult.SERVICE_DISABLED,
-            ConnectionResult.SERVICE_INVALID -> {
-                if (api.isUserResolvableError(availability)) {
-                    warn("GooglePlayServices are not available. Code: $availability")
-                    val dialog = api.getErrorDialog(this, availability, 0)
-                    dialog.setOnDismissListener {
-                        finish()
-                    }
-                    dialog.show()
-                } else {
-                    error("Unresolvable issue with GooglePlayServices. Code: $availability")
-                    finish()
-                }
-                return false
-            }
+    private fun checkPlayApiAvailability() {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val connectionResult = apiAvailability.isGooglePlayServicesAvailable(this)
+
+        if (connectionResult == ConnectionResult.SUCCESS) {
+            return
         }
 
-        return true
+        Timber.e("GooglePlayServices are not available: ${apiAvailability.getErrorString(connectionResult)}")
+
+        if (apiAvailability.isUserResolvableError(connectionResult)) {
+            apiAvailability.getErrorDialog(this, connectionResult, 0).apply {
+                setOnDismissListener {
+                    finish()
+                }
+                show()
+            }
+        } else {
+            finish()
+        }
     }
 
     private fun checkLocationPermission() {

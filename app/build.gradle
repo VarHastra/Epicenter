@@ -71,9 +71,6 @@ dependencies {
 
     implementation "com.karumi:dexter:$versions.dexter"
 
-    implementation "com.jakewharton:butterknife:$versions.butter_knife"
-    kapt "com.jakewharton:butterknife-compiler:$versions.butter_knife"
-
     testImplementation "org.junit.jupiter:junit-jupiter:$versions.junit"
     testImplementation "com.google.truth:truth:$versions.truth"
     androidTestImplementation "androidx.test:runner:$versions.test_runner"

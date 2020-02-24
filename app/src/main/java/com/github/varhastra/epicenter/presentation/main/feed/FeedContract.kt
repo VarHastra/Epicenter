@@ -43,8 +43,6 @@ interface FeedContract {
 
         fun isActive(): Boolean
 
-        fun showTitle()
-
         fun showProgress(active: Boolean)
 
         fun showCurrentPlace(place: Place)

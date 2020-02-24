@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.ListPopupWindow
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.data.AppState
-import com.github.varhastra.epicenter.presentation.common.views.ToolbarDropdown
 import com.github.varhastra.epicenter.presentation.main.feed.FeedFragment
-import com.github.varhastra.epicenter.presentation.main.feed.PlaceViewBlock
 import com.github.varhastra.epicenter.presentation.main.map.MapFragment
 import com.github.varhastra.epicenter.presentation.settings.SettingsActivity
 import com.google.android.gms.common.ConnectionResult
@@ -25,8 +23,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import org.jetbrains.anko.*
-import kotlin.math.roundToInt
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
+import org.jetbrains.anko.info
+import org.jetbrains.anko.warn
 
 /**
  * Primary activity of the app that holds
@@ -36,17 +36,11 @@ import kotlin.math.roundToInt
 class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
 
     @BindView(R.id.tb_main)
-    lateinit var toolbar: ToolbarDropdown
+    lateinit var toolbar: Toolbar
 
     @BindView(R.id.bnv_main)
     lateinit var bottomNavigation: BottomNavigationView
 
-    private var popupWindow: ListPopupWindow? = null
-
-    private val placesAdapter = PlacesAdapter()
-
-    private var placesPopupListener: ((PlaceViewBlock) -> Unit)? = null
-    private var placesEditPopupListener: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +48,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
         ButterKnife.bind(this)
 
         setSupportActionBar(toolbar)
-        toolbar.setOnDropdownClickListener { showDropdownPopup() }
 
         info("onCreate")
 
@@ -83,15 +76,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onStop() {
-        popupWindow?.dismiss()
-        popupWindow?.setAdapter(null)
-        popupWindow?.anchorView = null
-        popupWindow?.setOnItemClickListener(null)
-        popupWindow = null
-        super.onStop()
     }
 
     private fun checkPlayApiAvailability(): Boolean {
@@ -162,44 +146,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, ToolbarProvider {
     }
 
 
-    override fun setTitleText(text: String) = toolbar.setTitleText(text)
-
-    override fun setDropdownText(text: String) = toolbar.setDropdownText(text)
-
-    override fun showDropdown(show: Boolean) = toolbar.showDropDown(show)
-
-    private fun showDropdownPopup() {
-        popupWindow = ListPopupWindow(this).apply {
-            anchorView = toolbar.dropdownTextView
-            verticalOffset = -dip(32)
-            setBackgroundDrawable(getDrawable(R.drawable.bg_popup_window))
-            width = (displayMetrics.widthPixels / 1.5).roundToInt()
-            height = placesAdapter.count * dip(56)
-            setAdapter(placesAdapter)
-            setOnItemClickListener { parent, _, position, _ ->
-                if (position == parent.adapter.count - 1) {
-                    placesEditPopupListener?.invoke()
-                } else {
-                    placesPopupListener?.invoke(parent.adapter.getItem(position) as PlaceViewBlock)
-                }
-                this.dismiss()
-            }
-            isModal = true
-            setListSelector(getDrawable(R.drawable.bg_transparent))
-            show()
-        }
-    }
-
-    override fun attachListener(listener: (PlaceViewBlock) -> Unit) {
-        placesPopupListener = listener
-    }
-
-    override fun attachOnEditListener(listener: () -> Unit) {
-        placesEditPopupListener = listener
-    }
-
-    override fun setDropdownData(places: List<PlaceViewBlock>) {
-        placesAdapter.places = places
-        placesAdapter.notifyDataSetChanged()
+    override fun setTitleText(text: String) {
+        toolbar.title = text
     }
 }

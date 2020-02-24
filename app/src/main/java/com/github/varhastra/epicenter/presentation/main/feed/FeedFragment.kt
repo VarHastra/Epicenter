@@ -52,8 +52,6 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     private lateinit var feedAdapter: FeedAdapter
 
-    private var toolbarProvider: ToolbarProvider? = null
-
     private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
 
     private val placesRepository = PlacesDataSource.getInstance()
@@ -101,18 +99,6 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        toolbarProvider = (context as ToolbarProvider).apply {
-            attachListener { place ->
-                presenter.setPlaceAndReload(place.id)
-            }
-            attachOnEditListener {
-                presenter.openPlacesEditor()
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         presenter.start()
@@ -151,11 +137,6 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        toolbarProvider = null
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_filter -> {
@@ -187,17 +168,12 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun isActive() = isAdded
 
-
-    override fun showTitle() {
-        toolbarProvider?.showDropdown(true)
-    }
-
     override fun showProgress(active: Boolean) {
         if (active) progressBar.show() else progressBar.hide()
     }
 
     override fun showCurrentPlace(place: Place) {
-        toolbarProvider?.setDropdownText(place.name)
+        (requireActivity() as ToolbarProvider).setTitleText(place.name)
     }
 
     override fun showCurrentPlace(placeId: Int) {
@@ -231,8 +207,6 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlaces(places: List<PlaceViewBlock>) {
-        toolbarProvider?.setDropdownData(places)
-
         locationChipGroup.removeAllViews()
         places.map { createLocationChipFor(it) }.forEach { locationChipGroup.addView(it) }
     }

@@ -72,7 +72,6 @@ class FeedPresenter(
             ignoreUpcomingStartCall = false
             return
         }
-        view.showTitle()
 
         sortCriterion = feedStateDataSource.sortCriterion
         sortOrder = feedStateDataSource.sortOrder

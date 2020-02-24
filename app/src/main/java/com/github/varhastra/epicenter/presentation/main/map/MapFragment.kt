@@ -149,10 +149,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     override fun isActive() = isAdded
 
     override fun showTitle() {
-        (requireActivity() as ToolbarProvider).run {
-            showDropdown(false)
-            setTitleText(getString(R.string.app_map))
-        }
+        (requireActivity() as ToolbarProvider).setTitleText(getString(R.string.app_map))
     }
 
     override fun showProgress(show: Boolean) {

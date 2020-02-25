@@ -26,7 +26,7 @@ import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
@@ -64,7 +64,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         FeedPresenter(
                 App.instance,
                 this,
-                LoadSelectedPlaceInteractor(FeedState, placesRepository),
+                LoadSelectedPlaceNameInteractor(FeedState, placesRepository),
                 LoadFeedInteractor(eventsRepository, locationProvider),
                 LoadPlacesInteractor(placesRepository),
                 LoadPlaceInteractor(placesRepository)

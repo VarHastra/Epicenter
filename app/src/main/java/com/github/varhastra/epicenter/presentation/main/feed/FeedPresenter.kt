@@ -8,8 +8,9 @@ import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectio
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.PlaceName
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
@@ -32,7 +33,7 @@ import org.jetbrains.anko.error
 class FeedPresenter(
         private val context: Context,
         private val view: FeedContract.View,
-        private val loadSelectedPlaceInteractor: LoadSelectedPlaceInteractor,
+        private val loadSelectedPlaceNameInteractor: LoadSelectedPlaceNameInteractor,
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlacesInteractor: LoadPlacesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
@@ -56,7 +57,7 @@ class FeedPresenter(
 
     private lateinit var minMagnitude: MagnitudeLevel
 
-    private lateinit var selectedPlace: Place
+    private lateinit var selectedPlace: PlaceName
 
     private var ignoreUpcomingStartCall = false
 
@@ -97,7 +98,7 @@ class FeedPresenter(
     }
 
     private suspend fun fetchSelectedPlace() {
-        selectedPlace = loadSelectedPlaceInteractor()
+        selectedPlace = loadSelectedPlaceNameInteractor()
         view.showSelectedPlace(selectedPlace.id)
         view.showSelectedPlaceName(selectedPlace.name)
     }

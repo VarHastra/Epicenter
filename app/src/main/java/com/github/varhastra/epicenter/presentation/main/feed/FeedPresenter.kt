@@ -19,6 +19,7 @@ import com.github.varhastra.epicenter.domain.model.filters.PlaceFilter
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
+import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
@@ -37,6 +38,7 @@ class FeedPresenter(
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlacesInteractor: LoadPlacesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
+        private val locationRepository: LocationRepository,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
@@ -58,6 +60,9 @@ class FeedPresenter(
     private lateinit var minMagnitude: MagnitudeLevel
 
     private lateinit var selectedPlace: PlaceName
+
+    private val isNearMeSelected
+        get() = selectedPlace.id == Place.CURRENT_LOCATION.id
 
     private var ignoreUpcomingStartCall = false
 
@@ -131,10 +136,9 @@ class FeedPresenter(
     }
 
     private suspend fun fetchEvents(forceLoad: Boolean) {
-        // TODO: check if the location permission is granted
-        val locationPermissionGranted = true
-        if (!locationPermissionGranted) {
+        if (isNearMeSelected && !locationRepository.isLocationPermissionGranted) {
             // TODO: show error message that suggests to grant location permission
+            this.events = emptyList()
             view.apply {
                 showProgress(false)
                 showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)

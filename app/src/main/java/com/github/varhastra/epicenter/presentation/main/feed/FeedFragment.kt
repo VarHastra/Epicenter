@@ -67,7 +67,8 @@ class FeedFragment : Fragment(), FeedContract.View {
                 LoadSelectedPlaceNameInteractor(FeedState, placesRepository),
                 LoadFeedInteractor(eventsRepository, locationProvider),
                 LoadPlacesInteractor(placesRepository),
-                LoadPlaceInteractor(placesRepository)
+                LoadPlaceInteractor(placesRepository),
+                locationProvider
         )
     }
 

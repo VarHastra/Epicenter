@@ -1,9 +1,12 @@
 package com.github.varhastra.epicenter.device
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.SystemClock
+import androidx.core.content.ContextCompat
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
@@ -24,6 +27,8 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
 
     private val geocoder = Geocoder(context)
 
+    override val isLocationPermissionGranted: Boolean
+        get() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     override suspend fun getCoordinates(): Either<Coordinates, Throwable> {
         return when (val lastLocationResult = getLastLocation()) {

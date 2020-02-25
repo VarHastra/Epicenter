@@ -12,4 +12,6 @@ interface LocationRepository {
     suspend fun getLocationName(coordinates: Coordinates): Either<String, Throwable>
 
     fun isGeoCodingAvailable(): Boolean
+
+    val isLocationPermissionGranted: Boolean
 }

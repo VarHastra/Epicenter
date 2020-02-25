@@ -45,9 +45,9 @@ interface FeedContract {
 
         fun showProgress(active: Boolean)
 
-        fun showCurrentPlace(place: Place)
+        fun showSelectedPlaceName(name: String)
 
-        fun showCurrentPlace(placeId: Int)
+        fun showSelectedPlace(placeId: Int)
 
         fun showCurrentSortCriterion(sortCriterion: SortCriterion)
 
@@ -61,8 +61,6 @@ interface FeedContract {
 
         fun showErrorNoData(errorType: ErrorType)
 
-        fun showLocationPermissionRequest(callback: PermissionRequestCallback)
-
         fun showErrorLocationNotAvailable()
 
         fun showErrorNoConnection()
@@ -74,8 +72,6 @@ interface FeedContract {
 
     interface Presenter : BasePresenter {
         fun init()
-
-        fun loadPlaces()
 
         fun loadEvents()
 

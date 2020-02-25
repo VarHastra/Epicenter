@@ -1,7 +1,6 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -20,13 +19,14 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceInteractor
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
@@ -35,12 +35,7 @@ import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.places.PlacesActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
 
@@ -51,6 +46,10 @@ class FeedFragment : Fragment(), FeedContract.View {
     private lateinit var presenter: FeedContract.Presenter
 
     private lateinit var feedAdapter: FeedAdapter
+
+    private val locationChipGroupListener: (ChipGroup, Int) -> Unit = { _, checkedId ->
+        presenter.setPlaceAndReload(checkedId)
+    }
 
     private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
 
@@ -65,6 +64,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         FeedPresenter(
                 App.instance,
                 this,
+                LoadSelectedPlaceInteractor(FeedState, placesRepository),
                 LoadFeedInteractor(eventsRepository, locationProvider),
                 LoadPlacesInteractor(placesRepository),
                 LoadPlaceInteractor(placesRepository)
@@ -103,9 +103,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         super.onResume()
         presenter.start()
 
-        locationChipGroup.setRestrictiveCheckListener { _, checkedId ->
-            presenter.setPlaceAndReload(checkedId)
-        }
+        locationChipGroup.setRestrictiveCheckListener(locationChipGroupListener)
 
         magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
@@ -172,12 +170,14 @@ class FeedFragment : Fragment(), FeedContract.View {
         if (active) progressBar.show() else progressBar.hide()
     }
 
-    override fun showCurrentPlace(place: Place) {
-        (requireActivity() as ToolbarProvider).setTitleText(place.name)
+    override fun showSelectedPlaceName(name: String) {
+        (requireActivity() as ToolbarProvider).setTitleText(name)
     }
 
-    override fun showCurrentPlace(placeId: Int) {
-        locationChipGroup.clearCheck()
+    override fun showSelectedPlace(placeId: Int) {
+        if (placeId == locationChipGroup.checkedChipId) {
+            return
+        }
         locationChipGroup.check(placeId)
     }
 
@@ -207,7 +207,12 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlaces(places: List<PlaceViewBlock>) {
-        locationChipGroup.removeAllViews()
+        locationChipGroup.apply {
+            setOnCheckedChangeListener(null)
+            removeAllViews()
+            clearCheck()
+            setRestrictiveCheckListener(locationChipGroupListener)
+        }
         places.map { createLocationChipFor(it) }.forEach { locationChipGroup.addView(it) }
     }
 
@@ -238,29 +243,6 @@ class FeedFragment : Fragment(), FeedContract.View {
             setCaption(errorType.bodyResId)
             setImageDrawable(errorType.iconResId)
             visibility = View.VISIBLE
-        }
-    }
-
-    override fun showLocationPermissionRequest(callback: FeedContract.View.PermissionRequestCallback) {
-        activity?.apply {
-            Dexter.withActivity(this)
-                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .withListener(object : PermissionListener {
-                        override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                            callback.onGranted()
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest?,
-                                token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-
-                        override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                            callback.onDenied()
-                        }
-                    }).check()
         }
     }
 

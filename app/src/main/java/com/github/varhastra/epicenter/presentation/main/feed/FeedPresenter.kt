@@ -20,9 +20,10 @@ import com.github.varhastra.epicenter.domain.model.filters.PlaceFilter
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
-import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import com.github.varhastra.epicenter.presentation.main.feed.Error.PersistentError
+import com.github.varhastra.epicenter.presentation.main.feed.Error.TransientError
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.PlaceMapper
 import com.google.android.gms.common.api.ResolvableApiException
@@ -32,7 +33,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import timber.log.Timber
 
 class FeedPresenter(
         private val context: Context,
@@ -41,7 +41,6 @@ class FeedPresenter(
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlacesInteractor: LoadPlacesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
-        private val locationRepository: LocationRepository,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
@@ -154,7 +153,7 @@ class FeedPresenter(
         view.showProgress(false)
 
         if (newEvents.isEmpty()) {
-            view.showErrorNoData(FeedContract.View.ErrorType.NO_EVENTS)
+            view.showError(PersistentError.NoEvents)
             this.events = newEvents
             return
         }
@@ -170,36 +169,20 @@ class FeedPresenter(
             return
         }
         this.events = emptyList()
+
         view.showProgress(false)
-
-        if (t is ResolvableApiException) {
-            Timber.d(t, "handleFailure()")
-            view.apply {
-                showProgress(false)
-                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
+        when (t) {
+            is ResolvableApiException -> view.showError(PersistentError.LocationIsOff(t))
+            is LocationProvider.PermissionDeniedException -> view.showError(PersistentError.NoLocationPermission)
+            is NoNetworkConnectionException -> {
+                if (forceLoad) {
+                    view.showError(TransientError.NoConnection)
+                } else {
+                    view.showError(PersistentError.NoConnection)
+                }
             }
-            return
+            else -> view.showError(PersistentError.Unknown)
         }
-
-        if (t is LocationProvider.PermissionDeniedException) {
-            Timber.d(t, "handleFailure()")
-            view.apply {
-                showProgress(false)
-                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
-            }
-            return
-        }
-
-        if (t is NoNetworkConnectionException) {
-            if (forceLoad) {
-                view.showErrorNoConnection()
-            } else {
-                view.showErrorNoData(FeedContract.View.ErrorType.NO_CONNECTION)
-            }
-            return
-        }
-
-        view.showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
     }
 
     private suspend fun areEventListsEqual(first: List<EventViewBlock>, second: List<EventViewBlock>): Boolean {
@@ -254,6 +237,20 @@ class FeedPresenter(
 
     override fun openEventDetails(eventId: String) {
         view.showEventDetails(eventId)
+    }
+
+    override fun onResolveError(error: Error) {
+        if (error is PersistentError) {
+            resolveError(error)
+        }
+    }
+
+    private fun resolveError(error: PersistentError) {
+        when (error) {
+            is PersistentError.LocationIsOff -> view.renderLocationSettingsPrompt(error.resolvableException)
+            is PersistentError.NoLocationPermission -> view.renderLocationPermissionRequest()
+            else -> loadEvents()
+        }
     }
 
     override fun ignoreUpcomingStartCall() {

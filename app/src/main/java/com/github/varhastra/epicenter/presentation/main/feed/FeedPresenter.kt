@@ -5,6 +5,7 @@ import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
+import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
@@ -24,12 +25,14 @@ import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.PlaceMapper
+import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
+import timber.log.Timber
 
 class FeedPresenter(
         private val context: Context,
@@ -60,9 +63,6 @@ class FeedPresenter(
     private lateinit var minMagnitude: MagnitudeLevel
 
     private lateinit var selectedPlace: PlaceName
-
-    private val isNearMeSelected
-        get() = selectedPlace.id == Place.CURRENT_LOCATION.id
 
     private var ignoreUpcomingStartCall = false
 
@@ -136,27 +136,6 @@ class FeedPresenter(
     }
 
     private suspend fun fetchEvents(forceLoad: Boolean) {
-        if (isNearMeSelected && !locationRepository.isLocationPermissionGranted) {
-            // TODO: show error message that suggests to grant location permission
-            this.events = emptyList()
-            view.apply {
-                showProgress(false)
-                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
-            }
-            return
-        }
-
-        // TODO: check location settings
-        val locationServicesAreAvailable = true
-        if (!locationServicesAreAvailable) {
-            // TODO: prompt the user to change location settings
-            view.apply {
-                showProgress(false)
-                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
-            }
-            return
-        }
-
         view.showProgress(true)
         loadPlaceInteractor(selectedPlace.id)
                 .map { place -> AndFilter(PlaceFilter(place), magnitudeFilter) }
@@ -190,8 +169,26 @@ class FeedPresenter(
         if (!view.isActive()) {
             return
         }
-        logger.error("Error loading events: $t")
+        this.events = emptyList()
         view.showProgress(false)
+
+        if (t is ResolvableApiException) {
+            Timber.d(t, "handleFailure()")
+            view.apply {
+                showProgress(false)
+                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
+            }
+            return
+        }
+
+        if (t is LocationProvider.PermissionDeniedException) {
+            Timber.d(t, "handleFailure()")
+            view.apply {
+                showProgress(false)
+                showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
+            }
+            return
+        }
 
         if (t is NoNetworkConnectionException) {
             if (forceLoad) {
@@ -199,9 +196,10 @@ class FeedPresenter(
             } else {
                 view.showErrorNoData(FeedContract.View.ErrorType.NO_CONNECTION)
             }
-        } else {
-            view.showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
+            return
         }
+
+        view.showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
     }
 
     private suspend fun areEventListsEqual(first: List<EventViewBlock>, second: List<EventViewBlock>): Boolean {

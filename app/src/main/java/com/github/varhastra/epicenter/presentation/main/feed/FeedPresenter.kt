@@ -1,6 +1,7 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
 import android.content.Context
+import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
@@ -8,7 +9,7 @@ import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectio
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.PlaceName
@@ -25,27 +26,22 @@ import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
 import com.github.varhastra.epicenter.presentation.main.feed.Error.PersistentError
 import com.github.varhastra.epicenter.presentation.main.feed.Error.TransientError
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
-import com.github.varhastra.epicenter.presentation.main.feed.mappers.PlaceMapper
 import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
 
 class FeedPresenter(
         private val context: Context,
         private val view: FeedContract.View,
         private val loadSelectedPlaceNameInteractor: LoadSelectedPlaceNameInteractor,
         private val loadFeedInteractor: LoadFeedInteractor,
-        private val loadPlacesInteractor: LoadPlacesInteractor,
+        private val loadPlaceNamesInteractor: LoadPlaceNamesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
-
-    private val logger = AnkoLogger(this.javaClass)
 
     private var events = listOf<EventViewBlock>()
 
@@ -96,9 +92,11 @@ class FeedPresenter(
     }
 
     private suspend fun fetchPlaces() {
-        loadPlacesInteractor()
-                .map { places -> mapPlacesToViews(places) }
-                .fold(::handlePlaces, ::handlePlacesFailure)
+        val placeNames = loadPlaceNamesInteractor()
+        val views = mapPlaceNamesToViews(placeNames)
+        if (view.isActive()) {
+            view.showPlaces(views)
+        }
     }
 
     private suspend fun fetchSelectedPlace() {
@@ -107,23 +105,8 @@ class FeedPresenter(
         view.showSelectedPlaceName(selectedPlace.name)
     }
 
-    private suspend fun mapPlacesToViews(places: List<Place>): List<PlaceViewBlock> {
-        return withContext(Dispatchers.Default) {
-            val mapper = PlaceMapper(context, unitsLocaleRepository.preferredUnits)
-            places.map { mapper.map(it) }
-        }
-    }
-
-    private fun handlePlaces(places: List<PlaceViewBlock>) {
-        if (!view.isActive()) {
-            return
-        }
-
-        view.showPlaces(places)
-    }
-
-    private fun handlePlacesFailure(t: Throwable?) {
-        logger.error("Error loading places $t")
+    private suspend fun mapPlaceNamesToViews(places: List<PlaceName>) = withContext(Dispatchers.Default) {
+        places.map { it.toView() }
     }
 
     override fun loadEvents() {
@@ -256,4 +239,21 @@ class FeedPresenter(
     override fun ignoreUpcomingStartCall() {
         ignoreUpcomingStartCall = true
     }
+}
+
+
+private fun PlaceName.toView(): PlaceViewBlock {
+    val titleText = this.name
+
+    val iconResId = when (this.id) {
+        Place.CURRENT_LOCATION.id -> R.drawable.ic_place_near_me_24px
+        Place.WORLD.id -> R.drawable.ic_place_world_24px
+        else -> null
+    }
+
+    return PlaceViewBlock(
+            this.id,
+            titleText,
+            iconResId
+    )
 }

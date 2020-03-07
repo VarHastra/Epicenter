@@ -25,7 +25,7 @@ import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
@@ -67,7 +67,7 @@ class FeedFragment : Fragment(), FeedContract.View {
                 this,
                 LoadSelectedPlaceNameInteractor(FeedState, placesRepository),
                 LoadFeedInteractor(eventsRepository, locationProvider),
-                LoadPlacesInteractor(placesRepository),
+                LoadPlaceNamesInteractor(placesRepository),
                 LoadPlaceInteractor(placesRepository)
         )
     }

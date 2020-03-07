@@ -30,7 +30,7 @@ class EventsDataSource private constructor(
             return Either.Success(list)
         }
 
-        return serviceProvider.getWeekFeedSuspending()
+        return serviceProvider.getWeekFeed()
                 .map { response -> response.mapToModel() }
                 .ifSuccess { updateFeedCache(it) }
     }

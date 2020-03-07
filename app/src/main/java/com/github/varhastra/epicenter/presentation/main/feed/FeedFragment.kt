@@ -4,43 +4,39 @@ package com.github.varhastra.epicenter.presentation.main.feed
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
-import com.github.varhastra.epicenter.common.extensions.longSnackbar
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
+import com.github.varhastra.epicenter.common.extensions.snackbar
 import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.presentation.details.DetailsActivity
 import com.github.varhastra.epicenter.presentation.main.ToolbarProvider
 import com.github.varhastra.epicenter.presentation.places.PlacesActivity
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
 
@@ -51,6 +47,10 @@ class FeedFragment : Fragment(), FeedContract.View {
     private lateinit var presenter: FeedContract.Presenter
 
     private lateinit var feedAdapter: FeedAdapter
+
+    private val locationChipGroupListener: (ChipGroup, Int) -> Unit = { _, checkedId ->
+        presenter.setPlaceAndReload(checkedId)
+    }
 
     private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
 
@@ -65,8 +65,9 @@ class FeedFragment : Fragment(), FeedContract.View {
         FeedPresenter(
                 App.instance,
                 this,
+                LoadSelectedPlaceNameInteractor(FeedState, placesRepository),
                 LoadFeedInteractor(eventsRepository, locationProvider),
-                LoadPlacesInteractor(placesRepository),
+                LoadPlaceNamesInteractor(placesRepository),
                 LoadPlaceInteractor(placesRepository)
         )
     }
@@ -103,9 +104,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         super.onResume()
         presenter.start()
 
-        locationChipGroup.setRestrictiveCheckListener { _, checkedId ->
-            presenter.setPlaceAndReload(checkedId)
-        }
+        locationChipGroup.setRestrictiveCheckListener(locationChipGroupListener)
 
         magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
@@ -172,12 +171,14 @@ class FeedFragment : Fragment(), FeedContract.View {
         if (active) progressBar.show() else progressBar.hide()
     }
 
-    override fun showCurrentPlace(place: Place) {
-        (requireActivity() as ToolbarProvider).setTitleText(place.name)
+    override fun showSelectedPlaceName(name: String) {
+        (requireActivity() as ToolbarProvider).setTitleText(name)
     }
 
-    override fun showCurrentPlace(placeId: Int) {
-        locationChipGroup.clearCheck()
+    override fun showSelectedPlace(placeId: Int) {
+        if (placeId == locationChipGroup.checkedChipId) {
+            return
+        }
         locationChipGroup.check(placeId)
     }
 
@@ -207,7 +208,12 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun showPlaces(places: List<PlaceViewBlock>) {
-        locationChipGroup.removeAllViews()
+        locationChipGroup.apply {
+            setOnCheckedChangeListener(null)
+            removeAllViews()
+            clearCheck()
+            setRestrictiveCheckListener(locationChipGroupListener)
+        }
         places.map { createLocationChipFor(it) }.forEach { locationChipGroup.addView(it) }
     }
 
@@ -231,47 +237,31 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedRecyclerView.scheduleLayoutAnimation()
     }
 
-    override fun showErrorNoData(errorType: FeedContract.View.ErrorType) {
-        feedRecyclerView.visibility = View.INVISIBLE
+    override fun showError(error: Error) {
+        when (error) {
+            is Error.PersistentError -> showPersistentError(error)
+            is Error.TransientError -> showTransientError(error)
+        }
+    }
+
+    private fun showPersistentError(error: Error.PersistentError) {
+        feedRecyclerView.visibility = View.GONE
+
         emptyView.apply {
-            setTitle(errorType.titleResId)
-            setCaption(errorType.bodyResId)
-            setImageDrawable(errorType.iconResId)
+            setTitle(error.titleResId)
+            setCaption(error.captionResId)
+            setImageDrawable(error.iconResId)
+
+            setButtonVisibility(error.buttonResId != null)
+            error.buttonResId?.let { setButtonText(it) }
+            setButtonListener { presenter.onResolveError(error) }
+
             visibility = View.VISIBLE
         }
     }
 
-    override fun showLocationPermissionRequest(callback: FeedContract.View.PermissionRequestCallback) {
-        activity?.apply {
-            Dexter.withActivity(this)
-                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .withListener(object : PermissionListener {
-                        override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                            callback.onGranted()
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest?,
-                                token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-
-                        override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                            callback.onDenied()
-                        }
-                    }).check()
-        }
-    }
-
-    override fun showErrorLocationNotAvailable() {
-        requireView().longSnackbar(R.string.feed_error_location_not_avaliable, R.string.app_settings) {
-            showAppSettings()
-        }
-    }
-
-    override fun showErrorNoConnection() {
-        requireView().longSnackbar(R.string.app_error_no_connection)
+    private fun showTransientError(error: Error.TransientError) {
+        requireView().snackbar(error.titleResId)
     }
 
     override fun showPlacesEditor() {
@@ -282,17 +272,22 @@ class FeedFragment : Fragment(), FeedContract.View {
         DetailsActivity.start(requireActivity(), eventId, REQUEST_DETAILS)
     }
 
-    private fun showAppSettings() {
-        val intent = Intent().apply {
-            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            data = Uri.fromParts("package", requireContext().packageName, null)
-        }
-        startActivity(intent)
+    override fun renderLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+        )
     }
 
+    override fun renderLocationSettingsPrompt(resolvableException: ResolvableApiException) {
+        resolvableException.startResolutionForResult(requireActivity(), REQUEST_CHANGE_LOCATION_SETTINGS)
+    }
 
     companion object {
-        private const val REQUEST_DETAILS = 100
+        private const val REQUEST_DETAILS = 1
+        private const val REQUEST_CHANGE_LOCATION_SETTINGS = 2
+        private const val REQUEST_LOCATION_PERMISSION = 3
 
         fun newInstance(context: Context): FeedFragment {
             val transitionInflater = TransitionInflater.from(context)

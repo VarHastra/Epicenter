@@ -1,9 +1,12 @@
 package com.github.varhastra.epicenter.device
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.SystemClock
+import androidx.core.content.ContextCompat
 import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
@@ -24,8 +27,18 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
 
     private val geocoder = Geocoder(context)
 
+    private val oneTimeLocationRequest
+        get() = LocationRequest.create().apply {
+            numUpdates = 1
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            setExpirationDuration(Duration.ofSeconds(5).toMillis())
+        }
+
+    override val isLocationPermissionGranted: Boolean
+        get() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     override suspend fun getCoordinates(): Either<Coordinates, Throwable> {
+        if (!isLocationPermissionGranted) return Either.failure(PermissionDeniedException())
         return when (val lastLocationResult = getLastLocation()) {
             is Either.Success -> {
                 val location = lastLocationResult.data
@@ -40,6 +53,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     }
 
     override suspend fun getLastCoordinates(): Either<Coordinates, Throwable> {
+        if (!isLocationPermissionGranted) return Either.failure(PermissionDeniedException())
         return getLastLocation().map { it.toCoordinates() }
     }
 
@@ -61,11 +75,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     }
 
     private suspend fun getFreshLocation(): Either<Location, Throwable> {
-        val locationRequest = LocationRequest.create().apply {
-            numUpdates = 1
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            setExpirationDuration(Duration.ofSeconds(5).toMillis())
-        }
+        val locationRequest = oneTimeLocationRequest
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .setAlwaysShow(false)
@@ -129,6 +139,11 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
 
     class NoLocationAvailableException(
             message: String = "No location available.",
+            cause: Throwable? = null
+    ) : RuntimeException(message, cause)
+
+    class PermissionDeniedException(
+            message: String = "Location permission is denied.",
             cause: Throwable? = null
     ) : RuntimeException(message, cause)
 

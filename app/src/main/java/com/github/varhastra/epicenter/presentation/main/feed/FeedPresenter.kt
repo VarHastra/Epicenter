@@ -1,15 +1,18 @@
 package com.github.varhastra.epicenter.presentation.main.feed
 
 import android.content.Context
+import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
-import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
+import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
+import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.PlaceName
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
@@ -20,26 +23,25 @@ import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
 import com.github.varhastra.epicenter.domain.model.sorting.SortStrategy
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import com.github.varhastra.epicenter.presentation.main.feed.Error.PersistentError
+import com.github.varhastra.epicenter.presentation.main.feed.Error.TransientError
 import com.github.varhastra.epicenter.presentation.main.feed.mappers.EventMapper
-import com.github.varhastra.epicenter.presentation.main.feed.mappers.PlaceMapper
+import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
 
 class FeedPresenter(
         private val context: Context,
         private val view: FeedContract.View,
+        private val loadSelectedPlaceNameInteractor: LoadSelectedPlaceNameInteractor,
         private val loadFeedInteractor: LoadFeedInteractor,
-        private val loadPlacesInteractor: LoadPlacesInteractor,
+        private val loadPlaceNamesInteractor: LoadPlaceNamesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
         private val feedStateDataSource: FeedStateDataSource = FeedState
 ) : FeedContract.Presenter {
-
-    private val logger = AnkoLogger(this.javaClass)
 
     private var events = listOf<EventViewBlock>()
 
@@ -55,7 +57,8 @@ class FeedPresenter(
 
     private lateinit var minMagnitude: MagnitudeLevel
 
-    private var placeId = Place.WORLD.id
+    private lateinit var selectedPlace: PlaceName
+
     private var ignoreUpcomingStartCall = false
 
 
@@ -81,84 +84,49 @@ class FeedPresenter(
         view.showCurrentSortOrder(sortOrder)
         view.showCurrentMagnitudeFilter(minMagnitude)
 
-        placeId = feedStateDataSource.selectedPlaceId
-
-        loadPlaces()
-        loadEvents()
-    }
-
-    override fun loadPlaces() {
         CoroutineScope(Dispatchers.Main).launch {
-            loadPlacesInteractor()
-                    .map { places -> mapPlacesToViews(places) }
-                    .fold(::handlePlaces, ::handlePlacesFailure)
+            fetchPlaces()
+            fetchSelectedPlace()
+            fetchEvents(false)
         }
     }
 
-    private suspend fun mapPlacesToViews(places: List<Place>): List<PlaceViewBlock> {
-        return withContext(Dispatchers.Default) {
-            val mapper = PlaceMapper(context, unitsLocaleRepository.preferredUnits)
-            places.map { mapper.map(it) }
+    private suspend fun fetchPlaces() {
+        val placeNames = loadPlaceNamesInteractor()
+        val views = mapPlaceNamesToViews(placeNames)
+        if (view.isActive()) {
+            view.showPlaces(views)
         }
     }
 
-    private fun handlePlaces(places: List<PlaceViewBlock>) {
-        if (!view.isActive()) {
-            return
-        }
-
-        view.showPlaces(places)
-        view.showCurrentPlace(placeId)
+    private suspend fun fetchSelectedPlace() {
+        selectedPlace = loadSelectedPlaceNameInteractor()
+        view.showSelectedPlace(selectedPlace.id)
+        view.showSelectedPlaceName(selectedPlace.name)
     }
 
-    private fun handlePlacesFailure(t: Throwable?) {
-        logger.error("Error loading places $t")
+    private suspend fun mapPlaceNamesToViews(places: List<PlaceName>) = withContext(Dispatchers.Default) {
+        places.map { it.toView() }
     }
 
     override fun loadEvents() {
-        startLoadingEvents(false)
+        CoroutineScope(Dispatchers.Main).launch { fetchEvents(false) }
     }
 
     override fun refreshEvents() {
-        startLoadingEvents(true)
+        CoroutineScope(Dispatchers.Main).launch { fetchEvents(true) }
     }
 
-    private fun startLoadingEvents(forceLoad: Boolean) {
-        if (placeId == Place.CURRENT_LOCATION.id) {
-            // If the user has selected "Current location", then we first need
-            // to check location permission
-            view.showLocationPermissionRequest(object : FeedContract.View.PermissionRequestCallback {
-                override fun onGranted() {
-                    // Permission is granted, proceed by loading information
-                    getPlaceAndEvents(forceLoad)
-                }
-
-                override fun onDenied() {
-                    // Permission denied, inform the user and switch to "World"
-                    view.showErrorLocationNotAvailable()
-                    setPlaceAndReload(Place.WORLD)
-                }
-            })
-        } else {
-            // If we deal with any place other than "Current location"
-            // then just load information for that place
-            getPlaceAndEvents(forceLoad)
-        }
-    }
-
-    private fun getPlaceAndEvents(forceLoad: Boolean) {
+    private suspend fun fetchEvents(forceLoad: Boolean) {
         view.showProgress(true)
-        CoroutineScope(Dispatchers.Main).launch {
-            loadPlaceInteractor(placeId)
-                    .ifSuccess { place -> view.showCurrentPlace(place) }
-                    .map { place -> AndFilter(PlaceFilter(place), magnitudeFilter) }
-                    .flatMap { filter -> loadFeedInteractor(forceLoad, filter, sortStrategy) }
-                    .map { events -> mapEventsToViews(events) }
-                    .fold(
-                            { eventViews -> handleEvents(eventViews) },
-                            { failure -> handleFailure(failure, forceLoad) }
-                    )
-        }
+        loadPlaceInteractor(selectedPlace.id)
+                .map { place -> AndFilter(PlaceFilter(place), magnitudeFilter) }
+                .flatMap { filter -> loadFeedInteractor(forceLoad, filter, sortStrategy) }
+                .map { events -> mapEventsToViews(events) }
+                .fold(
+                        { eventViews -> handleEvents(eventViews) },
+                        { failure -> handleFailure(failure, forceLoad) }
+                )
     }
 
     private suspend fun handleEvents(newEvents: List<EventViewBlock>) {
@@ -168,7 +136,7 @@ class FeedPresenter(
         view.showProgress(false)
 
         if (newEvents.isEmpty()) {
-            view.showErrorNoData(FeedContract.View.ErrorType.NO_EVENTS)
+            view.showError(PersistentError.NoEvents)
             this.events = newEvents
             return
         }
@@ -183,17 +151,20 @@ class FeedPresenter(
         if (!view.isActive()) {
             return
         }
-        logger.error("Error loading events: $t")
-        view.showProgress(false)
+        this.events = emptyList()
 
-        if (t is NoNetworkConnectionException) {
-            if (forceLoad) {
-                view.showErrorNoConnection()
-            } else {
-                view.showErrorNoData(FeedContract.View.ErrorType.NO_CONNECTION)
+        view.showProgress(false)
+        when (t) {
+            is ResolvableApiException -> view.showError(PersistentError.LocationIsOff(t))
+            is LocationProvider.PermissionDeniedException -> view.showError(PersistentError.NoLocationPermission)
+            is NoNetworkConnectionException -> {
+                if (forceLoad) {
+                    view.showError(TransientError.NoConnection)
+                } else {
+                    view.showError(PersistentError.NoConnection)
+                }
             }
-        } else {
-            view.showErrorNoData(FeedContract.View.ErrorType.UNKNOWN)
+            else -> view.showError(PersistentError.Unknown)
         }
     }
 
@@ -215,12 +186,14 @@ class FeedPresenter(
     }
 
     override fun setPlaceAndReload(placeId: Int) {
-        if (placeId == this.placeId) {
+        if (placeId == selectedPlace.id) {
             return
         }
-        this.placeId = placeId
         feedStateDataSource.selectedPlaceId = placeId
-        loadEvents()
+        CoroutineScope(Dispatchers.Main).launch {
+            fetchSelectedPlace()
+            fetchEvents(false)
+        }
     }
 
     override fun setSortCriterion(sortCriterion: SortCriterion) {
@@ -249,7 +222,38 @@ class FeedPresenter(
         view.showEventDetails(eventId)
     }
 
+    override fun onResolveError(error: Error) {
+        if (error is PersistentError) {
+            resolveError(error)
+        }
+    }
+
+    private fun resolveError(error: PersistentError) {
+        when (error) {
+            is PersistentError.LocationIsOff -> view.renderLocationSettingsPrompt(error.resolvableException)
+            is PersistentError.NoLocationPermission -> view.renderLocationPermissionRequest()
+            else -> loadEvents()
+        }
+    }
+
     override fun ignoreUpcomingStartCall() {
         ignoreUpcomingStartCall = true
     }
+}
+
+
+private fun PlaceName.toView(): PlaceViewBlock {
+    val titleText = this.name
+
+    val iconResId = when (this.id) {
+        Place.CURRENT_LOCATION.id -> R.drawable.ic_place_near_me_24px
+        Place.WORLD.id -> R.drawable.ic_place_world_24px
+        else -> null
+    }
+
+    return PlaceViewBlock(
+            this.id,
+            titleText,
+            iconResId
+    )
 }

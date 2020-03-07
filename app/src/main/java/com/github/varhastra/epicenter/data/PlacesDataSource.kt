@@ -12,6 +12,7 @@ import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.GeoArea
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.PlaceName
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.PlacesRepository
 
@@ -41,6 +42,10 @@ class PlacesDataSource private constructor(
         return Either.Success(places)
     }
 
+    override suspend fun getAllPlaceNames(): List<PlaceName> {
+        return defaultPlaces.map { it.toPlaceName() } + placeDao.getAll().map { it.toPlaceName() }
+    }
+
     override suspend fun get(placeId: Int): Either<Place, Throwable> {
         val place = getFromDefaultsOrDb(placeId)
                 ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
@@ -51,6 +56,12 @@ class PlacesDataSource private constructor(
         } else {
             Either.success(place)
         }
+    }
+
+    override suspend fun getPlaceName(placeId: Int): Either<PlaceName, Throwable> {
+        val place = getFromDefaultsOrDb(placeId)
+                ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
+        return Either.success(place.toPlaceName())
     }
 
     private fun getFromDefaultsOrDb(placeId: Int): Place? {

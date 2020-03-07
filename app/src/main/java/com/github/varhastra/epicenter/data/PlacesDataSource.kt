@@ -50,7 +50,7 @@ class PlacesDataSource private constructor(
         val place = getFromDefaultsOrDb(placeId)
                 ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
         return if (placeId == Place.CURRENT_LOCATION.id) {
-            locationRepository.getLastCoordinates().map { lastCoordinates ->
+            locationRepository.getCoordinates().map { lastCoordinates ->
                 place.copy(geoArea = GeoArea(lastCoordinates, place.radiusKm))
             }
         } else {

@@ -13,6 +13,7 @@ import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.GeoArea
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.PlaceName
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.PlacesRepository
 
@@ -37,7 +38,7 @@ class PlacesDataSource private constructor(
         )
     }
 
-    override suspend fun getAll(): Either<List<Place>, Throwable> {
+    override suspend fun getAll(): Either<List<Place>, Failure> {
         val places = defaultPlaces + placeDao.getAll().map { it.toPlace() }
         return Either.Success(places)
     }
@@ -46,9 +47,9 @@ class PlacesDataSource private constructor(
         return defaultPlaces.map { it.toPlaceName() } + placeDao.getAll().map { it.toPlaceName() }
     }
 
-    override suspend fun get(placeId: Int): Either<Place, Throwable> {
+    override suspend fun get(placeId: Int): Either<Place, Failure> {
         val place = getFromDefaultsOrDb(placeId)
-                ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
+                ?: return Either.Failure(Failure.PlacesFailure.NoSuchPlace(placeId))
         return if (placeId == Place.CURRENT_LOCATION.id) {
             locationRepository.getCoordinates().map { lastCoordinates ->
                 place.copy(geoArea = GeoArea(lastCoordinates, place.radiusKm))
@@ -58,9 +59,9 @@ class PlacesDataSource private constructor(
         }
     }
 
-    override suspend fun getPlaceName(placeId: Int): Either<PlaceName, Throwable> {
+    override suspend fun getPlaceName(placeId: Int): Either<PlaceName, Failure> {
         val place = getFromDefaultsOrDb(placeId)
-                ?: return Either.Failure(NoSuchElementException("Place with the given id doesn't exist: $placeId"))
+                ?: return Either.Failure(Failure.PlacesFailure.NoSuchPlace(placeId))
         return Either.success(place.toPlaceName())
     }
 

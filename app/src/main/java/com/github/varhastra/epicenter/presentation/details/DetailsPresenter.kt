@@ -5,6 +5,7 @@ import android.net.Uri
 import android.webkit.URLUtil
 import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.presentation.common.AlertLevel
 import com.github.varhastra.epicenter.presentation.common.EventMarker
@@ -73,7 +74,7 @@ class DetailsPresenter(
         }
     }
 
-    private fun handleFailure(t: Throwable) {
+    private fun handleFailure(failure: Failure) {
         view.showErrorNoData()
     }
 

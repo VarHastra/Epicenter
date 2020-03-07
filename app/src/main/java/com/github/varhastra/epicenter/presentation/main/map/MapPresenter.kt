@@ -4,6 +4,7 @@ import android.content.Context
 import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
@@ -79,7 +80,7 @@ class MapPresenter(
         view.showEventMarkers(markers)
     }
 
-    private fun handleFailure(t: Throwable) {
+    private fun handleFailure(failure: Failure) {
         if (!view.isActive()) {
             return
         }

@@ -11,6 +11,9 @@ import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.failures.Failure
+import com.github.varhastra.epicenter.domain.model.failures.Failure.GeocoderFailure
+import com.github.varhastra.epicenter.domain.model.failures.Failure.LocationFailure
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.google.android.gms.location.*
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +42,8 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     override val isLocationPermissionGranted: Boolean
         get() = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    override suspend fun getCoordinates(): Either<Coordinates, Throwable> {
-        if (!isLocationPermissionGranted) return Either.failure(PermissionDeniedException())
+    override suspend fun getCoordinates(): Either<Coordinates, Failure> {
+        if (!isLocationPermissionGranted) return Either.failure(LocationFailure.PermissionDenied)
         return when (val lastLocationResult = getLastLocation()) {
             is Either.Success -> {
                 val location = lastLocationResult.data
@@ -54,29 +57,29 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         }
     }
 
-    override suspend fun getLastCoordinates(): Either<Coordinates, Throwable> {
-        if (!isLocationPermissionGranted) return Either.failure(PermissionDeniedException())
+    override suspend fun getLastCoordinates(): Either<Coordinates, Failure> {
+        if (!isLocationPermissionGranted) return Either.failure(LocationFailure.PermissionDenied)
         return getLastLocation().map { it.toCoordinates() }
     }
 
-    private suspend fun getLastLocation(): Either<Location, Throwable> {
+    private suspend fun getLastLocation(): Either<Location, Failure> {
         return try {
             val coordinates = locationProviderClient.lastLocation.await()
             Either.of(coordinates) {
                 Timber.w("getLastLocation() > FusedLocationProvider.getLastLocation() has returned null.")
-                NoLocationAvailableException()
+                LocationFailure.NotAvailable
             }
-        } catch (e: Throwable) {
-            Timber.w(e, "getLastLocation() > Exception encountered.")
-            Either.Failure(e)
+        } catch (t: Throwable) {
+            Timber.w(t, "getLastLocation() > Exception encountered.")
+            Either.Failure(LocationFailure.ProviderFailure(t))
         }
     }
 
-    private suspend fun getFreshCoordinates(): Either<Coordinates, Throwable> {
+    private suspend fun getFreshCoordinates(): Either<Coordinates, Failure> {
         return getFreshLocation().map { it.toCoordinates() }
     }
 
-    private suspend fun getFreshLocation(): Either<Location, Throwable> = withContext(Dispatchers.Main) {
+    private suspend fun getFreshLocation(): Either<Location, Failure> = withContext(Dispatchers.Main) {
         val locationRequest = oneTimeLocationRequest
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
@@ -87,38 +90,38 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
                 .flatMap { getOneTimeLocationUpdate(locationRequest) }
     }
 
-    private suspend fun getLocationSettings(settingsRequest: LocationSettingsRequest): Either<LocationSettingsResponse, Throwable> {
+    private suspend fun getLocationSettings(settingsRequest: LocationSettingsRequest): Either<LocationSettingsResponse, Failure> {
         return try {
             val settingsResponse = settingsClient.checkLocationSettings(settingsRequest).await()
             Either.Success(settingsResponse)
         } catch (t: Throwable) {
             Timber.w(t, "getLocationSettings() > Exception encountered.")
-            Either.Failure(t)
+            Either.Failure(LocationFailure.ProviderFailure(t))
         }
     }
 
-    private suspend fun getOneTimeLocationUpdate(locationRequest: LocationRequest): Either<Location, Throwable> = suspendCoroutine { continuation ->
+    private suspend fun getOneTimeLocationUpdate(locationRequest: LocationRequest): Either<Location, Failure> = suspendCoroutine { continuation ->
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
                 locationProviderClient.removeLocationUpdates(this)
-                continuation.resume(Either.of(lastLocation) { NoLocationAvailableException() })
+                continuation.resume(Either.of(lastLocation) { LocationFailure.NotAvailable })
             }
         }
 
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 
-    override suspend fun getLocationName(coordinates: Coordinates): Either<String, Throwable> {
+    override suspend fun getLocationName(coordinates: Coordinates): Either<String, Failure> {
         if (!Geocoder.isPresent()) {
-            return Either.Failure(GeocoderIsNotAvailableException())
+            return Either.Failure(GeocoderFailure.NotAvailable)
         }
 
         val (lat, lon) = coordinates
         val addresses = geocoder.getFromLocation(lat, lon, 1)
         return if (addresses.isEmpty()) {
             Timber.w("getLocationName() > Geocoder.getFromLocation() has returned an empty address list.")
-            Either.Failure(EmptyAddressListException())
+            Either.Failure(GeocoderFailure.UnableToGeocode(coordinates))
         } else {
             val address = addresses[0]
             Timber.d("getLocationName() > received address: $address.")
@@ -137,27 +140,6 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
     private val Location.nanosSinceCreation get() = SystemClock.elapsedRealtimeNanos() - elapsedRealtimeNanos
 
     private val Location.isObsolete get() = nanosSinceCreation > LOCATION_OBSOLESCENCE_THRESHOLD_NS
-
-
-    class NoLocationAvailableException(
-            message: String = "No location available.",
-            cause: Throwable? = null
-    ) : RuntimeException(message, cause)
-
-    class PermissionDeniedException(
-            message: String = "Location permission is denied.",
-            cause: Throwable? = null
-    ) : RuntimeException(message, cause)
-
-    class EmptyAddressListException(
-            message: String = "Empty address list.",
-            cause: Throwable? = null
-    ) : RuntimeException(message, cause)
-
-    class GeocoderIsNotAvailableException(
-            message: String = "Geocoder is not available.",
-            cause: Throwable? = null
-    ) : RuntimeException(message, cause)
 
 
     companion object {

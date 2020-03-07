@@ -6,8 +6,10 @@ import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.model.Event
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import org.threeten.bp.Duration
+import timber.log.Timber
 
 class EventsDataSource private constructor(
         private val serviceProvider: EventServiceProvider
@@ -24,7 +26,7 @@ class EventsDataSource private constructor(
     private val cacheIsAvailable get() = eventsFeedCache.isNotEmpty()
 
 
-    override suspend fun getWeekFeedSuspending(forceLoad: Boolean): Either<List<Event>, Throwable> {
+    override suspend fun getWeekFeedSuspending(forceLoad: Boolean): Either<List<Event>, Failure> {
         if (!forceLoad && cacheIsAvailable && !cacheIsStale) {
             val list = eventsFeedCache.values.toList()
             return Either.Success(list)
@@ -35,13 +37,14 @@ class EventsDataSource private constructor(
                 .ifSuccess { updateFeedCache(it) }
     }
 
-    override suspend fun getEventSuspending(eventId: String): Either<Event, Throwable> {
+    override suspend fun getEventSuspending(eventId: String): Either<Event, Failure> {
         val cachedEvent = eventsFeedCache[eventId]
 
         return if (cachedEvent != null) {
             Either.Success(cachedEvent)
         } else {
-            Either.Failure(IllegalStateException("Unable to find an event with the given id: $eventId."))
+            Timber.d("Can't find event with the given id: $eventId.")
+            Either.Failure(Failure.EventsFailure.NoSuchEvent(eventId))
         }
     }
 

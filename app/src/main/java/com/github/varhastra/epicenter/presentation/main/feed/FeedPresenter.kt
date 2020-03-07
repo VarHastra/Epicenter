@@ -5,8 +5,6 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.FeedState
-import com.github.varhastra.epicenter.data.network.exceptions.NoNetworkConnectionException
-import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
@@ -14,6 +12,9 @@ import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameIn
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.PlaceName
 import com.github.varhastra.epicenter.domain.model.RemoteEvent
+import com.github.varhastra.epicenter.domain.model.failures.Failure
+import com.github.varhastra.epicenter.domain.model.failures.Failure.LocationFailure
+import com.github.varhastra.epicenter.domain.model.failures.Failure.NetworkFailure
 import com.github.varhastra.epicenter.domain.model.filters.AndFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeFilter
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
@@ -147,17 +148,17 @@ class FeedPresenter(
         }
     }
 
-    private fun handleFailure(t: Throwable, forceLoad: Boolean) {
+    private fun handleFailure(failure: Failure, forceLoad: Boolean) {
         if (!view.isActive()) {
             return
         }
         this.events = emptyList()
 
         view.showProgress(false)
-        when (t) {
-            is ResolvableApiException -> view.showError(PersistentError.LocationIsOff(t))
-            is LocationProvider.PermissionDeniedException -> view.showError(PersistentError.NoLocationPermission)
-            is NoNetworkConnectionException -> {
+        when (failure) {
+            is LocationFailure.ProviderFailure -> if (failure.t is ResolvableApiException) view.showError(PersistentError.LocationIsOff(failure.t))
+            is LocationFailure.PermissionDenied -> view.showError(PersistentError.NoLocationPermission)
+            is NetworkFailure.NoConnection -> {
                 if (forceLoad) {
                     view.showError(TransientError.NoConnection)
                 } else {

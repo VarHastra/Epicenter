@@ -5,6 +5,7 @@ import com.github.varhastra.epicenter.domain.interactors.DeletePlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
 import com.github.varhastra.epicenter.domain.interactors.UpdatePlacesOrderInteractor
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +52,7 @@ class PlacesPresenter(
         view.showPlaces(places)
     }
 
-    private fun handleFailure(t: Throwable) {
+    private fun handleFailure(failure: Failure) {
         // TODO: implement
     }
 

@@ -2,6 +2,7 @@ package com.github.varhastra.epicenter.presentation.placenamepicker
 
 import com.github.varhastra.epicenter.domain.interactors.LoadLocationNameInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ class PlaceNamePickerPresenter(
         view.showSuggestedName(locationName)
     }
 
-    private fun handleFailure(t: Throwable) {
+    private fun handleFailure(failure: Failure) {
         if (!view.isActive()) {
             return
         }

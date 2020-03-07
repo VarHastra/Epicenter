@@ -6,6 +6,7 @@ import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
+import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
 import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
@@ -70,7 +71,7 @@ class PlaceEditorPresenter(
         view.loadMap()
     }
 
-    private fun handleFailure(t: Throwable) {
+    private fun handleFailure(failure: Failure) {
         // TODO: notify the user about the error
         view.navigateBack()
     }

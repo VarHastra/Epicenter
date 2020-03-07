@@ -13,7 +13,9 @@ import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.google.android.gms.location.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import timber.log.Timber
 import kotlin.coroutines.resume
@@ -74,14 +76,14 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         return getFreshLocation().map { it.toCoordinates() }
     }
 
-    private suspend fun getFreshLocation(): Either<Location, Throwable> {
+    private suspend fun getFreshLocation(): Either<Location, Throwable> = withContext(Dispatchers.Main) {
         val locationRequest = oneTimeLocationRequest
         val settingsRequest = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .setAlwaysShow(false)
                 .setNeedBle(false)
                 .build()
-        return getLocationSettings(settingsRequest)
+        getLocationSettings(settingsRequest)
                 .flatMap { getOneTimeLocationUpdate(locationRequest) }
     }
 

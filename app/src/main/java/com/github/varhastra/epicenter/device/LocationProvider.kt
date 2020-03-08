@@ -17,12 +17,12 @@ import com.github.varhastra.epicenter.domain.model.failures.Failure.LocationFail
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.google.android.gms.location.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import timber.log.Timber
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class LocationProvider(val context: Context = App.instance) : LocationRepository {
 
@@ -100,7 +100,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         }
     }
 
-    private suspend fun getOneTimeLocationUpdate(locationRequest: LocationRequest): Either<Location, Failure> = suspendCoroutine { continuation ->
+    private suspend fun getOneTimeLocationUpdate(locationRequest: LocationRequest): Either<Location, Failure> = suspendCancellableCoroutine { continuation ->
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
@@ -109,6 +109,7 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
             }
         }
 
+        continuation.invokeOnCancellation { locationProviderClient.removeLocationUpdates(locationCallback) }
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 

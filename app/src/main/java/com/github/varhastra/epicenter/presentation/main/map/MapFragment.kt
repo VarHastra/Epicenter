@@ -14,9 +14,9 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.onStopTrackingTouch
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.data.EventsDataSource
+import com.github.varhastra.epicenter.data.LocationProvider
 import com.github.varhastra.epicenter.data.MapState
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel

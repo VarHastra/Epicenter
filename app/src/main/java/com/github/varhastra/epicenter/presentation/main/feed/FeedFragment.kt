@@ -20,9 +20,9 @@ import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListe
 import com.github.varhastra.epicenter.common.extensions.snackbar
 import com.github.varhastra.epicenter.data.EventsDataSource
 import com.github.varhastra.epicenter.data.FeedState
+import com.github.varhastra.epicenter.data.LocationProvider
 import com.github.varhastra.epicenter.data.PlacesDataSource
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor

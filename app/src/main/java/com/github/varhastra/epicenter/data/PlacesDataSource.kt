@@ -8,7 +8,6 @@ import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.data.db.PlaceEntity
-import com.github.varhastra.epicenter.device.LocationProvider
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.GeoArea
 import com.github.varhastra.epicenter.domain.model.Place
@@ -115,3 +114,25 @@ class PlacesDataSource private constructor(
         }
     }
 }
+
+
+private fun PlaceEntity.toPlace() = Place(
+        id,
+        name,
+        GeoArea(
+                Coordinates(latitude, longitude),
+                radiusKm
+        )
+)
+
+private fun PlaceEntity.toPlaceName() = PlaceName(id, name)
+
+private fun Place.toPlaceEntity() = PlaceEntity(
+        id,
+        name,
+        latitude,
+        longitude,
+        radiusKm
+)
+
+private fun Place.toPlaceName() = PlaceName(id, name)

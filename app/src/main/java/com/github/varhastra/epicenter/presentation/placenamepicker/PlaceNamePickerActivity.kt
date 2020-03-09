@@ -8,7 +8,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.doAfterTextChanged
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
-import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.data.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadLocationNameInteractor
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_place_name_picker.*

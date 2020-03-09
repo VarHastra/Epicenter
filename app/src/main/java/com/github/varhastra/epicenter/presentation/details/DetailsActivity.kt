@@ -14,7 +14,7 @@ import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.setTextColorRes
 import com.github.varhastra.epicenter.data.AppSettings
 import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.device.LocationProvider
+import com.github.varhastra.epicenter.data.LocationProvider
 import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
 import com.github.varhastra.epicenter.presentation.common.EventMarker
 import com.github.varhastra.epicenter.presentation.common.toMarkerOptions

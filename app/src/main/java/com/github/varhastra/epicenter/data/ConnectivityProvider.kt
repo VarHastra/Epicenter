@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.device
+package com.github.varhastra.epicenter.data
 
 import android.content.Context
 import android.net.ConnectivityManager

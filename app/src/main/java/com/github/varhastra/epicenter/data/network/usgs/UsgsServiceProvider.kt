@@ -1,11 +1,11 @@
 package com.github.varhastra.epicenter.data.network.usgs
 
 import com.github.varhastra.epicenter.common.functionaltypes.Either
+import com.github.varhastra.epicenter.data.ConnectivityProvider
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.EventServiceResponse
 import com.github.varhastra.epicenter.data.network.Network
 import com.github.varhastra.epicenter.data.network.usgs.model.UsgsResponse
-import com.github.varhastra.epicenter.device.ConnectivityProvider
 import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.model.failures.Failure.NetworkFailure.*
 import timber.log.Timber

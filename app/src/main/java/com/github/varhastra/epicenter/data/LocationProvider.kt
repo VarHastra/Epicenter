@@ -1,4 +1,4 @@
-package com.github.varhastra.epicenter.device
+package com.github.varhastra.epicenter.data
 
 import android.Manifest
 import android.content.Context
@@ -147,3 +147,6 @@ class LocationProvider(val context: Context = App.instance) : LocationRepository
         private val LOCATION_OBSOLESCENCE_THRESHOLD_NS = Duration.ofMinutes(5).toNanos()
     }
 }
+
+
+private fun Location.toCoordinates() = Coordinates(this.latitude, this.longitude)

@@ -4,19 +4,15 @@ package com.github.varhastra.epicenter.di
 
 import androidx.room.Room
 import com.github.varhastra.epicenter.BuildConfig
-import com.github.varhastra.epicenter.data.ConnectivityProvider
-import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.LocationProvider
-import com.github.varhastra.epicenter.data.PlacesDataSource
+import com.github.varhastra.epicenter.data.*
 import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
 import com.github.varhastra.epicenter.data.network.usgs.UsgsService
 import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.domain.repos.ConnectivityRepository
-import com.github.varhastra.epicenter.domain.repos.EventsRepository
-import com.github.varhastra.epicenter.domain.repos.LocationRepository
-import com.github.varhastra.epicenter.domain.repos.PlacesRepository
+import com.github.varhastra.epicenter.domain.repos.*
+import com.github.varhastra.epicenter.domain.state.FeedStateDataSource
+import com.github.varhastra.epicenter.domain.state.MapStateDataSource
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -35,6 +31,12 @@ val dataModule = module {
     single<EventServiceProvider> { UsgsServiceProvider(get(), get()) }
 
     single<EventsRepository> { EventsDataSource(get()) }
+
+    single<UnitsLocaleRepository> { AppSettings }
+
+    single<FeedStateDataSource> { FeedState }
+
+    single<MapStateDataSource> { MapState }
 }
 
 val networkModule = module {

@@ -8,22 +8,20 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.doAfterTextChanged
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.longSnackbar
-import com.github.varhastra.epicenter.data.LocationProvider
-import com.github.varhastra.epicenter.domain.interactors.LoadLocationNameInteractor
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_place_name_picker.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.View {
 
-    private lateinit var presenter: PlaceNamePickerContract.Presenter
+    val presenter: PlaceNamePickerPresenter by inject { parametersOf(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_name_picker)
 
         setUpViews()
-
-        val presenter = PlaceNamePickerPresenter(this, LoadLocationNameInteractor(LocationProvider()))
 
         val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
@@ -44,7 +42,7 @@ class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.Vie
     }
 
     override fun attachPresenter(presenter: PlaceNamePickerContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun isActive() = !(isFinishing || isDestroyed)

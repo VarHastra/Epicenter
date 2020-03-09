@@ -18,7 +18,7 @@ class PlaceViewBlock(
 
 class Mapper(private val context: Context, unitsLocale: UnitsLocale) {
 
-    private val unitsFormatter = UnitsFormatter(unitsLocale)
+    private val unitsFormatter = UnitsFormatter(context, unitsLocale)
 
     fun map(place: Place): PlaceViewBlock {
         val titleText = place.name

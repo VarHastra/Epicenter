@@ -1,13 +1,12 @@
 package com.github.varhastra.epicenter.presentation.common
 
 import android.content.Context
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.domain.model.kmToMi
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-class UnitsFormatter(private val unitsLocale: UnitsLocale, decimalPlaces: Int = 1, val context: Context = App.instance) {
+class UnitsFormatter(val context: Context, private val unitsLocale: UnitsLocale, decimalPlaces: Int = 1) {
 
     private val decimalFormat = getDecimalFormat(decimalPlaces)
 

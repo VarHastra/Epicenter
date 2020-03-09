@@ -24,7 +24,7 @@ class EventMapper(context: Context, unitsLocale: UnitsLocale) {
 
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 
-    private var unitsFormatter = UnitsFormatter(unitsLocale)
+    private var unitsFormatter = UnitsFormatter(context, unitsLocale)
 
     private val distanceString = context.getString(R.string.feed_event_distance)
 

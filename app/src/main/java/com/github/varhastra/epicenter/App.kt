@@ -31,13 +31,5 @@ class App : Application() {
                     networkModule
             )
         }
-
-        instance = this
-    }
-
-
-    companion object {
-        lateinit var instance: App
-            private set
     }
 }

@@ -79,6 +79,7 @@ val presentationModule = module {
 
     factory<PlaceEditorPresenter> { (view: PlaceEditorContract.View) ->
         PlaceEditorPresenter(
+                androidContext(),
                 view,
                 get(),
                 get(),

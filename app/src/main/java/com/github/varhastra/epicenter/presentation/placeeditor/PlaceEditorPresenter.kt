@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
+import android.content.Context
 import android.os.Bundle
 import com.github.varhastra.epicenter.domain.interactors.InsertPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class PlaceEditorPresenter(
+        context: Context,
         private val view: PlaceEditorContract.View,
         private val loadPlace: LoadPlaceInteractor,
         private val insertPlace: InsertPlaceInteractor,
@@ -46,7 +48,7 @@ class PlaceEditorPresenter(
             return LatLngBounds(west, east)
         }
 
-    private val unitsFormatter = UnitsFormatter(unitsLocale, 0)
+    private val unitsFormatter = UnitsFormatter(context, unitsLocale, 0)
 
     init {
         view.attachPresenter(this)

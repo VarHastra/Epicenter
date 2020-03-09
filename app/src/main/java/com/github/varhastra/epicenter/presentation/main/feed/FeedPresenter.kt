@@ -3,8 +3,6 @@ package com.github.varhastra.epicenter.presentation.main.feed
 import android.content.Context
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
-import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.data.FeedState
 import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
@@ -40,8 +38,8 @@ class FeedPresenter(
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlaceNamesInteractor: LoadPlaceNamesInteractor,
         private val loadPlaceInteractor: LoadPlaceInteractor,
-        private val unitsLocaleRepository: UnitsLocaleRepository = AppSettings,
-        private val feedStateDataSource: FeedStateDataSource = FeedState
+        private val unitsLocaleRepository: UnitsLocaleRepository,
+        private val feedStateDataSource: FeedStateDataSource
 ) : FeedContract.Presenter {
 
     private var events = listOf<EventViewBlock>()

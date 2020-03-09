@@ -62,7 +62,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
                 LoadPlaceInteractor(placesDataSource),
                 InsertPlaceInteractor(placesDataSource),
                 UpdatePlaceInteractor(placesDataSource),
-                AppSettings.preferredUnits
+                AppSettings
         )
         if (savedInstanceState != null) {
             presenter.onRestoreState(savedInstanceState)

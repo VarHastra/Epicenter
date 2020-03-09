@@ -7,8 +7,8 @@ import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.failures.Failure
+import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.SphericalUtil
@@ -22,8 +22,10 @@ class PlaceEditorPresenter(
         private val loadPlace: LoadPlaceInteractor,
         private val insertPlace: InsertPlaceInteractor,
         private val updatePlace: UpdatePlaceInteractor,
-        unitsLocale: UnitsLocale
+        unitsLocaleRepository: UnitsLocaleRepository
 ) : PlaceEditorContract.Presenter {
+
+    private val unitsLocale = unitsLocaleRepository.preferredUnits
 
     private var placeId: Int? = null
 

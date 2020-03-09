@@ -9,13 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.setTextColorRes
-import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.LocationProvider
-import com.github.varhastra.epicenter.domain.interactors.LoadEventInteractor
 import com.github.varhastra.epicenter.presentation.common.EventMarker
 import com.github.varhastra.epicenter.presentation.common.toMarkerOptions
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,10 +20,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_details.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
 
-    private lateinit var presenter: DetailsContract.Presenter
+    val presenter: DetailsPresenter by inject { parametersOf(this) }
 
     private lateinit var map: GoogleMap
 
@@ -39,13 +36,6 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val presenter = DetailsPresenter(
-                App.instance,
-                this,
-                LoadEventInteractor(EventsDataSource.getInstance(), LocationProvider()),
-                AppSettings
-        )
 
         sourceLinkTile.setOnClickListener { presenter.openSourceLink() }
 
@@ -95,7 +85,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
     }
 
     override fun attachPresenter(presenter: DetailsContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun isActive() = !(isFinishing || isDestroyed)

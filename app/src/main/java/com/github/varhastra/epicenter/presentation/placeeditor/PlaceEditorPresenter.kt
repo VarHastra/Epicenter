@@ -1,5 +1,6 @@
 package com.github.varhastra.epicenter.presentation.placeeditor
 
+import android.content.Context
 import android.os.Bundle
 import com.github.varhastra.epicenter.domain.interactors.InsertPlaceInteractor
 import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
@@ -7,8 +8,8 @@ import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.Place
 import com.github.varhastra.epicenter.domain.model.failures.Failure
+import com.github.varhastra.epicenter.domain.repos.UnitsLocaleRepository
 import com.github.varhastra.epicenter.presentation.common.UnitsFormatter
-import com.github.varhastra.epicenter.presentation.common.UnitsLocale
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.SphericalUtil
@@ -18,12 +19,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class PlaceEditorPresenter(
+        context: Context,
         private val view: PlaceEditorContract.View,
         private val loadPlace: LoadPlaceInteractor,
         private val insertPlace: InsertPlaceInteractor,
         private val updatePlace: UpdatePlaceInteractor,
-        unitsLocale: UnitsLocale
+        unitsLocaleRepository: UnitsLocaleRepository
 ) : PlaceEditorContract.Presenter {
+
+    private val unitsLocale = unitsLocaleRepository.preferredUnits
 
     private var placeId: Int? = null
 
@@ -44,7 +48,7 @@ class PlaceEditorPresenter(
             return LatLngBounds(west, east)
         }
 
-    private val unitsFormatter = UnitsFormatter(unitsLocale, 0)
+    private val unitsFormatter = UnitsFormatter(context, unitsLocale, 0)
 
     init {
         view.attachPresenter(this)

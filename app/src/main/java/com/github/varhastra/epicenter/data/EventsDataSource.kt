@@ -4,14 +4,13 @@ import android.os.SystemClock
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.ifSuccess
 import com.github.varhastra.epicenter.data.network.EventServiceProvider
-import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
 import com.github.varhastra.epicenter.domain.model.Event
 import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import org.threeten.bp.Duration
 import timber.log.Timber
 
-class EventsDataSource private constructor(
+class EventsDataSource(
         private val serviceProvider: EventServiceProvider
 ) : EventsRepository {
 
@@ -56,15 +55,6 @@ class EventsDataSource private constructor(
 
 
     companion object {
-        private var instance: EventsRepository? = null
-
-        fun getInstance(
-                serviceProvider: EventServiceProvider = UsgsServiceProvider()
-        ): EventsRepository {
-            return instance ?: EventsDataSource(serviceProvider).apply {
-                instance = this
-            }
-        }
 
         private val CACHE_OBSOLESCENCE_THRESHOLD_MS = Duration.ofMinutes(10).toMillis()
     }

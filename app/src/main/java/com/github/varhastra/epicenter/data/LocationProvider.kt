@@ -7,7 +7,6 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.common.functionaltypes.Either
 import com.github.varhastra.epicenter.common.functionaltypes.flatMap
 import com.github.varhastra.epicenter.domain.model.Coordinates
@@ -24,7 +23,7 @@ import org.threeten.bp.Duration
 import timber.log.Timber
 import kotlin.coroutines.resume
 
-class LocationProvider(val context: Context = App.instance) : LocationRepository {
+class LocationProvider(val context: Context) : LocationRepository {
 
     private val locationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 

@@ -9,15 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.transition.TransitionInflater
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.onStopTrackingTouch
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
-import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.LocationProvider
-import com.github.varhastra.epicenter.data.MapState
-import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.domain.interactors.LoadMapEventsInteractor
 import com.github.varhastra.epicenter.domain.model.Coordinates
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.presentation.common.EventMarker
@@ -32,10 +26,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.sheet_map.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
-    private lateinit var presenter: MapContract.Presenter
+    val presenter: MapPresenter by inject { parametersOf(this) }
 
     private lateinit var map: GoogleMap
 
@@ -43,20 +39,10 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
-    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
-
-    private val locationProvider = LocationProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        MapPresenter(
-                App.instance,
-                this,
-                MapState,
-                LoadMapEventsInteractor(eventsRepository, locationProvider)
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -143,7 +129,7 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback, MapContract.View {
     }
 
     override fun attachPresenter(presenter: MapContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun isActive() = isAdded

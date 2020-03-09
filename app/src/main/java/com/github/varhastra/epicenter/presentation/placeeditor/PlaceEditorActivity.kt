@@ -9,11 +9,6 @@ import android.widget.SeekBar
 import androidx.core.app.ActivityOptionsCompat
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.getColorCompat
-import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.domain.interactors.InsertPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.UpdatePlaceInteractor
 import com.github.varhastra.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,15 +16,17 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_place_editor.*
 import kotlinx.android.synthetic.main.layout_place_editor_controls.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 
 class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorContract.View {
 
+    val presenter: PlaceEditorPresenter by inject { parametersOf(this) }
+
     private lateinit var map: GoogleMap
 
     private lateinit var areaCircle: Circle
-
-    private lateinit var presenter: PlaceEditorContract.Presenter
 
 
     private val seekBarListener = object : SeekBar.OnSeekBarChangeListener {
@@ -56,14 +53,6 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
         initMapView(savedInstanceState)
         setUpViews()
 
-        val placesDataSource = PlacesDataSource.getInstance()
-        val presenter = PlaceEditorPresenter(
-                this,
-                LoadPlaceInteractor(placesDataSource),
-                InsertPlaceInteractor(placesDataSource),
-                UpdatePlaceInteractor(placesDataSource),
-                AppSettings.preferredUnits
-        )
         if (savedInstanceState != null) {
             presenter.onRestoreState(savedInstanceState)
         } else {
@@ -133,7 +122,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback, PlaceEditorCo
     }
 
     override fun attachPresenter(presenter: PlaceEditorContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun loadMap() {

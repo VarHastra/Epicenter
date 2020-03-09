@@ -2,7 +2,11 @@ package com.github.varhastra.epicenter
 
 import android.app.Application
 import com.chibatching.kotpref.Kotpref
+import com.github.varhastra.epicenter.di.*
 import com.jakewharton.threetenabp.AndroidThreeTen
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import timber.log.Timber
 
 class App : Application() {
@@ -16,12 +20,16 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        instance = this
-    }
-
-
-    companion object {
-        lateinit var instance: App
-            private set
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+            modules(
+                    presentationModule,
+                    domainModule,
+                    dataModule,
+                    dbModule,
+                    networkModule
+            )
+        }
     }
 }

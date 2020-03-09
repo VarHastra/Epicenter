@@ -17,7 +17,7 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
 
     private val magnitudeDecimalFormat = DecimalFormat("0.0")
 
-    private val unitsFormatter = UnitsFormatter(unitsLocale)
+    private val unitsFormatter = UnitsFormatter(context, unitsLocale)
 
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
 

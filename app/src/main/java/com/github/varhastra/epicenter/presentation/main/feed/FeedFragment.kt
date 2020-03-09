@@ -14,19 +14,9 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.setRestrictiveCheckListener
 import com.github.varhastra.epicenter.common.extensions.snackbar
-import com.github.varhastra.epicenter.data.EventsDataSource
-import com.github.varhastra.epicenter.data.FeedState
-import com.github.varhastra.epicenter.data.LocationProvider
-import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.data.network.usgs.UsgsServiceProvider
-import com.github.varhastra.epicenter.domain.interactors.LoadFeedInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlaceNamesInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
 import com.github.varhastra.epicenter.domain.model.filters.MagnitudeLevel
 import com.github.varhastra.epicenter.domain.model.sorting.SortCriterion
 import com.github.varhastra.epicenter.domain.model.sorting.SortOrder
@@ -39,12 +29,14 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class FeedFragment : Fragment(), FeedContract.View {
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
+    val presenter: FeedPresenter by inject { parametersOf(this) }
 
-    private lateinit var presenter: FeedContract.Presenter
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
     private lateinit var feedAdapter: FeedAdapter
 
@@ -52,24 +44,9 @@ class FeedFragment : Fragment(), FeedContract.View {
         presenter.setPlaceAndReload(checkedId)
     }
 
-    private val eventsRepository = EventsDataSource.getInstance(UsgsServiceProvider())
-
-    private val placesRepository = PlacesDataSource.getInstance()
-
-    private val locationProvider = LocationProvider()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        FeedPresenter(
-                App.instance,
-                this,
-                LoadSelectedPlaceNameInteractor(FeedState, placesRepository),
-                LoadFeedInteractor(eventsRepository, locationProvider),
-                LoadPlaceNamesInteractor(placesRepository),
-                LoadPlaceInteractor(placesRepository)
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -162,7 +139,7 @@ class FeedFragment : Fragment(), FeedContract.View {
     }
 
     override fun attachPresenter(presenter: FeedContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun isActive() = isAdded

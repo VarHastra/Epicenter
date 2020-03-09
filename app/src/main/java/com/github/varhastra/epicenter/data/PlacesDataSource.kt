@@ -1,11 +1,8 @@
 package com.github.varhastra.epicenter.data
 
-import android.annotation.SuppressLint
 import android.content.Context
-import com.github.varhastra.epicenter.App
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.functionaltypes.Either
-import com.github.varhastra.epicenter.data.db.AppDb
 import com.github.varhastra.epicenter.data.db.PlaceDao
 import com.github.varhastra.epicenter.data.db.PlaceEntity
 import com.github.varhastra.epicenter.domain.model.Coordinates
@@ -103,16 +100,6 @@ class PlacesDataSource(
 
     override suspend fun deleteById(id: Int) {
         placeDao.deleteById(id)
-    }
-
-
-    companion object {
-        @SuppressLint("StaticFieldLeak")
-        private var instance: PlacesRepository? = null
-
-        fun getInstance(locationRepository: LocationRepository = LocationProvider(), placeDao: PlaceDao = AppDb.getInstance().getPlaceDao()): PlacesRepository {
-            return instance ?: PlacesDataSource(locationRepository, placeDao, App.instance)
-        }
     }
 }
 

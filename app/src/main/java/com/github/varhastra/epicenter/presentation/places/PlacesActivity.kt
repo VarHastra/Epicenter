@@ -9,19 +9,16 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.varhastra.epicenter.R
 import com.github.varhastra.epicenter.common.extensions.snackbar
-import com.github.varhastra.epicenter.data.AppSettings
-import com.github.varhastra.epicenter.data.PlacesDataSource
-import com.github.varhastra.epicenter.domain.interactors.DeletePlaceInteractor
-import com.github.varhastra.epicenter.domain.interactors.LoadPlacesInteractor
-import com.github.varhastra.epicenter.domain.interactors.UpdatePlacesOrderInteractor
 import com.github.varhastra.epicenter.presentation.placeeditor.PlaceEditorActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_places.*
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class PlacesActivity : AppCompatActivity(), PlacesContract.View {
 
-    private lateinit var presenter: PlacesContract.Presenter
+    val presenter: PlacesPresenter by inject { parametersOf(this) }
 
     private lateinit var placesAdapter: PlacesAdapter
 
@@ -30,16 +27,6 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         setContentView(R.layout.activity_places)
 
         setUpViews()
-
-        val placesRepository = PlacesDataSource.getInstance()
-        PlacesPresenter(
-                this,
-                this,
-                LoadPlacesInteractor(placesRepository),
-                DeletePlaceInteractor(placesRepository),
-                UpdatePlacesOrderInteractor(placesRepository),
-                AppSettings
-        )
     }
 
     private fun setUpViews() {
@@ -62,7 +49,7 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
     }
 
     override fun attachPresenter(presenter: PlacesContract.Presenter) {
-        this.presenter = presenter
+        // Intentionally do nothing
     }
 
     override fun onResume() {

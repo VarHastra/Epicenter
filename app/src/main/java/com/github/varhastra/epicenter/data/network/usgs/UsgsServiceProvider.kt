@@ -8,14 +8,15 @@ import com.github.varhastra.epicenter.data.network.Network
 import com.github.varhastra.epicenter.data.network.usgs.model.UsgsResponse
 import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.model.failures.Failure.NetworkFailure.*
+import com.github.varhastra.epicenter.domain.repos.ConnectivityRepository
 import timber.log.Timber
 
 class UsgsServiceProvider(
         private val usgsService: UsgsService = Network.retrofit.create(UsgsService::class.java),
-        private val connectivityProvider: ConnectivityProvider = ConnectivityProvider()
+        private val connectivityRepository: ConnectivityRepository = ConnectivityProvider()
 ) : EventServiceProvider {
 
-    private val isNetworkConnected get() = connectivityProvider.isNetworkConnected()
+    private val isNetworkConnected get() = connectivityRepository.isNetworkConnected()
 
 
     override suspend fun getWeekFeed(): Either<EventServiceResponse, Failure> {

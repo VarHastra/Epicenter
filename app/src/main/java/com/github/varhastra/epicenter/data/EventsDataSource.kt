@@ -11,7 +11,7 @@ import com.github.varhastra.epicenter.domain.repos.EventsRepository
 import org.threeten.bp.Duration
 import timber.log.Timber
 
-class EventsDataSource private constructor(
+class EventsDataSource(
         private val serviceProvider: EventServiceProvider
 ) : EventsRepository {
 

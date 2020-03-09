@@ -16,10 +16,11 @@ import com.github.varhastra.epicenter.domain.model.failures.Failure
 import com.github.varhastra.epicenter.domain.repos.LocationRepository
 import com.github.varhastra.epicenter.domain.repos.PlacesRepository
 
-class PlacesDataSource private constructor(
+class PlacesDataSource(
         private val locationRepository: LocationRepository,
         private val placeDao: PlaceDao,
-        context: Context = App.instance) : PlacesRepository {
+        context: Context
+) : PlacesRepository {
 
     private val context = context.applicationContext
 
@@ -110,7 +111,7 @@ class PlacesDataSource private constructor(
         private var instance: PlacesRepository? = null
 
         fun getInstance(locationRepository: LocationRepository = LocationProvider(), placeDao: PlaceDao = AppDb.getInstance().getPlaceDao()): PlacesRepository {
-            return instance ?: PlacesDataSource(locationRepository, placeDao)
+            return instance ?: PlacesDataSource(locationRepository, placeDao, App.instance)
         }
     }
 }

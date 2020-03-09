@@ -2,9 +2,7 @@ package com.github.varhastra.epicenter
 
 import android.app.Application
 import com.chibatching.kotpref.Kotpref
-import com.github.varhastra.epicenter.di.dataModule
-import com.github.varhastra.epicenter.di.dbModule
-import com.github.varhastra.epicenter.di.networkModule
+import com.github.varhastra.epicenter.di.*
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -25,7 +23,13 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(dataModule, dbModule, networkModule)
+            modules(
+                    presentationModule,
+                    domainModule,
+                    dataModule,
+                    dbModule,
+                    networkModule
+            )
         }
 
         instance = this

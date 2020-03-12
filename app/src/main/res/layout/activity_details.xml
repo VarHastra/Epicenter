@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorSurface"
-    tools:context=".presentation.details.DetailsActivity">
+    tools:context="me.alex.pet.apps.epicenter.presentation.details.DetailsActivity">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollview"
@@ -77,7 +77,7 @@
                 android:text="@string/details_tsunami_alert"
                 android:textColor="@color/colorTsunami" />
 
-            <com.github.varhastra.epicenter.presentation.common.views.TileTwolineView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileTwolineView
                 android:id="@+id/locationTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                 tools:textFirstLine="Lat: -127.3093, Lon: 40.5524"
                 tools:textSecondLine="Distance from you 1125mi" />
 
-            <com.github.varhastra.epicenter.presentation.common.views.TileTwolineView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileTwolineView
                 android:id="@+id/dateTimeTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 tools:textFirstLine="03/30/2019 at 12:34 pm"
                 tools:textSecondLine="2 days ago" />
 
-            <com.github.varhastra.epicenter.presentation.common.views.TileView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileView
                 android:id="@+id/depthTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 app:title="@string/details_depth"
                 tools:text="15 km" />
 
-            <com.github.varhastra.epicenter.presentation.common.views.TileView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileView
                 android:id="@+id/feltReportsTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 app:title="@string/details_dyfi"
                 tools:text="4" />
 
-            <com.github.varhastra.epicenter.presentation.common.views.TileView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileView
                 android:id="@+id/sourceLinkTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

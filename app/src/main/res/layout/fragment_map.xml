@@ -13,7 +13,7 @@
         android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".presentation.main.map.MapFragment"/>
+        tools:context="me.alex.pet.apps.epicenter.presentation.main.map.MapFragment" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progressBar"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.varhastra.epicenter">
+    package="me.alex.pet.apps.epicenter">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -9,20 +9,20 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".App"
+        android:name="me.alex.pet.apps.epicenter.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.placenamepicker.PlaceNamePickerActivity"></activity>
+        <activity android:name="me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".presentation.main.MainActivity">
+        <activity android:name="me.alex.pet.apps.epicenter.presentation.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,17 +30,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.settings.SettingsActivity"
+            android:name="me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity"
             android:label="@string/app_settings" />
         <activity
-            android:name=".presentation.details.DetailsActivity"
+            android:name="me.alex.pet.apps.epicenter.presentation.details.DetailsActivity"
             android:label=""
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".presentation.places.PlacesActivity"
+            android:name="me.alex.pet.apps.epicenter.presentation.places.PlacesActivity"
             android:label="@string/places_title" />
         <activity
-            android:name=".presentation.placeeditor.PlaceEditorActivity"
+            android:name="me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorActivity"
             android:theme="@style/AppTheme.TransparentStatus"
             android:label=""/>
     </application>

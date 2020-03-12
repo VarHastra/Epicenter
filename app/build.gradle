@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.github.varhastra.epicenter"
+        applicationId "me.alex.pet.apps.epicenter"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

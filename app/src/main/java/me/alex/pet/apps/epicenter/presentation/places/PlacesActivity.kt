@@ -68,13 +68,12 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
         }
     }
 
-    override fun onPause() {
+    override fun onBackPressed() {
         presenter.apply {
             deletePlace()
             saveOrder(placesAdapter.data)
         }
-
-        super.onPause()
+        super.onBackPressed()
     }
 
     override fun isActive() = !isFinishing && !isDestroyed

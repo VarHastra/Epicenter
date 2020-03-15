@@ -3,7 +3,6 @@ package me.alex.pet.apps.epicenter.presentation.main.feed
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -21,27 +20,28 @@ import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.sheet_feed.*
 import me.alex.pet.apps.epicenter.R
+import me.alex.pet.apps.epicenter.common.extensions.observe
 import me.alex.pet.apps.epicenter.common.extensions.setRestrictiveCheckListener
 import me.alex.pet.apps.epicenter.common.extensions.snackbar
+import me.alex.pet.apps.epicenter.common.functionaltypes.Either
+import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortCriterion
-import me.alex.pet.apps.epicenter.domain.model.sorting.SortOrder
 import me.alex.pet.apps.epicenter.presentation.details.DetailsActivity
 import me.alex.pet.apps.epicenter.presentation.main.ToolbarProvider
 import me.alex.pet.apps.epicenter.presentation.places.PlacesActivity
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FeedFragment : Fragment(), FeedContract.View {
+class FeedFragment : Fragment() {
 
-    val presenter: FeedPresenter by inject { parametersOf(this) }
+    val model: FeedModel by viewModel()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
     private lateinit var feedAdapter: FeedAdapter
 
     private val locationChipGroupListener: (ChipGroup, Int) -> Unit = { _, checkedId ->
-        presenter.setPlaceAndReload(checkedId)
+        model.onChangePlace(checkedId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +55,11 @@ class FeedFragment : Fragment(), FeedContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpViews()
+        observeModel()
+    }
 
+    private fun setUpViews() {
         bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet).apply {
             skipCollapsed = true
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -63,7 +67,6 @@ class FeedFragment : Fragment(), FeedContract.View {
 
         feedAdapter = FeedAdapter(requireActivity()).apply {
             setHasStableIds(false)
-            onItemClickListener = { eventId, _ -> presenter.openEventDetails(eventId) }
         }
 
         feedRecyclerView.apply {
@@ -71,15 +74,48 @@ class FeedFragment : Fragment(), FeedContract.View {
             layoutManager = LinearLayoutManager(activity)
             adapter = feedAdapter
         }
+    }
 
-        editLocationBtn.setOnClickListener {
-            presenter.openPlacesEditor()
+    private fun observeModel() = with(model) {
+        eventsData.observe(viewLifecycleOwner) { data ->
+            when (data) {
+                is Either.Success -> renderEvents(data.data)
+                is Either.Failure -> renderPersistentError(data.failureDetails)
+            }
+        }
+        places.observe(viewLifecycleOwner, ::renderPlaces)
+
+        selectedPlace.observe(viewLifecycleOwner, ::renderSelectedPlace)
+        sortCriterion.observe(viewLifecycleOwner, ::renderSortCriterion)
+        minMagnitude.observe(viewLifecycleOwner, ::renderMinMagnitude)
+
+        isLoading.observe(viewLifecycleOwner, ::renderProgressBar)
+
+        openDetailsEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { eventId -> renderEventDetails(eventId) }
+        }
+
+        openEditorEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { renderPlacesScreen() }
+        }
+
+        adjustLocationSettingsEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { renderLocationSettingsPrompt(it) }
+        }
+        requestLocationPermissionEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { renderLocationPermissionRequest() }
+        }
+
+        transientErrorEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { renderTransientError(it) }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.start()
+    override fun onStart() {
+        super.onStart()
+        model.onStart()
+
+        feedAdapter.onItemClickListener = { eventId, _ -> model.onOpenDetails(eventId) }
 
         locationChipGroup.setRestrictiveCheckListener(locationChipGroupListener)
 
@@ -92,7 +128,7 @@ class FeedFragment : Fragment(), FeedContract.View {
                 R.id.magnitudeEightChip -> MagnitudeLevel.EIGHT
                 else -> MagnitudeLevel.ZERO_OR_LESS
             }
-            presenter.setMinMagnitude(minMag)
+            model.onChangeMinMagnitude(minMag)
         }
 
         sortingChipGroup.setRestrictiveCheckListener { _, checkedId ->
@@ -102,14 +138,11 @@ class FeedFragment : Fragment(), FeedContract.View {
                 R.id.sortByDistanceChip -> SortCriterion.DISTANCE
                 else -> SortCriterion.DATE
             }
-            val sortOrder = when (checkedId) {
-                R.id.sortByDateChip -> SortOrder.DESCENDING
-                R.id.sortByMagnitudeChip -> SortOrder.DESCENDING
-                R.id.sortByDistanceChip -> SortOrder.ASCENDING
-                else -> SortOrder.ASCENDING
-            }
-            presenter.setSortCriterion(sortCriterion)
-            presenter.setSortOrder(sortOrder)
+            model.onChangeSortCriterion(sortCriterion)
+        }
+
+        editLocationBtn.setOnClickListener {
+            model.onOpenPlaceEditor()
         }
     }
 
@@ -123,7 +156,7 @@ class FeedFragment : Fragment(), FeedContract.View {
                 true
             }
             R.id.action_refresh -> {
-                presenter.refreshEvents()
+                model.onRefreshEvents()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -131,35 +164,19 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_DETAILS -> presenter.ignoreUpcomingStartCall()
-            else -> super.onActivityResult(requestCode, resultCode, data)
-        }
+    private fun renderProgressBar(isLoading: Boolean) {
+        if (isLoading) progressBar.show() else progressBar.hide()
     }
 
-    override fun attachPresenter(presenter: FeedContract.Presenter) {
-        // Intentionally do nothing
-    }
-
-    override fun isActive() = isAdded
-
-    override fun showProgress(active: Boolean) {
-        if (active) progressBar.show() else progressBar.hide()
-    }
-
-    override fun showSelectedPlaceName(name: String) {
-        (requireActivity() as ToolbarProvider).setTitleText(name)
-    }
-
-    override fun showSelectedPlace(placeId: Int) {
-        if (placeId == locationChipGroup.checkedChipId) {
+    private fun renderSelectedPlace(place: PlaceName) {
+        (requireActivity() as ToolbarProvider).setTitleText(place.name)
+        if (place.id == locationChipGroup.checkedChipId) {
             return
         }
-        locationChipGroup.check(placeId)
+        locationChipGroup.check(place.id)
     }
 
-    override fun showCurrentSortCriterion(sortCriterion: SortCriterion) {
+    private fun renderSortCriterion(sortCriterion: SortCriterion) {
         val id = when (sortCriterion) {
             SortCriterion.DATE -> R.id.sortByDateChip
             SortCriterion.MAGNITUDE -> R.id.sortByMagnitudeChip
@@ -168,11 +185,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         sortingChipGroup.check(id)
     }
 
-    override fun showCurrentSortOrder(sortOrder: SortOrder) {
-        // TODO: implement when ui is ready
-    }
-
-    override fun showCurrentMagnitudeFilter(magnitudeLevel: MagnitudeLevel) {
+    private fun renderMinMagnitude(magnitudeLevel: MagnitudeLevel) {
         val id = when (magnitudeLevel) {
             MagnitudeLevel.ZERO_OR_LESS -> R.id.magnitudeZeroChip
             MagnitudeLevel.TWO -> R.id.magnitudeTwoChip
@@ -184,7 +197,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         magnitudeChipGroup.check(id)
     }
 
-    override fun showPlaces(places: List<PlaceViewBlock>) {
+    private fun renderPlaces(places: List<PlaceViewBlock>) {
         locationChipGroup.apply {
             setOnCheckedChangeListener(null)
             removeAllViews()
@@ -205,8 +218,8 @@ class FeedFragment : Fragment(), FeedContract.View {
         }
     }
 
-    override fun showEvents(events: List<EventViewBlock>) {
-        emptyView.visibility = View.INVISIBLE
+    private fun renderEvents(events: List<EventViewBlock>) {
+        emptyView.visibility = View.GONE
         feedRecyclerView.visibility = View.VISIBLE
 
         feedAdapter.data = events
@@ -214,14 +227,7 @@ class FeedFragment : Fragment(), FeedContract.View {
         feedRecyclerView.scheduleLayoutAnimation()
     }
 
-    override fun showError(error: Error) {
-        when (error) {
-            is Error.PersistentError -> showPersistentError(error)
-            is Error.TransientError -> showTransientError(error)
-        }
-    }
-
-    private fun showPersistentError(error: Error.PersistentError) {
+    private fun renderPersistentError(error: Error.PersistentError) {
         feedRecyclerView.visibility = View.GONE
 
         emptyView.apply {
@@ -231,25 +237,25 @@ class FeedFragment : Fragment(), FeedContract.View {
 
             setButtonVisibility(error.buttonResId != null)
             error.buttonResId?.let { setButtonText(it) }
-            setButtonListener { presenter.onResolveError(error) }
+            setButtonListener { model.onResolveError(error) }
 
             visibility = View.VISIBLE
         }
     }
 
-    private fun showTransientError(error: Error.TransientError) {
+    private fun renderTransientError(error: Error.TransientError) {
         requireView().snackbar(error.titleResId)
     }
 
-    override fun showPlacesEditor() {
+    private fun renderPlacesScreen() {
         PlacesActivity.start(requireActivity())
     }
 
-    override fun showEventDetails(eventId: String) {
-        DetailsActivity.start(requireActivity(), eventId, REQUEST_DETAILS)
+    private fun renderEventDetails(eventId: String) {
+        DetailsActivity.start(requireActivity(), eventId)
     }
 
-    override fun renderLocationPermissionRequest() {
+    private fun renderLocationPermissionRequest() {
         ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -257,12 +263,11 @@ class FeedFragment : Fragment(), FeedContract.View {
         )
     }
 
-    override fun renderLocationSettingsPrompt(resolvableException: ResolvableApiException) {
+    private fun renderLocationSettingsPrompt(resolvableException: ResolvableApiException) {
         resolvableException.startResolutionForResult(requireActivity(), REQUEST_CHANGE_LOCATION_SETTINGS)
     }
 
     companion object {
-        private const val REQUEST_DETAILS = 1
         private const val REQUEST_CHANGE_LOCATION_SETTINGS = 2
         private const val REQUEST_LOCATION_PERMISSION = 3
 

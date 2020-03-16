@@ -74,6 +74,10 @@ class FeedModel(
         get() = _isLoading
     private val _isLoading = MutableLiveData<Boolean>().apply { value = false }
 
+    val filtersVisibility: LiveData<Boolean>
+        get() = _filtersVisibility
+    private val _filtersVisibility = MutableLiveData<Boolean>().apply { value = false }
+
     val transientErrorEvent: LiveData<TransientErrorEvent>
         get() = _transientErrorEvent
     private val _transientErrorEvent = MutableLiveData<TransientErrorEvent>()
@@ -222,6 +226,17 @@ class FeedModel(
 
     fun onOpenDetails(eventId: String) {
         _openDetailsEvent.value = OpenDetailsEvent(eventId)
+    }
+
+    fun onToggleFiltersVisibility(showFilters: Boolean) {
+        if (showFilters == _filtersVisibility.value) {
+            return
+        }
+        _filtersVisibility.value = showFilters
+    }
+
+    fun onToggleFiltersVisibility() {
+        _filtersVisibility.value = _filtersVisibility.value!!.not()
     }
 
     fun onResolveError(error: Error) {

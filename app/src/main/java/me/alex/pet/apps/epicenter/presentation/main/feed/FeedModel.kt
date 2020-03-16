@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.alex.pet.apps.epicenter.R
@@ -95,6 +96,8 @@ class FeedModel(
 
     private var placesMightHaveChanged = false
 
+    private var runningJob: Job? = null
+
 
     init {
         _sortCriterion.value = feedStateDataSource.sortCriterion
@@ -182,7 +185,9 @@ class FeedModel(
             return
         }
         feedStateDataSource.selectedPlaceId = placeId
-        viewModelScope.launch {
+
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch {
             fetchSelectedPlace()
             fetchEvents(false)
         }
@@ -194,7 +199,9 @@ class FeedModel(
         }
         feedStateDataSource.sortCriterion = sortCriterion
         _sortCriterion.value = sortCriterion
-        viewModelScope.launch { fetchEvents(false) }
+
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch { fetchEvents(false) }
     }
 
     fun onChangeMinMagnitude(magnitudeLevel: MagnitudeLevel) {
@@ -203,7 +210,9 @@ class FeedModel(
         }
         feedStateDataSource.minMagnitude = magnitudeLevel
         _minMagnitude.value = magnitudeLevel
-        viewModelScope.launch { fetchEvents(false) }
+
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch { fetchEvents(false) }
     }
 
     fun onOpenPlaceEditor() {

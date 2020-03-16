@@ -5,13 +5,8 @@ class EmptyEvent {
         private set
 
     fun consume(f: () -> Unit) {
-        if (isConsumed) throw IllegalStateException("This event has already been consumed.")
+        if (isConsumed) return
         f()
-        isConsumed = true
-    }
-
-    fun consume() {
-        if (isConsumed) throw IllegalStateException("This event has already been consumed.")
         isConsumed = true
     }
 }

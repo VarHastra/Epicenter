@@ -5,14 +5,8 @@ class Event<T>(private val data: T) {
         private set
 
     fun consume(f: (T) -> Unit) {
-        if (isConsumed) throw IllegalStateException("This event has already been consumed.")
+        if (isConsumed) return
         f(data)
         isConsumed = true
-    }
-
-    fun consume(): T {
-        if (isConsumed) throw IllegalStateException("This event has already been consumed.")
-        isConsumed = true
-        return data
     }
 }

@@ -140,10 +140,7 @@ class FeedModel(
                 .map { place -> AndFilter(PlaceFilter(place), MagnitudeFilter(_minMagnitude.value!!)) }
                 .flatMap { filter -> loadFeedInteractor(forceLoad, filter, _sortCriterion.value!!.toSortStrategy()) }
                 .map { events -> mapEventsToViews(events) }
-                .fold(
-                        { eventViews -> handleEvents(eventViews) },
-                        { failure -> handleFailure(failure, forceLoad) }
-                )
+                .fold(::handleEvents, ::handleFailure)
     }
 
     private fun handleEvents(newEvents: List<EventViewBlock>) {
@@ -157,13 +154,13 @@ class FeedModel(
         _data.value = success(newEvents)
     }
 
-    private fun handleFailure(failure: Failure, forceLoad: Boolean) {
+    private fun handleFailure(failure: Failure) {
         _isLoading.value = false
         when (failure) {
             is LocationFailure.ProviderFailure -> if (failure.t is ResolvableApiException) _data.value = failure(PersistentError.LocationIsOff(failure.t))
             is LocationFailure.PermissionDenied -> _data.value = failure(PersistentError.NoLocationPermission)
             is NetworkFailure.NoConnection -> {
-                if (forceLoad) {
+                if (_data.value is Either.Success) {
                     _transientErrorEvent.value = TransientErrorEvent(TransientError.NoConnection)
                 } else {
                     _data.value = failure(PersistentError.NoConnection)

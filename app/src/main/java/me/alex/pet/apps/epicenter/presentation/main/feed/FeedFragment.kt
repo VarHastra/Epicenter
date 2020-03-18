@@ -91,6 +91,10 @@ class FeedFragment : Fragment() {
 
         isLoading.observe(viewLifecycleOwner, ::renderProgressBar)
 
+        toggleFiltersEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { renderFilters() }
+        }
+
         openDetailsEvent.observe(viewLifecycleOwner) { event ->
             event.consume { eventId -> renderEventDetails(eventId) }
         }
@@ -98,8 +102,6 @@ class FeedFragment : Fragment() {
         openEditorEvent.observe(viewLifecycleOwner) { event ->
             event.consume { renderPlacesScreen() }
         }
-
-        filtersVisibility.observe(viewLifecycleOwner, ::renderFilters)
 
         adjustLocationSettingsEvent.observe(viewLifecycleOwner) { event ->
             event.consume { renderLocationSettingsPrompt(it) }
@@ -118,21 +120,6 @@ class FeedFragment : Fragment() {
         model.onStart()
 
         feedAdapter.onItemClickListener = { eventId, _ -> model.onOpenDetails(eventId) }
-
-        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // Intentionally do nothing
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> model.onToggleFiltersVisibility(true)
-                    BottomSheetBehavior.STATE_HIDDEN -> model.onToggleFiltersVisibility(false)
-                    else -> {
-                    } // Intentionally do nothing
-                }
-            }
-        })
 
         locationChipGroup.setRestrictiveCheckListener(locationChipGroupListener)
 
@@ -268,14 +255,11 @@ class FeedFragment : Fragment() {
         DetailsActivity.start(requireActivity(), eventId)
     }
 
-    private fun renderFilters(shown: Boolean) {
-        if (shown && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            return
+    private fun renderFilters() {
+        bottomSheetBehavior.state = when (bottomSheetBehavior.state) {
+            BottomSheetBehavior.STATE_HIDDEN -> BottomSheetBehavior.STATE_EXPANDED
+            else -> BottomSheetBehavior.STATE_HIDDEN
         }
-        if (!shown && bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-            return
-        }
-        bottomSheetBehavior.state = if (shown) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun renderLocationPermissionRequest() {

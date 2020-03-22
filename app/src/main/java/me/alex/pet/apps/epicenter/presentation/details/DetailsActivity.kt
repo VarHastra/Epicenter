@@ -17,15 +17,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_details.*
 import me.alex.pet.apps.epicenter.R
+import me.alex.pet.apps.epicenter.common.extensions.observe
 import me.alex.pet.apps.epicenter.common.extensions.setTextColorRes
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.common.toMarkerOptions
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCallback {
+class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    val presenter: DetailsPresenter by inject { parametersOf(this) }
+    val model: DetailsModel by viewModel { parametersOf(intent.extras!!.getString(EXTRA_EVENT_ID)!!) }
 
     private lateinit var map: GoogleMap
 
@@ -37,11 +38,9 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sourceLinkTile.setOnClickListener { presenter.openSourceLink() }
-
-        val eventId = intent.getStringExtra(EXTRA_EVENT_ID)
-                ?: throw IllegalStateException("Event id was expected as an intent extra with the DetailsActivity.EXTRA_EVENT_ID key.")
-        presenter.init(eventId)
+        (supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment).run {
+            getMapAsync(this@DetailsActivity)
+        }
     }
 
     private fun setUpAnimations() {
@@ -55,8 +54,23 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
 
     override fun onStart() {
         super.onStart()
-        (supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment).run {
-            getMapAsync(this@DetailsActivity)
+        sourceLinkTile.setOnClickListener { model.onVisitSource() }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap.apply {
+            uiSettings.isMapToolbarEnabled = false
+            setMapStyle(MapStyleOptions.loadRawResourceStyle(this@DetailsActivity, R.raw.map_style))
+        }
+
+        observeModel()
+    }
+
+    private fun observeModel() = with(model) {
+        eventViewBlock.observe(this@DetailsActivity, ::renderEventDetails)
+        eventMarker.observe(this@DetailsActivity, ::renderMarker)
+        visitSourceLinkEvent.observe(this@DetailsActivity) { event ->
+            event.consume { uri -> openSourceLink(uri) }
         }
     }
 
@@ -70,27 +84,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         }
     }
 
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_OK, null)
-        super.onBackPressed()
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap.apply {
-            uiSettings.isMapToolbarEnabled = false
-            setMapStyle(MapStyleOptions.loadRawResourceStyle(this@DetailsActivity, R.raw.map_style))
-        }
-
-        presenter.start()
-    }
-
-    override fun attachPresenter(presenter: DetailsContract.Presenter) {
-        // Intentionally do nothing
-    }
-
-    override fun isActive() = !(isFinishing || isDestroyed)
-
-    override fun showEvent(event: EventViewBlock) {
+    private fun renderEventDetails(event: EventViewBlock) {
         magnitudeValueTv.text = event.magnitudeValue
         magnitudeTypeTv.text = event.magnitudeType
 
@@ -114,7 +108,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         tsunamiAlertTv.visibility = if (event.tsunamiAlert) View.VISIBLE else View.GONE
     }
 
-    override fun showEventMapMarker(marker: EventMarker) {
+    private fun renderMarker(marker: EventMarker) {
         map.run {
             addMarker(marker.toMarkerOptions())
             moveCamera(
@@ -126,11 +120,7 @@ class DetailsActivity : AppCompatActivity(), DetailsContract.View, OnMapReadyCal
         }
     }
 
-    override fun showErrorNoData() {
-        // TODO: implement
-    }
-
-    override fun openSourceLink(uri: Uri) {
+    private fun openSourceLink(uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)

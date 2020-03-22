@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.alex.pet.apps.epicenter.domain.interactors.LoadMapEventsInteractor
@@ -61,6 +62,8 @@ class MapModel(
         get() = _openDetailsEvent
     private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
 
+    private var runningJob: Job? = null
+
     private val filter
         get() = AndFilter(MagnitudeFilter(minMagnitude.value!!), RecencyFilter(numberOfDaysToShow.value!!))
 
@@ -95,7 +98,8 @@ class MapModel(
     }
 
     fun onRefreshEvents() {
-        viewModelScope.launch { fetchEvents(true) }
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch { fetchEvents(true) }
     }
 
     fun onToggleFiltersVisibility() {
@@ -105,13 +109,15 @@ class MapModel(
     fun onChangeMinMagnitude(magnitudeLevel: MagnitudeLevel) {
         mapStateDataSource.minMagnitude = magnitudeLevel
         _minMagnitude.value = magnitudeLevel
-        viewModelScope.launch { fetchEvents(false) }
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch { fetchEvents(false) }
     }
 
     fun onChangeNumberOfDaysToShow(days: Int) {
         mapStateDataSource.numberOfDaysToShow = days
         _numberOfDaysToShow.value = days
-        viewModelScope.launch { fetchEvents(false) }
+        runningJob?.cancel()
+        runningJob = viewModelScope.launch { fetchEvents(false) }
     }
 
     fun onRememberCameraPosition(coordinates: Coordinates, zoom: Float) {

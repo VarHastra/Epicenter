@@ -11,22 +11,25 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_places.*
 import me.alex.pet.apps.epicenter.R
-import me.alex.pet.apps.epicenter.common.extensions.snackbar
+import me.alex.pet.apps.epicenter.common.extensions.observe
 import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorActivity
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
-class PlacesActivity : AppCompatActivity(), PlacesContract.View {
+class PlacesActivity : AppCompatActivity() {
 
-    val presenter: PlacesPresenter by inject { parametersOf(this) }
+    val model: PlacesModel by viewModel()
 
     private lateinit var placesAdapter: PlacesAdapter
+
+    private lateinit var undoDeletionSnackbar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_places)
 
         setUpViews()
+        observeModel()
     }
 
     private fun setUpViews() {
@@ -35,8 +38,6 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
 
         placesAdapter = PlacesAdapter(this).apply {
             setHasStableIds(true)
-            onItemClick = { presenter.editPlace(it) }
-            onDeleteItem = { presenter.tryDeletePlace(it) }
         }
 
         recyclerView.apply {
@@ -45,17 +46,47 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
             setHasFixedSize(true)
         }
 
-        addFab.setOnClickListener { presenter.addPlace() }
+        undoDeletionSnackbar = Snackbar.make(rootCoordinatorLayout, "", Snackbar.LENGTH_LONG)
     }
 
-    override fun attachPresenter(presenter: PlacesContract.Presenter) {
-        // Intentionally do nothing
+    private fun observeModel() = with(model) {
+        places.observe(this@PlacesActivity, ::renderPlaces)
+
+        addNewPlaceEvent.observe(this@PlacesActivity) { event ->
+            Timber.d("addNewPlaceEvent")
+            event.consume { renderPlaceCreator() }
+        }
+        editPlaceEvent.observe(this@PlacesActivity) { event ->
+            event.consume { placeId -> renderPlaceEditor(placeId) }
+        }
+        deletionAttemptEvent.observe(this@PlacesActivity) { event ->
+            event.consume { numberOfDeletedItems -> showUndoDeleteOption(numberOfDeletedItems) }
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+        model.onStart()
 
-        presenter.start()
+        placesAdapter.apply {
+            onItemClick = { model.onEditPlace(it) }
+            onDeleteItem = { model.onAttemptToDeletePlace(it) }
+        }
+
+        addFab.setOnClickListener { model.onAddNewPlace() }
+
+        undoDeletionSnackbar.apply {
+            setAction(R.string.app_action_undo) {
+                model.onUndoDeletion()
+            }
+            addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
+                    if (event == DISMISS_EVENT_SWIPE || event == DISMISS_EVENT_TIMEOUT) {
+                        model.onDeletePlaces()
+                    }
+                }
+            })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -69,38 +100,31 @@ class PlacesActivity : AppCompatActivity(), PlacesContract.View {
     }
 
     override fun onBackPressed() {
-        presenter.apply {
-            deletePlace()
-            saveOrder(placesAdapter.data)
+        model.apply {
+            onDeletePlaces()
+            onSaveOrder(placesAdapter.data)
         }
         super.onBackPressed()
     }
 
-    override fun isActive() = !isFinishing && !isDestroyed
-
-    override fun showPlaces(places: List<PlaceViewBlock>) {
+    private fun renderPlaces(places: List<PlaceViewBlock>) {
         placesAdapter.data = places.toMutableList()
     }
 
-    override fun showPlaceEditor(placeId: Int) {
+    private fun renderPlaceEditor(placeId: Int) {
         PlaceEditorActivity.start(this, placeId)
     }
 
-    override fun showPlaceCreator() {
+    private fun renderPlaceCreator() {
         PlaceEditorActivity.start(this)
     }
 
-    override fun showUndoDeleteOption() {
-        val snackbar = recyclerView.snackbar(R.string.places_manager_place_deleted, R.string.app_undo) {
-            presenter.undoDeletion()
+    private fun showUndoDeleteOption(numberOfDeletedItems: Int) {
+        val notice = resources.getQuantityString(R.plurals.plurals_places_deleted, numberOfDeletedItems, numberOfDeletedItems)
+        undoDeletionSnackbar.setText(notice)
+        if (!undoDeletionSnackbar.isShown) {
+            undoDeletionSnackbar.show()
         }
-        snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-            override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
-                if (event == DISMISS_EVENT_SWIPE || event == DISMISS_EVENT_TIMEOUT) {
-                    presenter.deletePlace()
-                }
-            }
-        })
     }
 
 

@@ -22,8 +22,7 @@ import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorContract
 import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorPresenter
 import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerContract
 import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerPresenter
-import me.alex.pet.apps.epicenter.presentation.places.PlacesContract
-import me.alex.pet.apps.epicenter.presentation.places.PlacesPresenter
+import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -62,10 +61,9 @@ val presentationModule = module {
         )
     }
 
-    factory<PlacesPresenter> { (view: PlacesContract.View) ->
-        PlacesPresenter(
+    viewModel {
+        PlacesModel(
                 androidContext(),
-                view,
                 get(),
                 get(),
                 get(),

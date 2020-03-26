@@ -18,8 +18,7 @@ import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
 import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorContract
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorPresenter
+import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
 import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerContract
 import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerPresenter
 import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
@@ -71,10 +70,10 @@ val presentationModule = module {
         )
     }
 
-    factory<PlaceEditorPresenter> { (view: PlaceEditorContract.View) ->
-        PlaceEditorPresenter(
+    viewModel { (placeId: Int?) ->
+        PlaceEditorModel(
                 androidContext(),
-                view,
+                placeId,
                 get(),
                 get(),
                 get(),

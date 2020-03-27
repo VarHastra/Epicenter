@@ -10,55 +10,59 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_place_name_picker.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.longSnackbar
-import org.koin.android.ext.android.inject
+import me.alex.pet.apps.epicenter.common.extensions.observe
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.View {
+class PlaceNamePickerActivity : AppCompatActivity() {
 
-    val presenter: PlaceNamePickerPresenter by inject { parametersOf(this) }
+    private val model: PlaceNamePickerModel by viewModel {
+        val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
+        val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
+        parametersOf(lat, lng)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_name_picker)
 
-        setUpViews()
-
-        val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
-        val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
-        presenter.initialize(lat, lng)
+        observeModel()
     }
 
-    private fun setUpViews() {
-        saveFab.setOnClickListener { presenter.saveAndExit() }
-
-        nameEditText.doAfterTextChanged { editable ->
-            presenter.setPlaceName(editable.toString())
+    private fun observeModel() = with(model) {
+        name.observe(this@PlaceNamePickerActivity, ::renderName)
+        transientErrorEvent.observe(this@PlaceNamePickerActivity) { event ->
+            event.consume { msgResId -> renderTransientError(msgResId) }
+        }
+        navigateBackEvent.observe(this@PlaceNamePickerActivity) { event ->
+            event.consume { placeName -> navigateBackWithResult(placeName) }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.start()
+    override fun onStart() {
+        super.onStart()
+
+        saveFab.setOnClickListener { model.onSaveAndExit() }
+        nameEditText.doAfterTextChanged { editable ->
+            model.onChangeName(editable.toString())
+        }
     }
 
-    override fun attachPresenter(presenter: PlaceNamePickerContract.Presenter) {
-        // Intentionally do nothing
-    }
-
-    override fun isActive() = !(isFinishing || isDestroyed)
-
-    override fun showSuggestedName(suggestedName: String) {
+    private fun renderName(name: String) {
+        if (nameEditText.text.toString() == name) {
+            return
+        }
         nameEditText.apply {
-            setText(suggestedName)
+            setText(name)
             setSelection(nameEditText.length())
         }
     }
 
-    override fun showErrorEmptyName() {
-        nameEditText.longSnackbar(R.string.place_name_picker_error_empty_name)
+    private fun renderTransientError(msgResId: Int) {
+        nameEditText.longSnackbar(msgResId)
     }
 
-    override fun navigateBackWithResult(placeName: String) {
+    private fun navigateBackWithResult(placeName: String) {
         val data = Intent().apply {
             putExtra(RESULT_NAME, placeName)
         }
@@ -67,8 +71,6 @@ class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.Vie
     }
 
     companion object {
-        private const val EXTRA_LAT = "EXTRA_LAT"
-        private const val EXTRA_LNG = "EXTRA_LNG"
         const val RESULT_NAME = "RESULT_NAME"
 
         fun start(sourceActivity: Activity, location: LatLng, requestCode: Int = -1) {
@@ -81,3 +83,7 @@ class PlaceNamePickerActivity : AppCompatActivity(), PlaceNamePickerContract.Vie
         }
     }
 }
+
+
+private const val EXTRA_LAT = "EXTRA_LAT"
+private const val EXTRA_LNG = "EXTRA_LNG"

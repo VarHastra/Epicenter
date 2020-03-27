@@ -13,7 +13,7 @@ class MainModel : ViewModel() {
     private val _selectedDestination = MutableLiveData<TabDestination>()
 
     init {
-        _selectedDestination.value = TabDestination.MAP
+        _selectedDestination.value = TabDestination.FEED
     }
 
     fun onChangeDestination(@IdRes id: Int) {

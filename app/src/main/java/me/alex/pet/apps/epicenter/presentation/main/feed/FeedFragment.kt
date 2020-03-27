@@ -34,7 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
 
-    val model: FeedModel by viewModel()
+    private val model: FeedModel by viewModel()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 

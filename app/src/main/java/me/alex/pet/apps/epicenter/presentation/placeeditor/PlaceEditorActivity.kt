@@ -23,7 +23,7 @@ import org.koin.core.parameter.parametersOf
 
 class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
 
-    val model: PlaceEditorModel by viewModel {
+    private val model: PlaceEditorModel by viewModel {
         parametersOf(if (intent.hasExtra(EXTRA_PLACE_ID)) intent.getIntExtra(EXTRA_PLACE_ID, 0) else null)
     }
 

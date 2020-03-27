@@ -26,7 +26,7 @@ import org.koin.core.parameter.parametersOf
 
 class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    val model: DetailsModel by viewModel { parametersOf(intent.extras!!.getString(EXTRA_EVENT_ID)!!) }
+    private val model: DetailsModel by viewModel { parametersOf(intent.extras!!.getString(EXTRA_EVENT_ID)!!) }
 
     private lateinit var map: GoogleMap
 

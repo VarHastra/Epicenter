@@ -18,7 +18,7 @@ import timber.log.Timber
 
 class PlacesActivity : AppCompatActivity() {
 
-    val model: PlacesModel by viewModel()
+    private val model: PlacesModel by viewModel()
 
     private lateinit var placesAdapter: PlacesAdapter
 

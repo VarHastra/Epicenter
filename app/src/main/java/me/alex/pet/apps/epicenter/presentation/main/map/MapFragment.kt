@@ -32,7 +32,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapFragment : BaseMapFragment(), OnMapReadyCallback {
 
-    val model: MapModel by viewModel()
+    private val model: MapModel by viewModel()
 
     private lateinit var map: GoogleMap
 

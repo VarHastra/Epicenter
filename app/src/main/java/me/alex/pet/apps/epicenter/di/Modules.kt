@@ -15,30 +15,29 @@ import me.alex.pet.apps.epicenter.domain.interactors.*
 import me.alex.pet.apps.epicenter.domain.repos.*
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
 import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
-import me.alex.pet.apps.epicenter.presentation.details.DetailsContract
-import me.alex.pet.apps.epicenter.presentation.details.DetailsPresenter
-import me.alex.pet.apps.epicenter.presentation.main.feed.FeedContract
-import me.alex.pet.apps.epicenter.presentation.main.feed.FeedPresenter
-import me.alex.pet.apps.epicenter.presentation.main.map.MapContract
-import me.alex.pet.apps.epicenter.presentation.main.map.MapPresenter
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorContract
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorPresenter
-import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerContract
-import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerPresenter
-import me.alex.pet.apps.epicenter.presentation.places.PlacesContract
-import me.alex.pet.apps.epicenter.presentation.places.PlacesPresenter
+import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
+import me.alex.pet.apps.epicenter.presentation.main.MainModel
+import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
+import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
+import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
+import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerModel
+import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 val presentationModule = module {
-    factory<FeedPresenter> { (view: FeedContract.View) ->
-        FeedPresenter(
+    viewModel {
+        MainModel()
+    }
+
+    viewModel {
+        FeedModel(
                 androidContext(),
-                view,
                 get(),
                 get(),
                 get(),
@@ -48,39 +47,26 @@ val presentationModule = module {
         )
     }
 
-    factory<MapPresenter> { (view: MapContract.View) ->
-        MapPresenter(
+    viewModel {
+        MapModel(
                 androidContext(),
-                view,
                 get(),
                 get()
         )
     }
 
-    factory<DetailsPresenter> { (view: DetailsContract.View) ->
-        DetailsPresenter(
+    viewModel { (eventId: String) ->
+        DetailsModel(
                 androidContext(),
-                view,
+                eventId,
                 get(),
                 get()
         )
     }
 
-    factory<PlacesPresenter> { (view: PlacesContract.View) ->
-        PlacesPresenter(
+    viewModel {
+        PlacesModel(
                 androidContext(),
-                view,
-                get(),
-                get(),
-                get(),
-                get()
-        )
-    }
-
-    factory<PlaceEditorPresenter> { (view: PlaceEditorContract.View) ->
-        PlaceEditorPresenter(
-                androidContext(),
-                view,
                 get(),
                 get(),
                 get(),
@@ -88,9 +74,21 @@ val presentationModule = module {
         )
     }
 
-    factory<PlaceNamePickerPresenter> { (view: PlaceNamePickerContract.View) ->
-        PlaceNamePickerPresenter(
-                view,
+    viewModel { (placeId: Int?) ->
+        PlaceEditorModel(
+                androidContext(),
+                placeId,
+                get(),
+                get(),
+                get(),
+                get()
+        )
+    }
+
+    viewModel { (lat: Double, lng: Double) ->
+        PlaceNamePickerModel(
+                lat,
+                lng,
                 get()
         )
     }

@@ -25,7 +25,7 @@ import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
-import me.alex.pet.apps.epicenter.presentation.details.DetailsActivity
+import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
 import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -190,7 +190,11 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     }
 
     private fun renderEventDetails(eventId: String) {
-        DetailsActivity.start(requireActivity(), eventId)
+        val detailsFragment = DetailsFragment.newInstance(requireContext(), eventId)
+        requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.hostContainer, detailsFragment, "DETAILS")
+                .addToBackStack(null)
+                .commit()
     }
 
     private fun changeCameraPosition(cameraState: CameraState) {

@@ -33,10 +33,6 @@
             android:name=".presentation.settings.SettingsActivity"
             android:label="@string/app_settings" />
         <activity
-            android:name=".presentation.details.DetailsActivity"
-            android:label=""
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".presentation.places.PlacesActivity"
             android:label="@string/places_title" />
         <activity

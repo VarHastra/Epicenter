@@ -1,86 +1,75 @@
 package me.alex.pet.apps.epicenter.presentation.details
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.transition.TransitionInflater
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
+import android.view.ViewGroup
+import androidx.transition.TransitionInflater
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import kotlinx.android.synthetic.main.activity_details.*
+import kotlinx.android.synthetic.main.fragment_details.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
 import me.alex.pet.apps.epicenter.common.extensions.setTextColorRes
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.common.toMarkerOptions
+import me.alex.pet.apps.epicenter.presentation.main.map.BaseMapFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
+class DetailsFragment : BaseMapFragment(), OnMapReadyCallback {
 
-    private val model: DetailsModel by viewModel { parametersOf(intent.extras!!.getString(EXTRA_EVENT_ID)!!) }
+    private val model: DetailsModel by viewModel {
+        val eventId = requireArguments().getString(EXTRA_EVENT_ID)
+                ?: throw IllegalStateException("DetailsFragment $this doesn't have required event id argument.")
+        parametersOf(eventId)
+    }
 
     private lateinit var map: GoogleMap
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_details)
-        setUpAnimations()
 
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        (supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment).run {
-            getMapAsync(this@DetailsActivity)
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
-    private fun setUpAnimations() {
-        val inTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_details_enter)
-        val outTransition = TransitionInflater.from(this).inflateTransition(R.transition.transition_details_return)
-        with(window) {
-            enterTransition = inTransition
-            returnTransition = outTransition
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toolbar.apply {
+            navigationIcon = requireContext().getDrawable(R.drawable.ic_up)
+            overflowIcon = requireContext().getDrawable(R.drawable.ic_overflow_menu)
         }
     }
 
     override fun onStart() {
         super.onStart()
+
+        toolbar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         sourceLinkTile.setOnClickListener { model.onVisitSource() }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap.apply {
             uiSettings.isMapToolbarEnabled = false
-            setMapStyle(MapStyleOptions.loadRawResourceStyle(this@DetailsActivity, R.raw.map_style))
+            setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
         }
 
         observeModel()
     }
 
     private fun observeModel() = with(model) {
-        eventViewBlock.observe(this@DetailsActivity, ::renderEventDetails)
-        eventMarker.observe(this@DetailsActivity, ::renderMarker)
-        visitSourceLinkEvent.observe(this@DetailsActivity) { event ->
+        eventViewBlock.observe(viewLifecycleOwner, ::renderEventDetails)
+        eventMarker.observe(viewLifecycleOwner, ::renderMarker)
+        visitSourceLinkEvent.observe(viewLifecycleOwner) { event ->
             event.consume { uri -> openSourceLink(uri) }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -122,20 +111,27 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun openSourceLink(uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(packageManager) != null) {
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(intent)
         }
     }
 
-    companion object {
-        private const val EXTRA_EVENT_ID = "EVENT_ID"
 
-        fun start(sourceActivity: Activity, eventId: String, requestCode: Int = -1) {
-            val intent = Intent(sourceActivity, DetailsActivity::class.java).apply {
-                putExtra(EXTRA_EVENT_ID, eventId)
+    companion object {
+
+        fun newInstance(context: Context, eventId: String): DetailsFragment {
+            val inTransition = TransitionInflater.from(context).inflateTransition(R.transition.transition_details_enter)
+            val outTransition = TransitionInflater.from(context).inflateTransition(R.transition.transition_details_return)
+            return DetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EXTRA_EVENT_ID, eventId)
+                }
+                enterTransition = inTransition
+                returnTransition = outTransition
             }
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
-            sourceActivity.startActivityForResult(intent, requestCode, options)
         }
     }
 }
+
+
+private const val EXTRA_EVENT_ID = "EVENT_ID"

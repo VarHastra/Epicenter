@@ -47,8 +47,8 @@ class MainFragment : Fragment() {
     }
 
     private fun replaceTabFragment(fragment: Fragment, tag: String) {
-        if (parentFragmentManager.findFragmentByTag(tag) == null) {
-            parentFragmentManager.beginTransaction()
+        if (childFragmentManager.findFragmentByTag(tag) == null) {
+            childFragmentManager.beginTransaction()
                     .replace(R.id.frame_content_main, fragment, tag)
                     .commit()
         }

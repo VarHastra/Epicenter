@@ -90,6 +90,10 @@ class FeedModel(
         get() = _openDetailsEvent
     private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
 
+    val openSettingsEvent: LiveData<EmptyEvent>
+        get() = _openSettingsEvent
+    private val _openSettingsEvent = MutableLiveData<EmptyEvent>()
+
     val requestLocationPermissionEvent: LiveData<EmptyEvent>
         get() = _requestLocationPermissionEvent
     private val _requestLocationPermissionEvent = MutableLiveData<EmptyEvent>()
@@ -226,6 +230,10 @@ class FeedModel(
 
     fun onOpenDetails(eventId: String) {
         _openDetailsEvent.value = OpenDetailsEvent(eventId)
+    }
+
+    fun onOpenSettings() {
+        _openSettingsEvent.value = EmptyEvent()
     }
 
     fun onToggleFiltersVisibility() {

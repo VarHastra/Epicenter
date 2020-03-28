@@ -4,7 +4,6 @@ package me.alex.pet.apps.epicenter.presentation.main.map
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -27,7 +26,7 @@ import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.details.DetailsActivity
-import me.alex.pet.apps.epicenter.presentation.main.ToolbarProvider
+import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapFragment : BaseMapFragment(), OnMapReadyCallback {
@@ -41,11 +40,6 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
     }
@@ -53,16 +47,36 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        toolbar.inflateMenu(R.menu.menu_main)
+
         bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet).apply {
             skipCollapsed = true
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        (requireActivity() as ToolbarProvider).setTitleText(getString(R.string.app_map))
+        toolbar.title = getString(R.string.app_map)
     }
 
     override fun onStart() {
         super.onStart()
+
+        toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_filter -> {
+                    model.onToggleFiltersVisibility()
+                    true
+                }
+                R.id.action_refresh -> {
+                    model.onRefreshEvents()
+                    true
+                }
+                R.id.action_settings -> {
+                    model.onOpenSettings()
+                    true
+                }
+                else -> false
+            }
+        }
 
         magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
@@ -124,6 +138,9 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
         openDetailsEvent.observe(viewLifecycleOwner) { event ->
             event.consume { eventId -> renderEventDetails(eventId) }
         }
+        openSettingsEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { SettingsActivity.start(requireActivity()) }
+        }
         updateCameraPositionEvent.observe(viewLifecycleOwner) { event ->
             event.consume { cameraState -> changeCameraPosition(cameraState) }
         }
@@ -135,20 +152,6 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
         val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
         model.onRememberCameraPosition(coordinates, zoom)
         super.onStop()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_filter -> {
-                model.onToggleFiltersVisibility()
-                true
-            }
-            R.id.action_refresh -> {
-                model.onRefreshEvents()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun renderEventMarkers(markers: List<EventMarker>) {

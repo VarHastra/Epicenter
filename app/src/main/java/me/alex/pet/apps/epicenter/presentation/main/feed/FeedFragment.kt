@@ -5,7 +5,6 @@ import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
@@ -28,8 +27,8 @@ import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortCriterion
 import me.alex.pet.apps.epicenter.presentation.details.DetailsActivity
-import me.alex.pet.apps.epicenter.presentation.main.ToolbarProvider
 import me.alex.pet.apps.epicenter.presentation.places.PlacesActivity
+import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -44,10 +43,6 @@ class FeedFragment : Fragment() {
         model.onChangePlace(checkedId)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_feed, container, false)
@@ -60,6 +55,8 @@ class FeedFragment : Fragment() {
     }
 
     private fun setUpViews() {
+        toolbar.inflateMenu(R.menu.menu_main)
+
         bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet).apply {
             skipCollapsed = true
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -99,6 +96,10 @@ class FeedFragment : Fragment() {
             event.consume { eventId -> renderEventDetails(eventId) }
         }
 
+        openSettingsEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { SettingsActivity.start(requireActivity()) }
+        }
+
         openEditorEvent.observe(viewLifecycleOwner) { event ->
             event.consume { renderPlacesScreen() }
         }
@@ -118,6 +119,24 @@ class FeedFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         model.onStart()
+
+        toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_filter -> {
+                    model.onToggleFiltersVisibility()
+                    true
+                }
+                R.id.action_refresh -> {
+                    model.onRefreshEvents()
+                    true
+                }
+                R.id.action_settings -> {
+                    model.onOpenSettings()
+                    true
+                }
+                else -> false
+            }
+        }
 
         feedAdapter.onItemClickListener = { eventId, _ -> model.onOpenDetails(eventId) }
 
@@ -150,27 +169,12 @@ class FeedFragment : Fragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_filter -> {
-                model.onToggleFiltersVisibility()
-                true
-            }
-            R.id.action_refresh -> {
-                model.onRefreshEvents()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-
-        }
-    }
-
     private fun renderProgressBar(isLoading: Boolean) {
         if (isLoading) progressBar.show() else progressBar.hide()
     }
 
     private fun renderSelectedPlace(place: PlaceName) {
-        (requireActivity() as ToolbarProvider).setTitleText(place.name)
+        toolbar.title = place.name
         if (place.id == locationChipGroup.checkedChipId) {
             return
         }

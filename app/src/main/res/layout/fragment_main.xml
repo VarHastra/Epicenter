@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="me.alex.pet.apps.epicenter.presentation.main.MainActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Surface"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:elevation="@dimen/elevation_toolbar"
-            app:titleTextColor="@color/colorTextPrimary" />
 
         <FrameLayout
             android:id="@+id/frame_content_main"
@@ -40,5 +29,4 @@
             app:itemRippleColor="?colorControlHighlight"
             app:menu="@menu/menu_bnv" />
     </LinearLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

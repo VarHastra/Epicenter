@@ -62,6 +62,10 @@ class MapModel(
         get() = _openDetailsEvent
     private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
 
+    val openSettingsEvent: LiveData<EmptyEvent>
+        get() = _openSettingsEvent
+    private val _openSettingsEvent = MutableLiveData<EmptyEvent>()
+
     private var runningJob: Job? = null
 
     private val filter
@@ -126,6 +130,10 @@ class MapModel(
 
     fun onOpenDetails(eventId: String) {
         _openDetailsEvent.value = OpenDetailsEvent(eventId)
+    }
+
+    fun onOpenSettings() {
+        _openSettingsEvent.value = EmptyEvent()
     }
 
     fun onZoomIn(latitude: Double, longitude: Double) {

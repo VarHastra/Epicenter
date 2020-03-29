@@ -27,7 +27,7 @@ import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortCriterion
 import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
-import me.alex.pet.apps.epicenter.presentation.places.PlacesActivity
+import me.alex.pet.apps.epicenter.presentation.places.PlacesFragment
 import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -252,7 +252,11 @@ class FeedFragment : Fragment() {
     }
 
     private fun renderPlacesScreen() {
-        PlacesActivity.start(requireActivity())
+        val placesFragment = PlacesFragment.newInstance(requireContext())
+        requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.hostContainer, placesFragment, "PLACES")
+                .addToBackStack(null)
+                .commit()
     }
 
     private fun renderEventDetails(eventId: String) {

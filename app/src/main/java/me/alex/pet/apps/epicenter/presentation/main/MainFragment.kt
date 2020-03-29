@@ -20,6 +20,7 @@ class MainFragment : Fragment() {
     private val model: MainModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        model.onRestoreState(savedInstanceState)
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -36,6 +37,11 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         bottomNavigationView.setOnNavigationItemSelectedListener(BottomNavListener())
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        model.onSaveState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     private fun navigateTo(destination: TabDestination) {

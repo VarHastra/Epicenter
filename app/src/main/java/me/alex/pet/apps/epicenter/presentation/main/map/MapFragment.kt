@@ -24,6 +24,7 @@ import me.alex.pet.apps.epicenter.common.extensions.setRestrictiveCheckListener
 import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
+import me.alex.pet.apps.epicenter.presentation.common.BaseMapFragment
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
 import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity

@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.main.map
+package me.alex.pet.apps.epicenter.presentation.common
 
 
 import android.os.Bundle

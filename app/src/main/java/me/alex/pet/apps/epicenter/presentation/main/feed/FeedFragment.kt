@@ -258,7 +258,7 @@ class FeedFragment : Fragment() {
     private fun renderEventDetails(eventId: String) {
         val detailsFragment = DetailsFragment.newInstance(requireContext(), eventId)
         requireActivity().supportFragmentManager.beginTransaction()
-                .add(R.id.hostContainer, detailsFragment, "DETAILS")
+                .replace(R.id.hostContainer, detailsFragment, "DETAILS")
                 .addToBackStack(null)
                 .commit()
     }

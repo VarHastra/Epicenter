@@ -30,9 +30,6 @@
         </activity>
         <activity android:name=".presentation.placenamepicker.PlaceNamePickerActivity" />
         <activity
-            android:name=".presentation.settings.SettingsActivity"
-            android:label="@string/app_settings" />
-        <activity
             android:name=".presentation.placeeditor.PlaceEditorActivity"
             android:label=""
             android:theme="@style/AppTheme.TransparentStatus" />

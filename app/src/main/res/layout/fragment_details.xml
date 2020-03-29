@@ -19,13 +19,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/map"
+            <fragment
+                android:id="@+id/detailsMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
-                app:cameraZoom="2"
-                app:liteMode="true"
-                app:mapType="normal" />
+                app:liteMode="true" />
 
             <LinearLayout
                 android:id="@+id/magnitudeContainer"

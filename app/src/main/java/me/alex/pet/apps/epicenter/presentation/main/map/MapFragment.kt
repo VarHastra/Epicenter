@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -24,13 +26,12 @@ import me.alex.pet.apps.epicenter.common.extensions.setRestrictiveCheckListener
 import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
-import me.alex.pet.apps.epicenter.presentation.common.BaseMapFragment
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
 import me.alex.pet.apps.epicenter.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MapFragment : BaseMapFragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val model: MapModel by viewModel()
 
@@ -47,6 +48,8 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment).getMapAsync(this)
 
         toolbar.inflateMenu(R.menu.menu_main)
 
@@ -97,6 +100,8 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.clear()
+
         clusterManager = ClusterManager<EventMarker>(requireContext(), googleMap).apply {
             renderer = EventsRenderer(requireContext(), googleMap, this)
             setOnClusterItemInfoWindowClickListener { eventMarker ->

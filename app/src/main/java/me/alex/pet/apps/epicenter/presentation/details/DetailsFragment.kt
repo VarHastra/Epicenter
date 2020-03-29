@@ -7,23 +7,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.fragment_details.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
 import me.alex.pet.apps.epicenter.common.extensions.setTextColorRes
-import me.alex.pet.apps.epicenter.presentation.common.BaseMapFragment
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.common.toMarkerOptions
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class DetailsFragment : BaseMapFragment(), OnMapReadyCallback {
+class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     private val model: DetailsModel by viewModel {
         val eventId = requireArguments().getString(EXTRA_EVENT_ID)
@@ -40,6 +41,9 @@ class DetailsFragment : BaseMapFragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (childFragmentManager.findFragmentById(R.id.detailsMap) as SupportMapFragment).getMapAsync(this)
+
         toolbar.apply {
             navigationIcon = requireContext().getDrawable(R.drawable.ic_up)
             overflowIcon = requireContext().getDrawable(R.drawable.ic_overflow_menu)

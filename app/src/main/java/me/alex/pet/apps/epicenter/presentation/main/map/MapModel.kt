@@ -23,9 +23,12 @@ import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
 import me.alex.pet.apps.epicenter.presentation.common.Event
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.common.Mapper
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Destinations
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Router
 
 class MapModel(
         private val context: Context,
+        private val router: Router,
         private val mapStateDataSource: MapStateDataSource,
         private val loadEventsInteractor: LoadMapEventsInteractor
 ) : ViewModel() {
@@ -57,14 +60,6 @@ class MapModel(
     val zoomInEvent: LiveData<ZoomInEvent>
         get() = _zoomInEvent
     private val _zoomInEvent = MutableLiveData<ZoomInEvent>()
-
-    val openDetailsEvent: LiveData<OpenDetailsEvent>
-        get() = _openDetailsEvent
-    private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
-
-    val openSettingsEvent: LiveData<EmptyEvent>
-        get() = _openSettingsEvent
-    private val _openSettingsEvent = MutableLiveData<EmptyEvent>()
 
     private var runningJob: Job? = null
 
@@ -129,11 +124,11 @@ class MapModel(
     }
 
     fun onOpenDetails(eventId: String) {
-        _openDetailsEvent.value = OpenDetailsEvent(eventId)
+        router.navigateTo(Destinations.Details(eventId))
     }
 
     fun onOpenSettings() {
-        _openSettingsEvent.value = EmptyEvent()
+        router.navigateTo(Destinations.Settings())
     }
 
     fun onZoomIn(latitude: Double, longitude: Double) {

@@ -27,8 +27,6 @@ import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
-import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
-import me.alex.pet.apps.epicenter.presentation.settings.SettingsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -141,12 +139,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         zoomInEvent.observe(viewLifecycleOwner) { event ->
             event.consume { coordinates -> zoomIn(coordinates.latitude, coordinates.longitude) }
         }
-        openDetailsEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { eventId -> renderEventDetails(eventId) }
-        }
-        openSettingsEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { renderSettings() }
-        }
         updateCameraPositionEvent.observe(viewLifecycleOwner) { event ->
             event.consume { cameraState -> changeCameraPosition(cameraState) }
         }
@@ -193,22 +185,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun renderNumberOfDaysToShow(days: Int) {
         numOfDaysSeekBar.progress = days - 1
-    }
-
-    private fun renderEventDetails(eventId: String) {
-        val detailsFragment = DetailsFragment.newInstance(requireContext(), eventId)
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.hostContainer, detailsFragment, "DETAILS")
-                .addToBackStack(null)
-                .commit()
-    }
-
-    private fun renderSettings() {
-        val settingsFragment = SettingsFragment.newInstance(requireContext())
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.hostContainer, settingsFragment, "SETTINGS")
-                .addToBackStack(null)
-                .commit()
     }
 
     private fun changeCameraPosition(cameraState: CameraState) {

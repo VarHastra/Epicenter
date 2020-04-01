@@ -36,12 +36,15 @@ import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
 import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
 import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Destinations
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Router
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.PersistentError
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.TransientError
 import me.alex.pet.apps.epicenter.presentation.main.feed.mappers.EventMapper
 
 class FeedModel(
         private val context: Context,
+        private val router: Router,
         private val loadSelectedPlaceNameInteractor: LoadSelectedPlaceNameInteractor,
         private val loadFeedInteractor: LoadFeedInteractor,
         private val loadPlaceNamesInteractor: LoadPlaceNamesInteractor,
@@ -81,18 +84,6 @@ class FeedModel(
     val toggleFiltersEvent: LiveData<EmptyEvent>
         get() = _toggleFiltersEvent
     private val _toggleFiltersEvent = MutableLiveData<EmptyEvent>()
-
-    val openEditorEvent: LiveData<EmptyEvent>
-        get() = _openEditorEvent
-    private val _openEditorEvent = MutableLiveData<EmptyEvent>()
-
-    val openDetailsEvent: LiveData<OpenDetailsEvent>
-        get() = _openDetailsEvent
-    private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
-
-    val openSettingsEvent: LiveData<EmptyEvent>
-        get() = _openSettingsEvent
-    private val _openSettingsEvent = MutableLiveData<EmptyEvent>()
 
     val requestLocationPermissionEvent: LiveData<EmptyEvent>
         get() = _requestLocationPermissionEvent
@@ -224,16 +215,16 @@ class FeedModel(
     }
 
     fun onOpenPlaceEditor() {
-        _openEditorEvent.value = EmptyEvent()
         placesMightHaveChanged = true
+        router.navigateTo(Destinations.Places())
     }
 
     fun onOpenDetails(eventId: String) {
-        _openDetailsEvent.value = OpenDetailsEvent(eventId)
+        router.navigateTo(Destinations.Details(eventId))
     }
 
     fun onOpenSettings() {
-        _openSettingsEvent.value = EmptyEvent()
+        router.navigateTo(Destinations.Settings())
     }
 
     fun onToggleFiltersVisibility() {

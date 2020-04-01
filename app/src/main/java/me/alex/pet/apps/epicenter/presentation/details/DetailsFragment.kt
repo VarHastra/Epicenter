@@ -1,6 +1,5 @@
 package me.alex.pet.apps.epicenter.presentation.details
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.transition.TransitionInflater
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -54,7 +52,7 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
         super.onStart()
 
         toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+            requireActivity().onBackPressed()
         }
 
         sourceLinkTile.setOnClickListener { model.onVisitSource() }
@@ -123,15 +121,11 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     companion object {
 
-        fun newInstance(context: Context, eventId: String): DetailsFragment {
-            val inTransition = TransitionInflater.from(context).inflateTransition(R.transition.transition_details_enter)
-            val outTransition = TransitionInflater.from(context).inflateTransition(R.transition.transition_details_return)
+        fun newInstance(eventId: String): Fragment {
             return DetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(EXTRA_EVENT_ID, eventId)
                 }
-                enterTransition = inTransition
-                returnTransition = outTransition
             }
         }
     }

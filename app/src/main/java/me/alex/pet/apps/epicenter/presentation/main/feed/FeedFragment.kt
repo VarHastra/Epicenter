@@ -26,9 +26,6 @@ import me.alex.pet.apps.epicenter.common.functionaltypes.Either
 import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortCriterion
-import me.alex.pet.apps.epicenter.presentation.details.DetailsFragment
-import me.alex.pet.apps.epicenter.presentation.places.PlacesFragment
-import me.alex.pet.apps.epicenter.presentation.settings.SettingsFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -90,18 +87,6 @@ class FeedFragment : Fragment() {
 
         toggleFiltersEvent.observe(viewLifecycleOwner) { event ->
             event.consume { renderFilters() }
-        }
-
-        openDetailsEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { eventId -> renderEventDetails(eventId) }
-        }
-
-        openSettingsEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { renderSettings() }
-        }
-
-        openEditorEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { renderPlacesScreen() }
         }
 
         adjustLocationSettingsEvent.observe(viewLifecycleOwner) { event ->
@@ -249,30 +234,6 @@ class FeedFragment : Fragment() {
 
     private fun renderTransientError(error: Error.TransientError) {
         requireView().snackbar(error.titleResId)
-    }
-
-    private fun renderPlacesScreen() {
-        val placesFragment = PlacesFragment.newInstance(requireContext())
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.hostContainer, placesFragment, "PLACES")
-                .addToBackStack(null)
-                .commit()
-    }
-
-    private fun renderEventDetails(eventId: String) {
-        val detailsFragment = DetailsFragment.newInstance(requireContext(), eventId)
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.hostContainer, detailsFragment, "DETAILS")
-                .addToBackStack(null)
-                .commit()
-    }
-
-    private fun renderSettings() {
-        val settingsFragment = SettingsFragment.newInstance(requireContext())
-        requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.hostContainer, settingsFragment, "SETTINGS")
-                .addToBackStack(null)
-                .commit()
     }
 
     private fun renderFilters() {

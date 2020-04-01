@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.placenamepicker
+package me.alex.pet.apps.epicenter.presentation.namepicker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +11,7 @@ import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.presentation.common.Event
 
-class PlaceNamePickerModel(
+class NamePickerModel(
         lat: Double,
         lng: Double,
         private val loadLocationName: LoadLocationNameInteractor

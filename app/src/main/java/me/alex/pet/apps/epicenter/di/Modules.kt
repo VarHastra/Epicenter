@@ -22,7 +22,7 @@ import me.alex.pet.apps.epicenter.presentation.locationpicker.LocationPickerMode
 import me.alex.pet.apps.epicenter.presentation.main.MainModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
-import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerModel
+import me.alex.pet.apps.epicenter.presentation.namepicker.NamePickerModel
 import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -94,7 +94,7 @@ val presentationModule = module {
     }
 
     viewModel { (lat: Double, lng: Double) ->
-        PlaceNamePickerModel(
+        NamePickerModel(
                 lat,
                 lng,
                 get()

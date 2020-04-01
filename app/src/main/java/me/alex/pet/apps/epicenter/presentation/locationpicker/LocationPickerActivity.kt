@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.getColorCompat
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerActivity
+import me.alex.pet.apps.epicenter.presentation.namepicker.NamePickerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -123,7 +123,7 @@ class LocationPickerActivity : BaseMapActivity(), OnMapReadyCallback {
         when (requestCode) {
             REQUEST_PLACE_NAME -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    val name = data.getStringExtra(PlaceNamePickerActivity.RESULT_NAME)
+                    val name = data.getStringExtra(NamePickerActivity.RESULT_NAME)
                     model.onSaveAndExit(name)
                 }
             }
@@ -197,7 +197,7 @@ class LocationPickerActivity : BaseMapActivity(), OnMapReadyCallback {
     }
 
     private fun renderNamePicker(latLng: LatLng) {
-        PlaceNamePickerActivity.start(this, latLng, REQUEST_PLACE_NAME)
+        NamePickerActivity.start(this, latLng, REQUEST_PLACE_NAME)
     }
 
     private fun navigateBack() {

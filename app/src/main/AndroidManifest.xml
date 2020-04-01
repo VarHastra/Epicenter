@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.placenamepicker.PlaceNamePickerActivity" />
+        <activity android:name=".presentation.namepicker.NamePickerActivity" />
         <activity
             android:name=".presentation.locationpicker.LocationPickerActivity"
             android:label=""

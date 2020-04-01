@@ -30,7 +30,7 @@
         </activity>
         <activity android:name=".presentation.placenamepicker.PlaceNamePickerActivity" />
         <activity
-            android:name=".presentation.placeeditor.PlaceEditorActivity"
+            android:name=".presentation.locationpicker.LocationPickerActivity"
             android:label=""
             android:theme="@style/AppTheme.TransparentStatus" />
     </application>

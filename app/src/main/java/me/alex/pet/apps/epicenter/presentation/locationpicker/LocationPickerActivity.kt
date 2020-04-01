@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.placeeditor
+package me.alex.pet.apps.epicenter.presentation.locationpicker
 
 import android.app.Activity
 import android.content.Intent
@@ -11,7 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.activity_place_editor.*
+import kotlinx.android.synthetic.main.activity_location_picker.*
 import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.getColorCompat
@@ -21,9 +21,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
-class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
+class LocationPickerActivity : BaseMapActivity(), OnMapReadyCallback {
 
-    private val model: PlaceEditorModel by viewModel {
+    private val model: LocationPickerModel by viewModel {
         parametersOf(if (intent.hasExtra(EXTRA_PLACE_ID)) intent.getIntExtra(EXTRA_PLACE_ID, 0) else null)
     }
 
@@ -50,7 +50,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_place_editor)
+        setContentView(R.layout.activity_location_picker)
 
         initMapView(savedInstanceState)
         loadMapAsync()
@@ -80,7 +80,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
             uiSettings.isMapToolbarEnabled = false
             setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this@PlaceEditorActivity, R.raw.map_style
+                            this@LocationPickerActivity, R.raw.map_style
                     )
             )
             setOnCameraMoveListener(::onMapCameraMove)
@@ -93,18 +93,18 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
     }
 
     private fun observeModel() = with(model) {
-        areaCenterLatLng.observe(this@PlaceEditorActivity, ::renderAreaCenter)
-        areaRadiusMeters.observe(this@PlaceEditorActivity, ::renderAreaRadius)
-        areaRadiusText.observe(this@PlaceEditorActivity, ::renderAreaRadiusText)
-        areaRadiusPercentage.observe(this@PlaceEditorActivity, ::renderRadius)
+        areaCenterLatLng.observe(this@LocationPickerActivity, ::renderAreaCenter)
+        areaRadiusMeters.observe(this@LocationPickerActivity, ::renderAreaRadius)
+        areaRadiusText.observe(this@LocationPickerActivity, ::renderAreaRadiusText)
+        areaRadiusPercentage.observe(this@LocationPickerActivity, ::renderRadius)
 
-        adjustCameraEvent.observe(this@PlaceEditorActivity) { event ->
+        adjustCameraEvent.observe(this@LocationPickerActivity) { event ->
             event.consume { adjustCameraToFitBounds(it.first, it.second) }
         }
-        openNamePickerEvent.observe(this@PlaceEditorActivity) { event ->
+        openNamePickerEvent.observe(this@LocationPickerActivity) { event ->
             event.consume { renderNamePicker(it) }
         }
-        navigateBackEvent.observe(this@PlaceEditorActivity) { event ->
+        navigateBackEvent.observe(this@LocationPickerActivity) { event ->
             event.consume { navigateBack() }
         }
     }
@@ -212,7 +212,7 @@ class PlaceEditorActivity : BaseMapActivity(), OnMapReadyCallback {
     companion object {
         fun start(sourceActivity: Activity, placeId: Int? = null) {
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
-            val intent = Intent(sourceActivity, PlaceEditorActivity::class.java)
+            val intent = Intent(sourceActivity, LocationPickerActivity::class.java)
             placeId?.let { intent.putExtra(EXTRA_PLACE_ID, it) }
             sourceActivity.startActivity(intent, options)
         }

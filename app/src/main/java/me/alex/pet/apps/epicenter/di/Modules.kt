@@ -18,10 +18,10 @@ import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
 import me.alex.pet.apps.epicenter.presentation.common.navigation.AppRouter
 import me.alex.pet.apps.epicenter.presentation.common.navigation.Router
 import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
+import me.alex.pet.apps.epicenter.presentation.locationpicker.LocationPickerModel
 import me.alex.pet.apps.epicenter.presentation.main.MainModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
 import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerModel
 import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
@@ -83,7 +83,7 @@ val presentationModule = module {
     }
 
     viewModel { (placeId: Int?) ->
-        PlaceEditorModel(
+        LocationPickerModel(
                 androidContext(),
                 placeId,
                 get(),

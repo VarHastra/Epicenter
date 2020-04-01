@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_places.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorActivity
+import me.alex.pet.apps.epicenter.presentation.locationpicker.LocationPickerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -109,11 +109,11 @@ class PlacesFragment : Fragment() {
     }
 
     private fun renderPlaceEditor(placeId: Int) {
-        PlaceEditorActivity.start(requireActivity(), placeId)
+        LocationPickerActivity.start(requireActivity(), placeId)
     }
 
     private fun renderPlaceCreator() {
-        PlaceEditorActivity.start(requireActivity())
+        LocationPickerActivity.start(requireActivity())
     }
 
     private fun showUndoDeleteOption(numberOfDeletedItems: Int) {

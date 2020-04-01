@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.placeeditor
+package me.alex.pet.apps.epicenter.presentation.locationpicker
 
 import android.content.Context
 import android.os.Bundle
@@ -20,7 +20,7 @@ import me.alex.pet.apps.epicenter.presentation.common.Event
 import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
 import kotlin.math.roundToInt
 
-class PlaceEditorModel(
+class LocationPickerModel(
         context: Context,
         private val placeId: Int?,
         private val loadPlace: LoadPlaceInteractor,

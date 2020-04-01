@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.locationpicker
+package me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

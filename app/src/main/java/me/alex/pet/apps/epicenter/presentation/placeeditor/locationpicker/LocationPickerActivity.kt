@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.locationpicker
+package me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker
 
 import android.app.Activity
 import android.content.Intent
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.getColorCompat
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.namepicker.NamePickerActivity
+import me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker.NamePickerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.namepicker
+package me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker
 
 import android.app.Activity
 import android.content.Intent

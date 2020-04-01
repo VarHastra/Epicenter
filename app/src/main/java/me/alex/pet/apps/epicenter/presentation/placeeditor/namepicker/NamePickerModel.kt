@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.namepicker
+package me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

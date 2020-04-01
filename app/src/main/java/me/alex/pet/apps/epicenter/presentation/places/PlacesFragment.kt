@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_places.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.locationpicker.LocationPickerActivity
+import me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker.LocationPickerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 

@@ -5,15 +5,13 @@ import me.alex.pet.apps.epicenter.presentation.common.navigation.Destination
 import me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker.LocationPickerFragment
 import me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker.NamePickerFragment
 
-interface PlaceEditorDestinations {
+class PlaceEditorDestinations private constructor() {
 
     class LocationPicker : Destination() {
-        override val fragment: Fragment
-            get() = LocationPickerFragment.newInstance()
+        override val fragment: Fragment = LocationPickerFragment.newInstance()
     }
 
     class NamePicker : Destination() {
-        override val fragment: Fragment
-            get() = NamePickerFragment.newInstance()
+        override val fragment: Fragment = NamePickerFragment.newInstance()
     }
 }

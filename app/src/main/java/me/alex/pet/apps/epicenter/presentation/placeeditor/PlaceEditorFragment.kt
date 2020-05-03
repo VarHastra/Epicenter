@@ -116,7 +116,7 @@ class PlaceEditorFragment : Fragment(), PlaceEditorNavigator, BackButtonListener
     }
 
     private fun finishFlow() {
-        (requireActivity() as Navigator).navigateBack()
+        (requireActivity() as Navigator).processNavCommand(NavigationCommand.Back)
     }
 
     companion object {

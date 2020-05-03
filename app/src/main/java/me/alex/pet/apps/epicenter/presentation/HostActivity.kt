@@ -7,11 +7,10 @@ import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.presentation.common.navigation.*
-import org.koin.android.ext.android.inject
 
 class HostActivity : AppCompatActivity(), Navigator {
 
-    private val router: Router by inject()
+//    private val router: Router by inject()
 
     private lateinit var transitionInflater: TransitionInflater
 
@@ -33,11 +32,11 @@ class HostActivity : AppCompatActivity(), Navigator {
 
     override fun onStart() {
         super.onStart()
-        router.attachNavigator(this)
+//        router.attachNavigator(this)
     }
 
     override fun onStop() {
-        router.detachNavigator()
+//        router.detachNavigator()
         super.onStop()
     }
 
@@ -50,13 +49,30 @@ class HostActivity : AppCompatActivity(), Navigator {
         }
     }
 
-    override fun navigateTo(destination: Destination) {
+    override fun processNavCommand(command: NavigationCommand) {
+        when (command) {
+            is NavigationCommand.To -> navigateTo(command.destination)
+            NavigationCommand.Back -> navigateBack()
+            NavigationCommand.FinishFlow -> finishFlow()
+        }
+    }
+
+    private fun navigateTo(destination: Destination) {
         applyTransitionTo(destination)
         replaceFragment(destination.fragment, destination.tag, true)
     }
 
-    override fun navigateBack() {
-        supportFragmentManager.popBackStack()
+    private fun navigateBack() {
+        val stackEntryCount = supportFragmentManager.backStackEntryCount
+        if (stackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            finishFlow()
+        }
+    }
+
+    private fun finishFlow() {
+        finish()
     }
 
     private fun applyTransitionTo(destination: Destination) {

@@ -26,6 +26,7 @@ import me.alex.pet.apps.epicenter.common.functionaltypes.Either
 import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortCriterion
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -98,6 +99,12 @@ class FeedFragment : Fragment() {
 
         transientErrorEvent.observe(viewLifecycleOwner) { event ->
             event.consume { renderTransientError(it) }
+        }
+
+        navigationEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { command ->
+                (requireActivity() as Navigator).processNavCommand(command)
+            }
         }
     }
 

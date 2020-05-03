@@ -16,12 +16,12 @@ import me.alex.pet.apps.epicenter.domain.model.Place
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
 import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.common.NavigationEvent
 import me.alex.pet.apps.epicenter.presentation.common.navigation.Destinations
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Router
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 
 class PlacesModel(
         private val context: Context,
-        private val router: Router,
         private val loadPlaces: LoadPlacesInteractor,
         private val deletePlace: DeletePlaceInteractor,
         private val updatePlacesOrder: UpdatePlacesOrderInteractor,
@@ -35,6 +35,10 @@ class PlacesModel(
     val deletionAttemptEvent: LiveData<Event<Int>>
         get() = _deletionAttemptEvent
     private val _deletionAttemptEvent = MutableLiveData<Event<Int>>()
+
+    val navigationEvent: LiveData<NavigationEvent>
+        get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
     private val deletedPlaceIds = mutableSetOf<Int>()
 
@@ -71,13 +75,13 @@ class PlacesModel(
 
     fun onEditPlace(placeId: Int) {
         if (placeId != Place.WORLD.id && placeId != Place.CURRENT_LOCATION.id) {
-            router.navigateTo(Destinations.PlaceEditor(placeId))
+            _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.PlaceEditor(placeId)))
         }
         placesMightHaveChanged = true
     }
 
     fun onAddNewPlace() {
-        router.navigateTo(Destinations.PlaceEditor(null))
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.PlaceEditor(null)))
         placesMightHaveChanged = true
     }
 

@@ -27,6 +27,7 @@ import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -141,6 +142,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         updateCameraPositionEvent.observe(viewLifecycleOwner) { event ->
             event.consume { cameraState -> changeCameraPosition(cameraState) }
+        }
+
+        navigationEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { command ->
+                (requireActivity() as Navigator).processNavCommand(command)
+            }
         }
     }
 

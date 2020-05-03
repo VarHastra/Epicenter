@@ -11,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_places.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlacesFragment : Fragment() {
@@ -57,6 +58,12 @@ class PlacesFragment : Fragment() {
 
         deletionAttemptEvent.observe(viewLifecycleOwner) { event ->
             event.consume { numberOfDeletedItems -> showUndoDeleteOption(numberOfDeletedItems) }
+        }
+
+        navigationEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { command ->
+                (requireActivity() as Navigator).processNavCommand(command)
+            }
         }
     }
 

@@ -21,8 +21,7 @@ import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
 import me.alex.pet.apps.epicenter.presentation.main.MainModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
-import me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker.LocationPickerModel
-import me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker.NamePickerModel
+import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
 import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -78,25 +77,19 @@ val presentationModule = module {
                 get(),
                 get(),
                 get(),
+                get(),
                 get()
         )
     }
 
     viewModel { (placeId: Int?) ->
-        LocationPickerModel(
+        PlaceEditorModel(
                 androidContext(),
                 placeId,
                 get(),
                 get(),
                 get(),
-                get()
-        )
-    }
-
-    viewModel { (lat: Double, lng: Double) ->
-        NamePickerModel(
-                lat,
-                lng,
+                get(),
                 get()
         )
     }

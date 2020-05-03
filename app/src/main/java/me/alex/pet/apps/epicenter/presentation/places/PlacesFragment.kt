@@ -11,9 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_places.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker.LocationPickerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class PlacesFragment : Fragment() {
 
@@ -57,13 +55,6 @@ class PlacesFragment : Fragment() {
     private fun observeModel() = with(model) {
         places.observe(viewLifecycleOwner, ::renderPlaces)
 
-        addNewPlaceEvent.observe(viewLifecycleOwner) { event ->
-            Timber.d("addNewPlaceEvent")
-            event.consume { renderPlaceCreator() }
-        }
-        editPlaceEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { placeId -> renderPlaceEditor(placeId) }
-        }
         deletionAttemptEvent.observe(viewLifecycleOwner) { event ->
             event.consume { numberOfDeletedItems -> showUndoDeleteOption(numberOfDeletedItems) }
         }
@@ -108,14 +99,6 @@ class PlacesFragment : Fragment() {
         placesAdapter.data = places.toMutableList()
     }
 
-    private fun renderPlaceEditor(placeId: Int) {
-        LocationPickerActivity.start(requireActivity(), placeId)
-    }
-
-    private fun renderPlaceCreator() {
-        LocationPickerActivity.start(requireActivity())
-    }
-
     private fun showUndoDeleteOption(numberOfDeletedItems: Int) {
         val notice = resources.getQuantityString(R.plurals.plurals_places_deleted, numberOfDeletedItems, numberOfDeletedItems)
         undoDeletionSnackbar.setText(notice)
@@ -126,7 +109,6 @@ class PlacesFragment : Fragment() {
 
 
     companion object {
-
         fun newInstance(): Fragment = PlacesFragment()
     }
 }

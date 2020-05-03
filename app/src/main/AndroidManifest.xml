@@ -28,10 +28,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker.NamePickerActivity" />
-        <activity
-            android:name="me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker.LocationPickerActivity"
-            android:label=""
-            android:theme="@style/AppTheme.TransparentStatus" />
     </application>
 </manifest>

@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import me.alex.pet.apps.epicenter.R
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Destination
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Destinations
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Router
+import me.alex.pet.apps.epicenter.presentation.common.navigation.*
 import org.koin.android.ext.android.inject
 
 class HostActivity : AppCompatActivity(), Navigator {
@@ -42,6 +39,15 @@ class HostActivity : AppCompatActivity(), Navigator {
     override fun onStop() {
         router.detachNavigator()
         super.onStop()
+    }
+
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.hostContainer)
+        if (fragment != null && fragment is BackButtonListener && fragment.onBackPressed()) {
+            return
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun navigateTo(destination: Destination) {

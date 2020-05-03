@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.placeeditor.locationpicker
+package me.alex.pet.apps.epicenter.presentation.placeeditor
 
 import android.content.Context
 import android.os.Bundle
@@ -7,7 +7,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.SphericalUtil
 import kotlinx.coroutines.launch
+import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.domain.interactors.InsertPlaceInteractor
+import me.alex.pet.apps.epicenter.domain.interactors.LoadLocationNameInteractor
 import me.alex.pet.apps.epicenter.domain.interactors.LoadPlaceInteractor
 import me.alex.pet.apps.epicenter.domain.interactors.UpdatePlaceInteractor
 import me.alex.pet.apps.epicenter.domain.model.Coordinates
@@ -15,17 +17,20 @@ import me.alex.pet.apps.epicenter.domain.model.Place
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.domain.model.kmToM
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
-import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
 import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.common.NavigationEvent
 import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
+import me.alex.pet.apps.epicenter.presentation.placeeditor.navigation.PlaceEditorDestinations
 import kotlin.math.roundToInt
 
-class LocationPickerModel(
+class PlaceEditorModel(
         context: Context,
         private val placeId: Int?,
         private val loadPlace: LoadPlaceInteractor,
         private val insertPlace: InsertPlaceInteractor,
         private val updatePlace: UpdatePlaceInteractor,
+        private val loadLocationName: LoadLocationNameInteractor,
         unitsLocaleRepository: UnitsLocaleRepository
 ) : ViewModel() {
 
@@ -41,19 +46,25 @@ class LocationPickerModel(
 
     val areaRadiusPercentage: LiveData<Int> = areaRadiusKm.map { convertAreaRadiusToPercentage(it).roundToInt() }
 
+    val name: LiveData<String>
+        get() = _name
+    private val _name = MutableLiveData<String>()
+
     private val unitsLocale = unitsLocaleRepository.preferredUnits
 
     val adjustCameraEvent: LiveData<AdjustCameraEvent>
         get() = _adjustCameraEvent
     private val _adjustCameraEvent = MutableLiveData<AdjustCameraEvent>()
 
-    val openNamePickerEvent: LiveData<Event<LatLng>>
-        get() = _openNamePickerEvent
-    private val _openNamePickerEvent = MutableLiveData<Event<LatLng>>()
+    val navigationEvent: LiveData<NavigationEvent>
+        get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
-    val navigateBackEvent: LiveData<EmptyEvent>
-        get() = _navigateBackEvent
-    private val _navigateBackEvent = MutableLiveData<EmptyEvent>()
+    val transientErrorEvent: LiveData<Event<Int>>
+        get() = _transientErrorEvent
+    private val _transientErrorEvent = MutableLiveData<Event<Int>>()
+
+    private var stateHasBeenRestored = false
 
 
     private val areaBounds: LatLngBounds
@@ -74,6 +85,7 @@ class LocationPickerModel(
         if (placeId == null) {
             areaCenter.value = DEFAULT_COORDINATES
             areaRadiusKm.value = MIN_RADIUS_KM
+            _name.value = ""
             _adjustCameraEvent.value = AdjustCameraEvent(Pair(areaBounds, false))
         } else {
             viewModelScope.launch {
@@ -83,21 +95,30 @@ class LocationPickerModel(
     }
 
     private fun handlePlace(place: Place) {
-        areaCenter.value = place.coordinates
-        areaRadiusKm.value = place.radiusKm
-        _adjustCameraEvent.value = AdjustCameraEvent(Pair(areaBounds, false))
+        if (!stateHasBeenRestored) {
+            _name.value = place.name
+            areaCenter.value = place.coordinates
+            areaRadiusKm.value = place.radiusKm
+            _adjustCameraEvent.value = AdjustCameraEvent(Pair(areaBounds, false))
+        }
     }
 
     private fun handleFailure(failure: Failure) {
         // TODO: notify the user about the error
-        _navigateBackEvent.value = EmptyEvent()
+        _navigationEvent.value = NavigationEvent(NavigationCommand.FinishFlow)
     }
 
-    fun onRestoreState(state: Bundle) {
+    fun onRestoreState(state: Bundle?) {
+        if (state == null) {
+            return
+        }
         state.let {
+            stateHasBeenRestored = true
             areaCenter.value = it.getSerializable(STATE_AREA_CENTER) as Coordinates
             areaRadiusKm.value = it.getDouble(STATE_AREA_RADIUS, MIN_RADIUS_KM)
+            _name.value = it.getString(STATE_LOCATION_NAME)
         }
+        _adjustCameraEvent.value = AdjustCameraEvent(Pair(areaBounds, false))
     }
 
     fun onChangeAreaCenter(latLng: LatLng) {
@@ -123,27 +144,50 @@ class LocationPickerModel(
         }
     }
 
+    fun onChangeName(name: String) {
+        if (_name.value == name) {
+            return
+        }
+        _name.value = name
+    }
+
     fun onSaveState(outState: Bundle) {
         outState.run {
             putSerializable(STATE_AREA_CENTER, areaCenter.value!!)
             putDouble(STATE_AREA_RADIUS, areaRadiusKm.value!!)
+            putString(STATE_LOCATION_NAME, _name.value!!)
         }
     }
 
     fun onOpenNamePicker() {
-        _openNamePickerEvent.value = Event(areaCenter.value!!.toLatLng())
+        val namePicker = PlaceEditorDestinations.NamePicker()
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(namePicker))
+        if (placeId == null && _name.value.isNullOrEmpty()) {
+            viewModelScope.launch { fetchSuggestedPlaceName() }
+        }
     }
 
-    fun onSaveAndExit(placeName: String) {
-        viewModelScope.launch {
-            val id = placeId
-            if (id == null) {
-                insertPlace(placeName, areaCenter.value!!, areaRadiusKm.value!!)
-            } else {
-                updatePlace(id, placeName, areaCenter.value!!, areaRadiusKm.value!!)
-            }
+    fun onSaveAndExit() {
+        val name = name.value
+        if (name.isNullOrBlank()) {
+            _transientErrorEvent.value = Event(R.string.place_name_picker_error_empty_name)
+            return
         }
-        _navigateBackEvent.value = EmptyEvent()
+
+        if (placeId == null) {
+            viewModelScope.launch { insertPlace(name, areaCenter.value!!, areaRadiusKm.value!!) }
+        } else {
+            viewModelScope.launch { updatePlace(placeId, name, areaCenter.value!!, areaRadiusKm.value!!) }
+        }
+        _navigationEvent.value = NavigationEvent(NavigationCommand.FinishFlow)
+    }
+
+
+    private suspend fun fetchSuggestedPlaceName() {
+        loadLocationName(areaCenter.value!!).fold(
+                { name -> _name.value = name },
+                { _name.value = "" }
+        )
     }
 
 
@@ -160,6 +204,7 @@ private val DEFAULT_COORDINATES = Coordinates(0.0, 0.0)
 
 private const val STATE_AREA_CENTER = "AREA_CENTER"
 private const val STATE_AREA_RADIUS = "AREA_RADIUS"
+private const val STATE_LOCATION_NAME = "LOCATION_NAME"
 
 private fun convertAreaRadiusToPercentage(radiusKm: Double): Double {
     return (radiusKm - MIN_RADIUS_KM) / RADIUS_DELTA_KM * 100

@@ -19,8 +19,8 @@ import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.filters.RecencyFilter
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
+import me.alex.pet.apps.epicenter.presentation.Destinations
 import me.alex.pet.apps.epicenter.presentation.common.*
-import me.alex.pet.apps.epicenter.presentation.common.navigation.Destinations
 import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 
 class MapModel(

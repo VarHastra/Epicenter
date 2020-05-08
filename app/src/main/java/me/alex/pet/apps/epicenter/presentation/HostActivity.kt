@@ -6,7 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import me.alex.pet.apps.epicenter.R
-import me.alex.pet.apps.epicenter.presentation.common.navigation.*
+import me.alex.pet.apps.epicenter.presentation.common.navigation.BackButtonListener
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Destination
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 
 class HostActivity : AppCompatActivity(), Navigator {
 
@@ -25,7 +28,7 @@ class HostActivity : AppCompatActivity(), Navigator {
 
         if (savedInstanceState == null) {
             val rootDestination = Destinations.Main()
-            replaceFragment(rootDestination.fragment, rootDestination.tag, false)
+            replaceFragment(rootDestination.newFragment(), rootDestination.tag, false)
         }
         preloadFragmentTransitions()
     }
@@ -58,8 +61,11 @@ class HostActivity : AppCompatActivity(), Navigator {
     }
 
     private fun navigateTo(destination: Destination) {
-        applyTransitionTo(destination)
-        replaceFragment(destination.fragment, destination.tag, true)
+        val fragment = destination.newFragment()
+        if (destination !is Destinations.Main) {
+            applyTransitionTo(fragment)
+        }
+        replaceFragment(fragment, destination.tag, true)
     }
 
     private fun navigateBack() {
@@ -75,14 +81,10 @@ class HostActivity : AppCompatActivity(), Navigator {
         finish()
     }
 
-    private fun applyTransitionTo(destination: Destination) {
-        if (destination is Destinations.Main) {
-            return
-        }
-
-        destination.fragment.let {
-            it.enterTransition = enterTransition
-            it.returnTransition = returnTransition
+    private fun applyTransitionTo(fragment: Fragment) {
+        fragment.let {
+            it.enterTransition = this.enterTransition
+            it.returnTransition = this.returnTransition
         }
     }
 

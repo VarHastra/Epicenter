@@ -10,22 +10,22 @@ import me.alex.pet.apps.epicenter.presentation.settings.SettingsFragment
 
 class Destinations private constructor() {
     class Main : Destination() {
-        override val fragment: Fragment = MainFragment.newInstance()
+        override fun newFragment(): Fragment = MainFragment.newInstance()
     }
 
-    class Details(eventId: String) : Destination() {
-        override val fragment: Fragment = DetailsFragment.newInstance(eventId)
+    class Details(private val eventId: String) : Destination() {
+        override fun newFragment(): Fragment = DetailsFragment.newInstance(eventId)
     }
 
     class Places : Destination() {
-        override val fragment: Fragment = PlacesFragment.newInstance()
+        override fun newFragment(): Fragment = PlacesFragment.newInstance()
     }
 
-    class PlaceEditor(placeId: Int?) : Destination() {
-        override val fragment: Fragment = PlaceEditorFragment.newInstance(placeId)
+    class PlaceEditor(private val placeId: Int?) : Destination() {
+        override fun newFragment(): Fragment = PlaceEditorFragment.newInstance(placeId)
     }
 
     class Settings : Destination() {
-        override val fragment: Fragment = SettingsFragment.newInstance()
+        override fun newFragment(): Fragment = SettingsFragment.newInstance()
     }
 }

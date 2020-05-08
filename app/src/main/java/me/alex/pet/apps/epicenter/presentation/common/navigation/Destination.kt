@@ -3,9 +3,10 @@ package me.alex.pet.apps.epicenter.presentation.common.navigation
 import androidx.fragment.app.Fragment
 
 abstract class Destination {
-    abstract val fragment: Fragment
 
     open val tag: String = this::class.java.simpleName
+
+    abstract fun newFragment(): Fragment
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -13,19 +14,16 @@ abstract class Destination {
 
         other as Destination
 
-        if (fragment != other.fragment) return false
         if (tag != other.tag) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = fragment.hashCode()
-        result = 31 * result + tag.hashCode()
-        return result
+        return tag.hashCode()
     }
 
     override fun toString(): String {
-        return "Destination(fragment=$fragment, tag='$tag')"
+        return "Destination(tag='$tag')"
     }
 }

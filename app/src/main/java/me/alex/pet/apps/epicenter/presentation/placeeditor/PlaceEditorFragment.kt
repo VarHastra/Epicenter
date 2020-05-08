@@ -42,7 +42,7 @@ class PlaceEditorFragment : Fragment(), PlaceEditorNavigator, BackButtonListener
 
         if (savedInstanceState == null) {
             val startDestination = PlaceEditorDestinations.LocationPicker()
-            replaceFragment(startDestination.fragment, startDestination.tag, false)
+            replaceFragment(startDestination.newFragment(), startDestination.tag, false)
         }
         preloadFragmentTransitions()
     }
@@ -84,12 +84,13 @@ class PlaceEditorFragment : Fragment(), PlaceEditorNavigator, BackButtonListener
     }
 
     private fun navigateTo(destination: Destination) {
-        applyTransitionTo(destination)
-        replaceFragment(destination.fragment, destination.tag, true)
+        val fragment = destination.newFragment()
+        applyTransitionTo(fragment)
+        replaceFragment(fragment, destination.tag, true)
     }
 
-    private fun applyTransitionTo(destination: Destination) {
-        destination.fragment.let {
+    private fun applyTransitionTo(fragment: Fragment) {
+        fragment.let {
             it.enterTransition = this.enterTransition
             it.returnTransition = this.returnTransition
         }

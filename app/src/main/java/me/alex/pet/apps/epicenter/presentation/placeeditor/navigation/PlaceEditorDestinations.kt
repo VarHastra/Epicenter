@@ -8,10 +8,10 @@ import me.alex.pet.apps.epicenter.presentation.placeeditor.namepicker.NamePicker
 class PlaceEditorDestinations private constructor() {
 
     class LocationPicker : Destination() {
-        override val fragment: Fragment = LocationPickerFragment.newInstance()
+        override fun newFragment(): Fragment = LocationPickerFragment.newInstance()
     }
 
     class NamePicker : Destination() {
-        override val fragment: Fragment = NamePickerFragment.newInstance()
+        override fun newFragment(): Fragment = NamePickerFragment.newInstance()
     }
 }

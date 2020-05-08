@@ -2,7 +2,6 @@ package me.alex.pet.apps.epicenter.presentation.main.feed
 
 
 import android.Manifest
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.TransitionInflater
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
@@ -266,14 +264,6 @@ class FeedFragment : Fragment() {
         private const val REQUEST_CHANGE_LOCATION_SETTINGS = 2
         private const val REQUEST_LOCATION_PERMISSION = 3
 
-        fun newInstance(context: Context): FeedFragment {
-            val transitionInflater = TransitionInflater.from(context)
-            val enterAnim = transitionInflater.inflateTransition(R.transition.transition_main_enter)
-            val exitAnim = transitionInflater.inflateTransition(R.transition.transition_main_exit)
-            return FeedFragment().apply {
-                enterTransition = enterAnim
-                exitTransition = exitAnim
-            }
-        }
+        fun newInstance(): Fragment = FeedFragment()
     }
 }

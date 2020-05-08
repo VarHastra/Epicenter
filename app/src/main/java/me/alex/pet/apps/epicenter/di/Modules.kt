@@ -16,7 +16,6 @@ import me.alex.pet.apps.epicenter.domain.repos.*
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
 import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
 import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
-import me.alex.pet.apps.epicenter.presentation.main.MainModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
 import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
@@ -30,10 +29,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 val presentationModule = module {
-
-    viewModel {
-        MainModel()
-    }
 
     viewModel {
         FeedModel(

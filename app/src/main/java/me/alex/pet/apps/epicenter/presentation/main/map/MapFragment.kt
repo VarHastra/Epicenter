@@ -1,14 +1,12 @@
 package me.alex.pet.apps.epicenter.presentation.main.map
 
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import androidx.transition.TransitionInflater
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -207,14 +205,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
 
     companion object {
-        fun newInstance(context: Context): MapFragment {
-            val transitionInflater = TransitionInflater.from(context)
-            val enterAnim = transitionInflater.inflateTransition(R.transition.transition_main_enter)
-            val exitAnim = transitionInflater.inflateTransition(R.transition.transition_main_exit)
-            return MapFragment().apply {
-                enterTransition = enterAnim
-                exitTransition = exitAnim
-            }
-        }
+        fun newInstance(): Fragment = MapFragment()
     }
 }

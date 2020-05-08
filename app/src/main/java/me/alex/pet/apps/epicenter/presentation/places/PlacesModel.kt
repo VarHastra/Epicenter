@@ -15,8 +15,10 @@ import me.alex.pet.apps.epicenter.domain.interactors.UpdatePlacesOrderInteractor
 import me.alex.pet.apps.epicenter.domain.model.Place
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
-import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
-import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.Destinations
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
+import me.alex.pet.apps.epicenter.presentation.common.events.NavigationEvent
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 
 class PlacesModel(
         private val context: Context,
@@ -30,17 +32,13 @@ class PlacesModel(
         get() = _places
     private val _places = MutableLiveData<List<PlaceViewBlock>>()
 
-    val addNewPlaceEvent: LiveData<EmptyEvent>
-        get() = _addNewPlaceEvent
-    private val _addNewPlaceEvent = MutableLiveData<EmptyEvent>()
-
-    val editPlaceEvent: LiveData<Event<Int>>
-        get() = _editPlaceEvent
-    private val _editPlaceEvent = MutableLiveData<Event<Int>>()
-
     val deletionAttemptEvent: LiveData<Event<Int>>
         get() = _deletionAttemptEvent
     private val _deletionAttemptEvent = MutableLiveData<Event<Int>>()
+
+    val navigationEvent: LiveData<NavigationEvent>
+        get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
     private val deletedPlaceIds = mutableSetOf<Int>()
 
@@ -77,13 +75,13 @@ class PlacesModel(
 
     fun onEditPlace(placeId: Int) {
         if (placeId != Place.WORLD.id && placeId != Place.CURRENT_LOCATION.id) {
-            _editPlaceEvent.value = Event(placeId)
+            _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.PlaceEditor(placeId)))
         }
         placesMightHaveChanged = true
     }
 
     fun onAddNewPlace() {
-        _addNewPlaceEvent.value = EmptyEvent()
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.PlaceEditor(null)))
         placesMightHaveChanged = true
     }
 

@@ -5,8 +5,7 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorSurface"
-    tools:context="me.alex.pet.apps.epicenter.presentation.details.DetailsActivity">
+    android:background="?colorSurface">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollview"
@@ -21,13 +20,11 @@
             android:orientation="vertical">
 
             <fragment
-                android:id="@+id/mapFragment"
+                android:id="@+id/detailsMap"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
-                app:cameraZoom="2"
-                app:liteMode="true"
-                app:mapType="normal" />
+                app:liteMode="true" />
 
             <LinearLayout
                 android:id="@+id/magnitudeContainer"

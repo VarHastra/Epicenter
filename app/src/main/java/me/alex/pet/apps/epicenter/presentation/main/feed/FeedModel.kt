@@ -34,8 +34,11 @@ import me.alex.pet.apps.epicenter.domain.model.sorting.SortOrder
 import me.alex.pet.apps.epicenter.domain.model.sorting.SortStrategy
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
-import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
-import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.Destinations
+import me.alex.pet.apps.epicenter.presentation.common.events.EmptyEvent
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
+import me.alex.pet.apps.epicenter.presentation.common.events.NavigationEvent
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.PersistentError
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.TransientError
 import me.alex.pet.apps.epicenter.presentation.main.feed.mappers.EventMapper
@@ -82,14 +85,6 @@ class FeedModel(
         get() = _toggleFiltersEvent
     private val _toggleFiltersEvent = MutableLiveData<EmptyEvent>()
 
-    val openEditorEvent: LiveData<EmptyEvent>
-        get() = _openEditorEvent
-    private val _openEditorEvent = MutableLiveData<EmptyEvent>()
-
-    val openDetailsEvent: LiveData<OpenDetailsEvent>
-        get() = _openDetailsEvent
-    private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
-
     val requestLocationPermissionEvent: LiveData<EmptyEvent>
         get() = _requestLocationPermissionEvent
     private val _requestLocationPermissionEvent = MutableLiveData<EmptyEvent>()
@@ -97,6 +92,10 @@ class FeedModel(
     val adjustLocationSettingsEvent: LiveData<AdjustLocationSettingsEvent>
         get() = _adjustLocationSettingsEvent
     private val _adjustLocationSettingsEvent = MutableLiveData<AdjustLocationSettingsEvent>()
+
+    val navigationEvent: LiveData<NavigationEvent>
+        get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
     private var placesMightHaveChanged = false
 
@@ -220,12 +219,16 @@ class FeedModel(
     }
 
     fun onOpenPlaceEditor() {
-        _openEditorEvent.value = EmptyEvent()
         placesMightHaveChanged = true
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Places()))
     }
 
     fun onOpenDetails(eventId: String) {
-        _openDetailsEvent.value = OpenDetailsEvent(eventId)
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Details(eventId)))
+    }
+
+    fun onOpenSettings() {
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Settings()))
     }
 
     fun onToggleFiltersVisibility() {

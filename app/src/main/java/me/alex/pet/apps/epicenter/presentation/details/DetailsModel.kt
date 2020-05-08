@@ -15,8 +15,8 @@ import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
 import me.alex.pet.apps.epicenter.presentation.common.AlertLevel
-import me.alex.pet.apps.epicenter.presentation.common.Event
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
 import me.alex.pet.apps.epicenter.presentation.details.mappers.EventMapper
 
 class DetailsModel(

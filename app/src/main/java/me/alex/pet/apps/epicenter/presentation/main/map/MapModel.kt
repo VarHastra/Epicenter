@@ -19,10 +19,13 @@ import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.model.filters.RecencyFilter
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
-import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
-import me.alex.pet.apps.epicenter.presentation.common.Event
+import me.alex.pet.apps.epicenter.presentation.Destinations
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
 import me.alex.pet.apps.epicenter.presentation.common.Mapper
+import me.alex.pet.apps.epicenter.presentation.common.events.EmptyEvent
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
+import me.alex.pet.apps.epicenter.presentation.common.events.NavigationEvent
+import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 
 class MapModel(
         private val context: Context,
@@ -58,9 +61,9 @@ class MapModel(
         get() = _zoomInEvent
     private val _zoomInEvent = MutableLiveData<ZoomInEvent>()
 
-    val openDetailsEvent: LiveData<OpenDetailsEvent>
-        get() = _openDetailsEvent
-    private val _openDetailsEvent = MutableLiveData<OpenDetailsEvent>()
+    val navigationEvent: LiveData<NavigationEvent>
+        get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
     private var runningJob: Job? = null
 
@@ -125,7 +128,11 @@ class MapModel(
     }
 
     fun onOpenDetails(eventId: String) {
-        _openDetailsEvent.value = OpenDetailsEvent(eventId)
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Details(eventId)))
+    }
+
+    fun onOpenSettings() {
+        _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Settings()))
     }
 
     fun onZoomIn(latitude: Double, longitude: Double) {

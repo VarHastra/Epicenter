@@ -16,11 +16,9 @@ import me.alex.pet.apps.epicenter.domain.repos.*
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
 import me.alex.pet.apps.epicenter.domain.state.MapStateDataSource
 import me.alex.pet.apps.epicenter.presentation.details.DetailsModel
-import me.alex.pet.apps.epicenter.presentation.main.MainModel
 import me.alex.pet.apps.epicenter.presentation.main.feed.FeedModel
 import me.alex.pet.apps.epicenter.presentation.main.map.MapModel
 import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorModel
-import me.alex.pet.apps.epicenter.presentation.placenamepicker.PlaceNamePickerModel
 import me.alex.pet.apps.epicenter.presentation.places.PlacesModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -31,9 +29,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 val presentationModule = module {
-    viewModel {
-        MainModel()
-    }
 
     viewModel {
         FeedModel(
@@ -81,14 +76,7 @@ val presentationModule = module {
                 get(),
                 get(),
                 get(),
-                get()
-        )
-    }
-
-    viewModel { (lat: Double, lng: Double) ->
-        PlaceNamePickerModel(
-                lat,
-                lng,
+                get(),
                 get()
         )
     }

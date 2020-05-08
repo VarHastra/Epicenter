@@ -1,4 +1,4 @@
-package me.alex.pet.apps.epicenter.presentation.common
+package me.alex.pet.apps.epicenter.presentation.common.events
 
 class EmptyEvent {
     var isConsumed = false

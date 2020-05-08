@@ -1,22 +1,20 @@
 package me.alex.pet.apps.epicenter.presentation.places
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_places.*
+import kotlinx.android.synthetic.main.fragment_places.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.observe
-import me.alex.pet.apps.epicenter.presentation.placeeditor.PlaceEditorActivity
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
-class PlacesActivity : AppCompatActivity() {
+class PlacesFragment : Fragment() {
 
     private val model: PlacesModel by viewModel()
 
@@ -24,24 +22,30 @@ class PlacesActivity : AppCompatActivity() {
 
     private lateinit var undoDeletionSnackbar: Snackbar
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_places)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return layoutInflater.inflate(R.layout.fragment_places, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setUpViews()
         observeModel()
     }
 
     private fun setUpViews() {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.apply {
+            setNavigationIcon(R.drawable.ic_up)
+            setTitle(R.string.places_title)
+        }
 
-        placesAdapter = PlacesAdapter(this).apply {
+        placesAdapter = PlacesAdapter(requireContext()).apply {
             setHasStableIds(true)
         }
 
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@PlacesActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = placesAdapter
             setHasFixedSize(true)
         }
@@ -50,23 +54,24 @@ class PlacesActivity : AppCompatActivity() {
     }
 
     private fun observeModel() = with(model) {
-        places.observe(this@PlacesActivity, ::renderPlaces)
+        places.observe(viewLifecycleOwner, ::renderPlaces)
 
-        addNewPlaceEvent.observe(this@PlacesActivity) { event ->
-            Timber.d("addNewPlaceEvent")
-            event.consume { renderPlaceCreator() }
-        }
-        editPlaceEvent.observe(this@PlacesActivity) { event ->
-            event.consume { placeId -> renderPlaceEditor(placeId) }
-        }
-        deletionAttemptEvent.observe(this@PlacesActivity) { event ->
+        deletionAttemptEvent.observe(viewLifecycleOwner) { event ->
             event.consume { numberOfDeletedItems -> showUndoDeleteOption(numberOfDeletedItems) }
+        }
+
+        navigationEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { command ->
+                (requireActivity() as Navigator).processNavCommand(command)
+            }
         }
     }
 
     override fun onStart() {
         super.onStart()
         model.onStart()
+
+        toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
 
         placesAdapter.apply {
             onItemClick = { model.onEditPlace(it) }
@@ -89,34 +94,16 @@ class PlacesActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onBackPressed() {
+    override fun onStop() {
         model.apply {
             onDeletePlaces()
             onSaveOrder(placesAdapter.data)
         }
-        super.onBackPressed()
+        super.onStop()
     }
 
     private fun renderPlaces(places: List<PlaceViewBlock>) {
         placesAdapter.data = places.toMutableList()
-    }
-
-    private fun renderPlaceEditor(placeId: Int) {
-        PlaceEditorActivity.start(this, placeId)
-    }
-
-    private fun renderPlaceCreator() {
-        PlaceEditorActivity.start(this)
     }
 
     private fun showUndoDeleteOption(numberOfDeletedItems: Int) {
@@ -129,11 +116,6 @@ class PlacesActivity : AppCompatActivity() {
 
 
     companion object {
-
-        fun start(sourceActivity: Activity) {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(sourceActivity).toBundle()
-            val intent = Intent(sourceActivity, PlacesActivity::class.java)
-            sourceActivity.startActivity(intent, options)
-        }
+        fun newInstance(): Fragment = PlacesFragment()
     }
 }

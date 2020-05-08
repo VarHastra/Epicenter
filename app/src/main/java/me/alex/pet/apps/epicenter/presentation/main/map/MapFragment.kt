@@ -1,17 +1,16 @@
 package me.alex.pet.apps.epicenter.presentation.main.map
 
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.transition.TransitionInflater
+import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,25 +25,19 @@ import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.filters.MagnitudeLevel
 import me.alex.pet.apps.epicenter.domain.state.CameraState
 import me.alex.pet.apps.epicenter.presentation.common.EventMarker
-import me.alex.pet.apps.epicenter.presentation.details.DetailsActivity
-import me.alex.pet.apps.epicenter.presentation.main.ToolbarProvider
+import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MapFragment : BaseMapFragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val model: MapModel by viewModel()
 
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
 
     private lateinit var clusterManager: ClusterManager<EventMarker>
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
@@ -53,16 +46,38 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment).getMapAsync(this)
+
+        toolbar.inflateMenu(R.menu.menu_main)
+
         bottomSheetBehavior = BottomSheetBehavior.from(filtersSheet).apply {
             skipCollapsed = true
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        (requireActivity() as ToolbarProvider).setTitleText(getString(R.string.app_map))
+        toolbar.title = getString(R.string.app_map)
     }
 
     override fun onStart() {
         super.onStart()
+
+        toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_filter -> {
+                    model.onToggleFiltersVisibility()
+                    true
+                }
+                R.id.action_refresh -> {
+                    model.onRefreshEvents()
+                    true
+                }
+                R.id.action_settings -> {
+                    model.onOpenSettings()
+                    true
+                }
+                else -> false
+            }
+        }
 
         magnitudeChipGroup.setRestrictiveCheckListener { _, checkedId ->
             val minMag = when (checkedId) {
@@ -82,6 +97,8 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.clear()
+
         clusterManager = ClusterManager<EventMarker>(requireContext(), googleMap).apply {
             renderer = EventsRenderer(requireContext(), googleMap, this)
             setOnClusterItemInfoWindowClickListener { eventMarker ->
@@ -121,34 +138,26 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
         zoomInEvent.observe(viewLifecycleOwner) { event ->
             event.consume { coordinates -> zoomIn(coordinates.latitude, coordinates.longitude) }
         }
-        openDetailsEvent.observe(viewLifecycleOwner) { event ->
-            event.consume { eventId -> renderEventDetails(eventId) }
-        }
         updateCameraPositionEvent.observe(viewLifecycleOwner) { event ->
             event.consume { cameraState -> changeCameraPosition(cameraState) }
+        }
+
+        navigationEvent.observe(viewLifecycleOwner) { event ->
+            event.consume { command ->
+                (requireActivity() as Navigator).processNavCommand(command)
+            }
         }
     }
 
     override fun onStop() {
-        val cameraTarget = map.cameraPosition.target
-        val zoom = map.cameraPosition.zoom
-        val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
-        model.onRememberCameraPosition(coordinates, zoom)
-        super.onStop()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_filter -> {
-                model.onToggleFiltersVisibility()
-                true
-            }
-            R.id.action_refresh -> {
-                model.onRefreshEvents()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        val map = this.map
+        if (map != null) {
+            val cameraTarget = map.cameraPosition.target
+            val zoom = map.cameraPosition.zoom
+            val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
+            model.onRememberCameraPosition(coordinates, zoom)
         }
+        super.onStop()
     }
 
     private fun renderEventMarkers(markers: List<EventMarker>) {
@@ -186,31 +195,23 @@ class MapFragment : BaseMapFragment(), OnMapReadyCallback {
         numOfDaysSeekBar.progress = days - 1
     }
 
-    private fun renderEventDetails(eventId: String) {
-        DetailsActivity.start(requireActivity(), eventId)
-    }
-
     private fun changeCameraPosition(cameraState: CameraState) {
         val (zoom, coordinates) = cameraState
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
+        requireMap().moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
     }
 
     private fun zoomIn(latitude: Double, longitude: Double) {
         val position = LatLng(latitude, longitude)
-        val zoom = map.cameraPosition.zoom + 2
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom))
+        val zoom = requireMap().cameraPosition.zoom + 2
+        requireMap().animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom))
+    }
+
+    private fun requireMap(): GoogleMap {
+        return this.map ?: throw NullPointerException()
     }
 
 
     companion object {
-        fun newInstance(context: Context): MapFragment {
-            val transitionInflater = TransitionInflater.from(context)
-            val enterAnim = transitionInflater.inflateTransition(R.transition.transition_main_enter)
-            val exitAnim = transitionInflater.inflateTransition(R.transition.transition_main_exit)
-            return MapFragment().apply {
-                enterTransition = enterAnim
-                exitTransition = exitAnim
-            }
-        }
+        fun newInstance(): Fragment = MapFragment()
     }
 }

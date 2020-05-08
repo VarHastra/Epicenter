@@ -21,6 +21,7 @@ import me.alex.pet.apps.epicenter.domain.model.failures.Failure.LocationFailure
 import me.alex.pet.apps.epicenter.domain.repos.LocationRepository
 import org.threeten.bp.Duration
 import timber.log.Timber
+import java.io.IOException
 import kotlin.coroutines.resume
 
 class LocationProvider(val context: Context) : LocationRepository {
@@ -117,8 +118,12 @@ class LocationProvider(val context: Context) : LocationRepository {
             return Either.Failure(GeocoderFailure.NotAvailable)
         }
 
-        val (lat, lon) = coordinates
-        val addresses = geocoder.getFromLocation(lat, lon, 1)
+        val addresses = try {
+            geocoder.getFromLocation(coordinates.latitude, coordinates.longitude, 1)
+        } catch (e: IOException) {
+            return Either.Failure(GeocoderFailure.NotAvailable)
+        }
+
         return if (addresses.isEmpty()) {
             Timber.w("getLocationName() > Geocoder.getFromLocation() has returned an empty address list.")
             Either.Failure(GeocoderFailure.UnableToGeocode(coordinates))

@@ -13,8 +13,6 @@ import me.alex.pet.apps.epicenter.presentation.common.navigation.Navigator
 
 class HostActivity : AppCompatActivity(), Navigator {
 
-//    private val router: Router by inject()
-
     private lateinit var transitionInflater: TransitionInflater
 
     private lateinit var enterTransition: Transition
@@ -31,16 +29,6 @@ class HostActivity : AppCompatActivity(), Navigator {
             replaceFragment(rootDestination.newFragment(), rootDestination.tag, false)
         }
         preloadFragmentTransitions()
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        router.attachNavigator(this)
-    }
-
-    override fun onStop() {
-//        router.detachNavigator()
-        super.onStop()
     }
 
     override fun onBackPressed() {

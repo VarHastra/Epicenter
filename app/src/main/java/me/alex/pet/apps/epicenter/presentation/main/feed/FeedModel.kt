@@ -35,9 +35,9 @@ import me.alex.pet.apps.epicenter.domain.model.sorting.SortStrategy
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
 import me.alex.pet.apps.epicenter.domain.state.FeedStateDataSource
 import me.alex.pet.apps.epicenter.presentation.Destinations
-import me.alex.pet.apps.epicenter.presentation.common.EmptyEvent
-import me.alex.pet.apps.epicenter.presentation.common.Event
-import me.alex.pet.apps.epicenter.presentation.common.NavigationEvent
+import me.alex.pet.apps.epicenter.presentation.common.events.EmptyEvent
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
+import me.alex.pet.apps.epicenter.presentation.common.events.NavigationEvent
 import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.PersistentError
 import me.alex.pet.apps.epicenter.presentation.main.feed.Error.TransientError

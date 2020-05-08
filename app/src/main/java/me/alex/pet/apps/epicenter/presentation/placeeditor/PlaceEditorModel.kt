@@ -17,9 +17,9 @@ import me.alex.pet.apps.epicenter.domain.model.Place
 import me.alex.pet.apps.epicenter.domain.model.failures.Failure
 import me.alex.pet.apps.epicenter.domain.model.kmToM
 import me.alex.pet.apps.epicenter.domain.repos.UnitsLocaleRepository
-import me.alex.pet.apps.epicenter.presentation.common.Event
-import me.alex.pet.apps.epicenter.presentation.common.NavigationEvent
 import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
+import me.alex.pet.apps.epicenter.presentation.common.events.Event
+import me.alex.pet.apps.epicenter.presentation.common.events.NavigationEvent
 import me.alex.pet.apps.epicenter.presentation.common.navigation.NavigationCommand
 import me.alex.pet.apps.epicenter.presentation.placeeditor.navigation.PlaceEditorDestinations
 import kotlin.math.roundToInt

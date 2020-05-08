@@ -32,7 +32,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val model: MapModel by viewModel()
 
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
 
     private lateinit var clusterManager: ClusterManager<EventMarker>
 
@@ -150,10 +150,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onStop() {
-        val cameraTarget = map.cameraPosition.target
-        val zoom = map.cameraPosition.zoom
-        val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
-        model.onRememberCameraPosition(coordinates, zoom)
+        val map = this.map
+        if (map != null) {
+            val cameraTarget = map.cameraPosition.target
+            val zoom = map.cameraPosition.zoom
+            val coordinates = Coordinates(cameraTarget.latitude, cameraTarget.longitude)
+            model.onRememberCameraPosition(coordinates, zoom)
+        }
         super.onStop()
     }
 
@@ -194,13 +197,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun changeCameraPosition(cameraState: CameraState) {
         val (zoom, coordinates) = cameraState
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
+        requireMap().moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom))
     }
 
     private fun zoomIn(latitude: Double, longitude: Double) {
         val position = LatLng(latitude, longitude)
-        val zoom = map.cameraPosition.zoom + 2
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom))
+        val zoom = requireMap().cameraPosition.zoom + 2
+        requireMap().animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom))
+    }
+
+    private fun requireMap(): GoogleMap {
+        return this.map ?: throw NullPointerException()
     }
 
 

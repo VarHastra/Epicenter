@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="4.6"
-                    tools:textColor="@color/colorAlert4" />
+                    tools:textColor="?attr/colorAlert4" />
 
                 <TextView
                     android:id="@+id/magnitudeTypeTv"
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_05x"
-                    android:textColor="@color/colorAlert4"
+                    android:textColor="?attr/colorAlert4"
                     tools:text="mb" />
             </LinearLayout>
 
@@ -69,16 +69,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_2x"
                 android:layout_marginTop="@dimen/spacing_05x"
-                android:drawableStart="@drawable/ic_waves_blue_24px"
+                android:drawableStart="@drawable/ic_tsunami"
                 android:drawablePadding="@dimen/spacing_1x"
                 android:text="@string/details_tsunami_alert"
-                android:textColor="@color/colorTsunami" />
+                android:textColor="?colorTsunami" />
 
             <me.alex.pet.apps.epicenter.presentation.common.views.TileTwolineView
                 android:id="@+id/locationTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_location_24dp"
+                app:icon="@drawable/ic_location"
                 app:title="@string/details_location"
                 tools:textFirstLine="Lat: -127.3093, Lon: 40.5524"
                 tools:textSecondLine="Distance from you 1125mi" />
@@ -87,7 +87,7 @@
                 android:id="@+id/dateTimeTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_datetime_white_24px"
+                app:icon="@drawable/ic_datetime"
                 app:title="@string/details_datetime"
                 tools:textFirstLine="03/30/2019 at 12:34 pm"
                 tools:textSecondLine="2 days ago" />
@@ -96,7 +96,7 @@
                 android:id="@+id/depthTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_depth_white_24px"
+                app:icon="@drawable/ic_depth"
                 app:title="@string/details_depth"
                 tools:text="15 km" />
 
@@ -104,7 +104,7 @@
                 android:id="@+id/feltReportsTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_dyfi_white_24px"
+                app:icon="@drawable/ic_man"
                 app:title="@string/details_dyfi"
                 tools:text="4" />
 
@@ -113,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_2x"
-                app:icon="@drawable/ic_open_link_white_24px"
+                app:icon="@drawable/ic_link"
                 app:title="@string/details_source_link"
                 tools:text="http://usgs.gov" />
         </LinearLayout>
@@ -135,6 +135,7 @@
             app:toolbarId="@id/toolbar">
 
             <androidx.appcompat.widget.Toolbar
+                style="@style/Widget.MaterialComponents.Toolbar.Surface"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp" />

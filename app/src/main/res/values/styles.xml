@@ -1,12 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <!-- Customize your theme here. -->
+    <!-- Main application theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
-        <item name="colorSecondary">@color/colorOnSecondary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="colorError">@color/colorError</item>
@@ -15,58 +14,108 @@
         <item name="colorOnBackground">@color/colorOnBackground</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnSurface</item>
-        <item name="snackbarStyle">@style/SnackbarStyle</item>
+
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
         <item name="android:statusBarColor">?colorSurface</item>
 
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowContentTransitions">true</item>
+        <item name="colorAlert0">@color/colorAlert0</item>
+        <item name="colorAlert2">@color/colorAlert2</item>
+        <item name="colorAlert4">@color/colorAlert4</item>
+        <item name="colorAlert5">@color/colorAlert5</item>
+        <item name="colorAlert6">@color/colorAlert6</item>
+        <item name="colorAlert7">@color/colorAlert7</item>
+        <item name="colorAlert8">@color/colorAlert8</item>
+        <item name="colorAlert9">@color/colorAlert9</item>
+        <item name="colorTsunami">@color/colorTsunami</item>
 
-        <item name="android:windowEnterTransition">@transition/transition_all_enter</item>
-        <item name="android:windowReenterTransition">@transition/transition_all_reenter</item>
-        <item name="android:windowReturnTransition">@transition/transition_all_return</item>
+        <item name="colorIconActive">?colorControlNormal</item>
+        <item name="colorIconInactive">?android:textColorHint</item>
+        <item name="colorIconDim">@color/colorIconSheer</item>
+
+        <item name="colorDanger">@color/colorDanger</item>
     </style>
 
-    <style name="AppTheme.Gentle" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimaryGentle</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryGentleVariant</item>
+
+    <!-- Main theme overlays -->
+    <style name="AppThemeOverlay" parent="AppTheme" />
+
+    <style name="AppThemeOverlay.PrimaryAsSecondary">
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnSecondary">@color/colorOnPrimary</item>
     </style>
 
-    <style name="AppTheme.TranslucentStatus" parent="AppTheme">
-        <item name="android:statusBarColor">?colorSurface</item>
+    <style name="AppThemeOverlay.Alert0">
+        <item name="colorPrimary">@color/colorAlert0</item>
+        <item name="colorOnPrimary">#FFF</item>
     </style>
 
-    <style name="AppTheme.TransparentStatus" parent="AppTheme">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="AppThemeOverlay.Alert2">
+        <item name="colorPrimary">@color/colorAlert2</item>
+        <item name="colorOnPrimary">#FFF</item>
     </style>
 
-    <style name="SnackbarStyle" parent="@style/Widget.MaterialComponents.Snackbar">
-        <item name="actionTextColorAlpha">1.0</item>
-        <item name="android:backgroundTint">@color/colorSnackbar</item>
+    <style name="AppThemeOverlay.Alert4">
+        <item name="colorPrimary">@color/colorAlert4</item>
+        <item name="colorOnPrimary">#FFF</item>
     </style>
 
+    <style name="AppThemeOverlay.Alert5">
+        <item name="colorPrimary">@color/colorAlert5</item>
+        <item name="colorOnPrimary">#FFF</item>
+    </style>
+
+    <style name="AppThemeOverlay.Alert6">
+        <item name="colorPrimary">@color/colorAlert6</item>
+        <item name="colorOnPrimary">#FFF</item>
+    </style>
+
+    <style name="AppThemeOverlay.Alert7">
+        <item name="colorPrimary">@color/colorAlert7</item>
+        <item name="colorOnPrimary">#FFF</item>
+    </style>
+
+    <style name="AppThemeOverlay.Alert8">
+        <item name="colorPrimary">@color/colorAlert8</item>
+        <item name="colorOnPrimary">#FFF</item>
+    </style>
+
+    <style name="AppThemeOverlay.Alert9">
+        <item name="colorPrimary">@color/colorAlert9</item>
+        <item name="colorOnPrimary">#FFF</item>
+    </style>
+
+
+    <!-- Styles of individual components -->
     <style name="SelectableChip" parent="@style/Widget.MaterialComponents.Chip.Choice">
-        <item name="chipBackgroundColor">@color/bg_chip</item>
-        <item name="android:textColor">@color/text_chip</item>
-        <item name="chipIconTint">@color/text_chip</item>
-        <item name="checkedIcon">@null</item>
+        <item name="chipBackgroundColor">@color/chip_bg_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+        <item name="chipIconTint">@color/chip_text_color</item>
         <item name="android:checkable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
 
-    <style name="ClusterIconTextAppearance">
-        <item name="android:textColor">#80000000</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+    <style name="TextAppearance.MaterialComponents.Body2.Secondary">
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="MapTooltipTextAppearance" parent="@style/TextAppearance.MaterialComponents.Caption">
-        <item name="android:textColor">@color/colorMapTooltipText</item>
-        <item name="android:background">@drawable/bg_map_tooltip</item>
-        <item name="android:minHeight">40dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingStart">@dimen/spacing_1x</item>
-        <item name="android:paddingEnd">@dimen/spacing_1x</item>
+    <style name="SelectableChip.OpaqueSelection">
+        <item name="chipBackgroundColor">@color/opaque_chip_bg_color</item>
+        <item name="android:textColor">@color/opaque_chip_text_color</item>
+        <item name="chipIconTint">@color/opaque_chip_text_color</item>
+    </style>
+
+    <style name="Widget.AppCompat.SeekBar.Primary">
+        <item name="android:progressBackgroundTint">?colorPrimary</item>
+        <item name="android:progressTint">?colorPrimary</item>
+        <item name="android:thumbTint">?colorPrimary</item>
+    </style>
+
+    <style name="ClusterIconTextAppearance">
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

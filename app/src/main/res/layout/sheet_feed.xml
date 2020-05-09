@@ -39,8 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="@string/feed_filters_location"
-                android:textStyle="bold" />
+                android:text="@string/feed_filters_location" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/editLocationBtn"
@@ -67,20 +66,17 @@
             android:layout_marginTop="@dimen/spacing_2x"
             android:layout_marginEnd="@dimen/spacing_2x"
             android:gravity="center_vertical"
-            android:text="@string/feed_filters_sort_by"
-            android:textStyle="bold" />
+            android:text="@string/feed_filters_sort_by" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:theme="@style/AppTheme.Gentle">
+            android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/sortingChipGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_1x"
                 android:paddingStart="@dimen/spacing_2x"
                 android:paddingEnd="@dimen/spacing_2x"
                 app:singleLine="true"
@@ -118,19 +114,16 @@
             android:layout_marginTop="@dimen/spacing_2x"
             android:layout_marginEnd="@dimen/spacing_2x"
             android:gravity="center_vertical"
-            android:text="@string/feed_filters_magnitude"
-            android:textStyle="bold" />
+            android:text="@string/feed_filters_magnitude" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.Gentle">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/magnitudeChipGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_1x"
                 android:paddingStart="@dimen/spacing_2x"
                 android:paddingEnd="@dimen/spacing_2x"
                 app:singleLine="true"
@@ -138,43 +131,43 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/magnitudeZeroChip"
-                    style="@style/SelectableChip"
+                    style="@style/SelectableChip.OpaqueSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/feed_filters_chip_mag_0"
-                    app:chipBackgroundColor="@color/bg_chip_alert_0" />
+                    android:theme="@style/AppThemeOverlay.Alert0" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/magnitudeTwoChip"
-                    style="@style/SelectableChip"
+                    style="@style/SelectableChip.OpaqueSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/feed_filters_chip_mag_2"
-                    app:chipBackgroundColor="@color/bg_chip_alert_2" />
+                    android:theme="@style/AppThemeOverlay.Alert2" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/magnitudeFourChip"
-                    style="@style/SelectableChip"
+                    style="@style/SelectableChip.OpaqueSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/feed_filters_chip_mag_4"
-                    app:chipBackgroundColor="@color/bg_chip_alert_4" />
+                    android:theme="@style/AppThemeOverlay.Alert4" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/magnitudeSixChip"
-                    style="@style/SelectableChip"
+                    style="@style/SelectableChip.OpaqueSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/feed_filters_chip_mag_6"
-                    app:chipBackgroundColor="@color/bg_chip_alert_6" />
+                    android:theme="@style/AppThemeOverlay.Alert6" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/magnitudeEightChip"
-                    style="@style/SelectableChip"
+                    style="@style/SelectableChip.OpaqueSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/feed_filters_chip_mag_8"
-                    app:chipBackgroundColor="@color/bg_chip_alert_8" />
+                    android:theme="@style/AppThemeOverlay.Alert8" />
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
     </LinearLayout>

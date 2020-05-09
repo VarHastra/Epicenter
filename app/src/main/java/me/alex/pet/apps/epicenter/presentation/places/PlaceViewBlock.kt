@@ -29,9 +29,9 @@ class Mapper(private val context: Context, unitsLocale: UnitsLocale) {
         }
 
         val iconResId = when (place.id) {
-            Place.CURRENT_LOCATION.id -> R.drawable.ic_place_near_me_24px
-            Place.WORLD.id -> R.drawable.ic_place_world_24px
-            else -> R.drawable.ic_drag_handle_24px
+            Place.CURRENT_LOCATION.id -> R.drawable.ic_place_near_me
+            Place.WORLD.id -> R.drawable.ic_place_world
+            else -> R.drawable.ic_drag_handle
         }
 
         val isDeletable = !place.isSpecial

@@ -6,18 +6,18 @@
     <item
         android:id="@+id/action_refresh"
         android:title="@string/app_refresh"
-        android:icon="@drawable/ic_action_refresh_24px"
+        android:icon="@drawable/ic_action_refresh"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_filter"
         android:title="@string/app_filter"
-        android:icon="@drawable/ic_action_filter_list_24px"
+        android:icon="@drawable/ic_action_filter"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_settings"
         android:title="@string/app_settings"
-        android:icon="@drawable/ic_action_settings_24px"
+        android:icon="@drawable/ic_action_settings"
         app:showAsAction="never" />
 </menu>

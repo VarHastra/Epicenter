@@ -12,7 +12,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.activity_location_picker.*
+import kotlinx.android.synthetic.main.fragment_location_picker.*
 import kotlinx.android.synthetic.main.layout_place_editor_controls.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.getColorCompat

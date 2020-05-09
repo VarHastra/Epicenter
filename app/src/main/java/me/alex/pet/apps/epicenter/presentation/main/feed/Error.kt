@@ -23,34 +23,34 @@ sealed class Error {
         object NoEvents : PersistentError(
                 R.string.app_error_no_events,
                 R.string.app_error_no_events_capt,
-                R.drawable.ic_error_earth_24px
+                R.drawable.ic_error_large_no_events
         )
 
         object NoConnection : PersistentError(
                 R.string.app_error_no_connection,
                 R.string.app_error_no_connection_capt,
-                R.drawable.ic_error_wifi_off_24px,
+                R.drawable.ic_error_large_no_connection,
                 R.string.app_action_retry
         )
 
         object NoLocationPermission : PersistentError(
                 R.string.feed_error_no_location_permission,
                 R.string.feed_error_no_location_permission_capt,
-                R.drawable.ic_error_no_location_permission,
+                R.drawable.ic_error_large_no_permission,
                 R.string.app_action_grant_permission
         )
 
         class LocationIsOff(val resolvableException: ResolvableApiException) : PersistentError(
                 R.string.feed_error_location_is_off,
                 R.string.feed_error_location_is_off_capt,
-                R.drawable.ic_error_location_is_off,
+                R.drawable.ic_error_large_no_gps,
                 R.string.app_action_enable_location
         )
 
         object Unknown : PersistentError(
                 R.string.app_error_unknown,
                 R.string.app_error_unknown_capt,
-                R.drawable.ic_error_cloud_off_24dp,
+                R.drawable.ic_error_large_unknown,
                 R.string.app_action_retry
         )
     }

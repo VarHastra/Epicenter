@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.activity_name_picker.nameEditText
-import kotlinx.android.synthetic.main.activity_name_picker.saveFab
 import kotlinx.android.synthetic.main.fragment_name_picker.*
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.longSnackbar

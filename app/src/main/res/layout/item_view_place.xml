@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/spacing_05x"
         android:layout_marginEnd="@dimen/spacing_05x"
         android:background="@null"
-        android:src="@drawable/ic_drag_handle_24px" />
+        android:src="@drawable/ic_drag_handle" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -34,12 +34,11 @@
 
         <TextView
             android:id="@+id/placeCaptionTextView"
-            style="@style/TextAppearance.MaterialComponents.Body2"
+            style="@style/TextAppearance.MaterialComponents.Body2.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="?android:textColorSecondary"
             tools:text="3000 mi" />
 
     </LinearLayout>
@@ -50,6 +49,6 @@
         android:layout_height="match_parent"
         android:background="@null"
         android:layout_marginEnd="@dimen/spacing_05x"
-        android:src="@drawable/ic_remove_circle_red_24px" />
+        android:src="@drawable/ic_remove_red" />
 
 </LinearLayout>

@@ -1,55 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#27BEFF</color>
-    <color name="colorPrimaryVariant">#6ec5ff</color>
-    <color name="colorPrimaryGentle">#858585</color>
-    <color name="colorPrimaryGentleVariant">#858585</color>
-    <color name="colorOnPrimary">#8A000000</color>
-    <color name="colorSecondary">#27BEFF</color>
-    <color name="colorSecondaryVariant">#6ec5ff</color>
-    <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="colorError">#F44336</color>
-    <color name="colorOnError">#FFFFFF</color>
-    <color name="colorBackground">#212121</color>
-    <color name="colorOnBackground">#8affffff</color>
-    <color name="colorSurface">#303030</color>
-    <color name="colorSemitransparentSurface">#99303030</color>
-    <color name="colorOnSurface">#8affffff</color>
+    <!-- Material theme colors -->
+    <color name="colorPrimary">#5C1CB3</color>
+    <color name="colorPrimaryVariant">#5014AB</color>
+    <color name="colorOnPrimary">#FFF</color>
+    <color name="colorSecondary">#00FFF0</color>
+    <color name="colorSecondaryVariant">#06CEC2</color>
+    <color name="colorOnSecondary">#000</color>
+    <color name="colorError">#CF0000</color>
+    <color name="colorOnError">#FFF</color>
+    <color name="colorBackground">#FFF</color>
+    <color name="colorOnBackground">#000</color>
+    <color name="colorSurface">#FFF</color>
+    <color name="colorOnSurface">#000</color>
 
-    <color name="colorSnackbar">#ffffff</color>
 
-    <color name="colorTextPrimary">#ffffff</color>
-    <color name="colorTextSecondary">#99FFFFFF</color>
-    <color name="colorTextCaption">#08FFFFFF</color>
-    <color name="colorTextLink">#8027BEFF</color>
+    <!-- Custom colors -->
+    <color name="colorIconSheer">#1F000000</color>
 
-    <color name="colorIconActive">#ffffff</color>
-    <color name="colorIconInactive">#B3FFFFFF</color>
-    <color name="colorIconDisabled">#80FFFFFF</color>
-    <color name="colorIconSheer">#1fffffff</color>
+    <color name="colorAlert0">#7E828E</color>
+    <color name="colorAlert2">#4D546A</color>
+    <color name="colorAlert4">#FFB300</color>
+    <color name="colorAlert5">#FA9A1F</color>
+    <color name="colorAlert6">#FB8C00</color>
+    <color name="colorAlert7">#F44336</color>
+    <color name="colorAlert8">#AD3F76</color>
+    <color name="colorAlert9">#673AB7</color>
 
-    <color name="colorIconDarkActive">#DE000000</color>
-    <color name="colorIconDarkInactive">#8A000000</color>
-    <color name="colorIconDarkDisabled">#61000000</color>
-    <color name="colorIconDarkSheer">#1F000000</color>
+    <color name="colorTsunami">#0063D8</color>
 
-    <color name="colorDivider">#1F000000</color>
+    <color name="colorDanger">#D61907</color>
 
-    <color name="colorChipSelected">#FFFFFF</color>
-    <color name="colorChip">#1FFFFFFF</color>
-    <color name="colorChipTextSelected">@color/colorSurface</color>
-    <color name="colorChipText">@color/mtrl_on_surface_emphasis_medium</color>
-
-    <color name="colorAlert0">#F4E0A5</color>
-    <color name="colorAlert2">#EED177</color>
-    <color name="colorAlert4">#E8C14A</color>
-    <color name="colorAlert6">#E48B50</color>
-    <color name="colorAlert8">#E15555</color>
-    <color name="colorTsunami">#27A9F3</color>
-
-    <color name="colorSelectedArea">#8027BEFF</color>
-    <color name="colorSelectedAreaStroke">#27BEFF</color>
-
-    <color name="colorMapTooltipBg">#D6FFFFFF</color>
-    <color name="colorMapTooltipText">#DE000000</color>
+    <color name="colorSelectedArea">#805C1CB3</color>
+    <color name="colorSelectedAreaStroke">#5C1CB3</color>
 </resources>

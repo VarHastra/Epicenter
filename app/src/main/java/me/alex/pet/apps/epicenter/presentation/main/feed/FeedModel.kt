@@ -255,8 +255,8 @@ private fun PlaceName.toView(): PlaceViewBlock {
     val titleText = this.name
 
     val iconResId = when (this.id) {
-        Place.CURRENT_LOCATION.id -> R.drawable.ic_place_near_me_24px
-        Place.WORLD.id -> R.drawable.ic_place_world_24px
+        Place.CURRENT_LOCATION.id -> R.drawable.ic_chip_place_near_me
+        Place.WORLD.id -> R.drawable.ic_chip_place_world
         else -> null
     }
 

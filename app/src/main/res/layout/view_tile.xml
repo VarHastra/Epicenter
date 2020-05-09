@@ -12,8 +12,7 @@
         android:layout_height="@dimen/size_icon_normal"
         android:layout_alignTop="@id/tv_tile_title"
         android:layout_marginStart="@dimen/spacing_2x"
-        android:tint="@color/colorIconDisabled"
-        tools:src="@drawable/ic_datetime_white_24px" />
+        tools:src="@drawable/ic_datetime" />
 
     <TextView
         android:id="@+id/tv_tile_title"
@@ -29,7 +28,7 @@
 
     <TextView
         android:id="@+id/tv_tile_text"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="@style/TextAppearance.MaterialComponents.Body2.Secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_tile_title"
@@ -40,8 +39,6 @@
         android:ellipsize="end"
         android:linksClickable="false"
         android:maxLines="1"
-        android:textColor="@color/colorTextSecondary"
-        android:textColorLink="@color/colorTextLink"
         tools:text="5" />
 
 </RelativeLayout>

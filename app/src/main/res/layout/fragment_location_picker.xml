@@ -40,9 +40,7 @@
         android:elevation="10dp"
         app:layout_anchor="@id/bottomSheetRootView"
         app:layout_anchorGravity="end"
-        app:rippleColor="@color/colorIconDarkDisabled"
-        app:srcCompat="@drawable/ic_next_fab_dark_24px"
-        app:tint="@color/colorIconDarkActive"
+        app:srcCompat="@drawable/ic_fab_action_next"
         tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

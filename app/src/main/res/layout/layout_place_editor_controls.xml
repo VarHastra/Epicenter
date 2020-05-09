@@ -36,14 +36,11 @@
         android:layout_marginTop="@dimen/spacing_1x"
         android:layout_marginEnd="@dimen/spacing_1x"
         android:layout_marginBottom="@dimen/spacing_2x"
-        android:indeterminateTint="?colorPrimary"
         android:max="100"
-        android:progressBackgroundTint="?colorPrimary"
-        android:progressTint="?colorPrimary"
-        android:thumbTint="?colorPrimary" />
+        android:theme="@style/AppThemeOverlay.PrimaryAsSecondary" />
 
     <TextView
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="@style/TextAppearance.MaterialComponents.Body2.Secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_2x"

@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="30sp"
+        tools:textColor="?attr/colorAlert5"
         tools:text="5.6" />
 
     <LinearLayout
@@ -38,14 +39,13 @@
 
             <TextView
                 android:id="@+id/distanceTextView"
-                style="@style/TextAppearance.MaterialComponents.Body2"
+                style="@style/TextAppearance.MaterialComponents.Body2.Secondary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_1x"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/mtrl_dark_on_surface_emphasis_medium"
                 tools:text="Distance: 3453 mi" />
 
             <ImageView
@@ -53,7 +53,7 @@
                 android:layout_width="@dimen/size_icon_small"
                 android:layout_height="@dimen/size_icon_small"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_waves_blue_24px" />
+                android:src="@drawable/ic_tsunami" />
         </LinearLayout>
 
 
@@ -64,14 +64,13 @@
 
             <TextView
                 android:id="@+id/depthTextView"
-                style="@style/TextAppearance.MaterialComponents.Body2"
+                style="@style/TextAppearance.MaterialComponents.Body2.Secondary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_1x"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/mtrl_dark_on_surface_emphasis_medium"
                 tools:text="Depth: 15 mi" />
 
             <TextView

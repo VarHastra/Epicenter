@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Custom theme attributes -->
+    <attr name="colorAlert0" format="color|reference" />
+    <attr name="colorAlert2" format="color|reference" />
+    <attr name="colorAlert4" format="color|reference" />
+    <attr name="colorAlert5" format="color|reference" />
+    <attr name="colorAlert6" format="color|reference" />
+    <attr name="colorAlert7" format="color|reference" />
+    <attr name="colorAlert8" format="color|reference" />
+    <attr name="colorAlert9" format="color|reference" />
+    <attr name="colorTsunami" format="color|reference" />
+
+    <attr name="colorIconActive" format="color|reference" />
+    <attr name="colorIconInactive" format="color|reference" />
+    <attr name="colorIconDim" format="color|reference" />
+
+    <attr name="colorDanger" format="color|reference" />
+
+
+    <!-- Custom view attributes -->
     <attr name="title" format="string" />
     <attr name="icon" format="reference" />
     <attr name="iconTint" format="color" />

@@ -95,10 +95,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             model.onChangeNumberOfDaysToShow(seekBar.progress + 1)
         }
 
+        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // Intentionally do nothing
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    filtersFab.show()
+                }
+            }
+        })
+
         hideFiltersBtn.setOnClickListener {
             if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_DRAGGING) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
+        }
+
+        filtersFab.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            filtersFab.hide()
         }
     }
 

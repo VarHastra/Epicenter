@@ -62,10 +62,6 @@
     <string name="feed_event_distance">Distance: %1$s</string>
     <string name="feed_event_depth">Depth: %1$s</string>
 
-    <string name="feed_edit_places">Edit places</string>
-    <string name="feed_edit_places_desc">Add new or edit existing places</string>
-    <string name="feed_place_infinite">Infinite</string>
-
     <string name="feed_error_no_location_permission">No location permission</string>
     <string name="feed_error_no_location_permission_capt">This feature requires permission to access the device location. Your location data never leaves your device and is used to find events near you.</string>
     <string name="feed_error_location_is_off">Location is off</string>
@@ -135,27 +131,22 @@
     <string name="map_filters_4_days">4 days</string>
     <string name="map_format_marker_title">%s %s</string>
 
-    <string name="places_title">Places manager</string>
-    <string name="places_infinite">Infinity</string>
+    <string name="places_title">Locations</string>
     <string name="places_radius_dash">-</string>
     <string name="place_editor_radius">Radius</string>
 
     <plurals name="plurals_places_deleted">
-        <item quantity="zero">%d places deleted</item>
-        <item quantity="one">%d place deleted</item>
-        <item quantity="two">%d places deleted</item>
-        <item quantity="few">%d places deleted</item>
-        <item quantity="many">%d places deleted</item>
-        <item quantity="other">%d places deleted</item>
+        <item quantity="zero">%d locations deleted</item>
+        <item quantity="one">%d location deleted</item>
+        <item quantity="two">%d location deleted</item>
+        <item quantity="few">%d locations deleted</item>
+        <item quantity="many">%d locations deleted</item>
+        <item quantity="other">%d locations deleted</item>
     </plurals>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="place_name_picker_place_name">Place name</string>
-    <string name="place_name_picker_error_empty_name">Enter place name</string>
-    <string name="places_manager_place_deleted">Place deleted</string>
+    <string name="place_name_picker_place_name">Location name</string>
+    <string name="place_name_picker_error_empty_name">Enter location name</string>
     <string name="app_undo">Undo</string>
 
-    <string name="place_editor_tap_to_select">Tap anywhere to select a place</string>
     <string name="place_editor_hint_move_map">Move the map to select the desired place</string>
 </resources>

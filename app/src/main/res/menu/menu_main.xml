@@ -10,12 +10,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_filter"
-        android:title="@string/app_filter"
-        android:icon="@drawable/ic_action_filter"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_settings"
         android:title="@string/app_settings"
         android:icon="@drawable/ic_action_settings"

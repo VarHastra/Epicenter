@@ -63,10 +63,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.action_filter -> {
-                    model.onToggleFiltersVisibility()
-                    true
-                }
                 R.id.action_refresh -> {
                     model.onRefreshEvents()
                     true

@@ -1,174 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/filtersSheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorSurface"
+    android:clickable="true"
     android:elevation="@dimen/elevation_bottom_sheet"
+    android:focusable="true"
+    android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="@dimen/height_bottom_sheet_peek"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:background="?colorSurface"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/spacing_2x">
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical">
 
-        <View
-            android:layout_width="24dp"
-            android:layout_height="4dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/spacing_1x"
-            android:background="@drawable/shape_sheet_drag_handle" />
+        <ImageButton
+            android:id="@+id/hideFiltersBtn"
+            android:contentDescription="@string/app_action_hide_filters"
+            android:layout_width="@dimen/size_min_touch_target"
+            android:layout_height="@dimen/size_min_touch_target"
+            android:layout_marginStart="@dimen/spacing_05x"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_collapse" />
+
+        <TextView
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/spacing_05x"
+            android:layout_marginEnd="@dimen/spacing_2x"
+            android:gravity="center_vertical"
+            android:text="@string/app_filter" />
+
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_2x"
-            android:layout_marginTop="@dimen/spacing_1x"
-            android:layout_marginEnd="@dimen/spacing_2x"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="?colorSurface"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_2x">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_2x"
+                android:layout_marginTop="@dimen/spacing_1x"
+                android:layout_marginEnd="@dimen/spacing_2x"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/feed_filters_location" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editLocationBtn"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feed_filters_edit_locations" />
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/locationChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/spacing_2x"
+                android:paddingEnd="@dimen/spacing_2x"
+                app:singleLine="false"
+                app:singleSelection="true" />
 
             <TextView
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/spacing_2x"
+                android:layout_marginTop="@dimen/spacing_2x"
+                android:layout_marginEnd="@dimen/spacing_2x"
                 android:gravity="center_vertical"
-                android:text="@string/feed_filters_location" />
+                android:text="@string/feed_filters_sort_by" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/editLocationBtn"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_filters_edit_locations" />
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/sortingChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_2x"
+                    android:paddingEnd="@dimen/spacing_2x"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/sortByDateChip"
+                        style="@style/SelectableChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_sorting_data" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/sortByMagnitudeChip"
+                        style="@style/SelectableChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_sorting_mag"
+                        app:chipIconEnabled="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/sortByDistanceChip"
+                        style="@style/SelectableChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_sorting_distance" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/spacing_2x"
+                android:layout_marginTop="@dimen/spacing_2x"
+                android:layout_marginEnd="@dimen/spacing_2x"
+                android:gravity="center_vertical"
+                android:text="@string/feed_filters_magnitude" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_4x">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/magnitudeChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_2x"
+                    android:paddingEnd="@dimen/spacing_2x"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/magnitudeZeroChip"
+                        style="@style/SelectableChip.OpaqueSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_mag_0"
+                        android:theme="@style/AppThemeOverlay.Alert0" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/magnitudeTwoChip"
+                        style="@style/SelectableChip.OpaqueSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_mag_2"
+                        android:theme="@style/AppThemeOverlay.Alert2" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/magnitudeFourChip"
+                        style="@style/SelectableChip.OpaqueSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_mag_4"
+                        android:theme="@style/AppThemeOverlay.Alert4" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/magnitudeSixChip"
+                        style="@style/SelectableChip.OpaqueSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_mag_6"
+                        android:theme="@style/AppThemeOverlay.Alert6" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/magnitudeEightChip"
+                        style="@style/SelectableChip.OpaqueSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_filters_chip_mag_8"
+                        android:theme="@style/AppThemeOverlay.Alert8" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
         </LinearLayout>
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/locationChipGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/spacing_2x"
-            android:paddingEnd="@dimen/spacing_2x"
-            app:singleLine="false"
-            app:singleSelection="true" />
-
-        <TextView
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="@dimen/spacing_2x"
-            android:layout_marginTop="@dimen/spacing_2x"
-            android:layout_marginEnd="@dimen/spacing_2x"
-            android:gravity="center_vertical"
-            android:text="@string/feed_filters_sort_by" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/sortingChipGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/spacing_2x"
-                android:paddingEnd="@dimen/spacing_2x"
-                app:singleLine="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/sortByDateChip"
-                    style="@style/SelectableChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_sorting_data" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/sortByMagnitudeChip"
-                    style="@style/SelectableChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_sorting_mag"
-                    app:chipIconEnabled="true" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/sortByDistanceChip"
-                    style="@style/SelectableChip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_sorting_distance" />
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-
-        <TextView
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="@dimen/spacing_2x"
-            android:layout_marginTop="@dimen/spacing_2x"
-            android:layout_marginEnd="@dimen/spacing_2x"
-            android:gravity="center_vertical"
-            android:text="@string/feed_filters_magnitude" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/magnitudeChipGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/spacing_2x"
-                android:paddingEnd="@dimen/spacing_2x"
-                app:singleLine="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/magnitudeZeroChip"
-                    style="@style/SelectableChip.OpaqueSelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_mag_0"
-                    android:theme="@style/AppThemeOverlay.Alert0" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/magnitudeTwoChip"
-                    style="@style/SelectableChip.OpaqueSelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_mag_2"
-                    android:theme="@style/AppThemeOverlay.Alert2" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/magnitudeFourChip"
-                    style="@style/SelectableChip.OpaqueSelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_mag_4"
-                    android:theme="@style/AppThemeOverlay.Alert4" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/magnitudeSixChip"
-                    style="@style/SelectableChip.OpaqueSelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_mag_6"
-                    android:theme="@style/AppThemeOverlay.Alert6" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/magnitudeEightChip"
-                    style="@style/SelectableChip.OpaqueSelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feed_filters_chip_mag_8"
-                    android:theme="@style/AppThemeOverlay.Alert8" />
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

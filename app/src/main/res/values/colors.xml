@@ -19,7 +19,9 @@
     <color name="colorIconSheer">#1F000000</color>
 
     <color name="colorAlert0">#7E828E</color>
+    <color name="colorAlert1">#7E828E</color>
     <color name="colorAlert2">#4D546A</color>
+    <color name="colorAlert3">#4D546A</color>
     <color name="colorAlert4">#FFB300</color>
     <color name="colorAlert5">#FA9A1F</color>
     <color name="colorAlert6">#FB8C00</color>

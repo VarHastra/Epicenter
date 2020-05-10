@@ -20,7 +20,9 @@
         <item name="android:statusBarColor">?colorSurface</item>
 
         <item name="colorAlert0">@color/colorAlert0</item>
+        <item name="colorAlert1">@color/colorAlert1</item>
         <item name="colorAlert2">@color/colorAlert2</item>
+        <item name="colorAlert3">@color/colorAlert3</item>
         <item name="colorAlert4">@color/colorAlert4</item>
         <item name="colorAlert5">@color/colorAlert5</item>
         <item name="colorAlert6">@color/colorAlert6</item>

@@ -2,7 +2,9 @@
 <resources>
     <!-- Custom theme attributes -->
     <attr name="colorAlert0" format="color|reference" />
+    <attr name="colorAlert1" format="color|reference" />
     <attr name="colorAlert2" format="color|reference" />
+    <attr name="colorAlert3" format="color|reference" />
     <attr name="colorAlert4" format="color|reference" />
     <attr name="colorAlert5" format="color|reference" />
     <attr name="colorAlert6" format="color|reference" />

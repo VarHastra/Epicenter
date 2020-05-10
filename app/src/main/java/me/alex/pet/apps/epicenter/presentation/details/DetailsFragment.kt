@@ -101,7 +101,7 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     private fun renderMarker(marker: EventMarker) {
         map.run {
-            addMarker(marker.toMarkerOptions())
+            addMarker(marker.toMarkerOptions(requireContext()))
             moveCamera(
                     CameraUpdateFactory.newLatLngZoom(
                             LatLng(marker.latitude, marker.longitude),

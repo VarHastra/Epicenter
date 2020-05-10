@@ -1,6 +1,11 @@
 package me.alex.pet.apps.epicenter.presentation.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -54,14 +59,24 @@ class EventMarker(
 }
 
 
-fun EventMarker.toMarkerOptions(): MarkerOptions {
+fun EventMarker.toMarkerOptions(context: Context): MarkerOptions {
     return MarkerOptions().position(LatLng(latitude, longitude))
-            .icon(BitmapDescriptorFactory.fromResource(alertLevel.markerResId))
+            .icon(newBitmapDescriptorFromVectorResource(context, alertLevel.markerResId))
             .title(markerTitle)
             .snippet(markerSnippet)
             .anchor(0.5f, 0.5f)
             .alpha(alpha)
             .zIndex(zIndex)
+}
+
+private fun newBitmapDescriptorFromVectorResource(context: Context, @DrawableRes resId: Int): BitmapDescriptor {
+    val vectorDrawable = ContextCompat.getDrawable(context, resId)!!.apply {
+        setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+    }
+    val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    vectorDrawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
 
 

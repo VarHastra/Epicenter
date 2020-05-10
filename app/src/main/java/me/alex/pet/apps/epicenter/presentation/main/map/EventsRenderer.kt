@@ -1,11 +1,15 @@
 package me.alex.pet.apps.epicenter.presentation.main.map
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -43,7 +47,7 @@ class EventsRenderer(
 
 
     override fun onBeforeClusterItemRendered(item: EventMarker, markerOptions: MarkerOptions) {
-        val icon = BitmapDescriptorFactory.fromResource(item.alertLevel.markerResId)
+        val icon = newBitmapDescriptorFromVectorResource(context, item.alertLevel.markerResId)
         markerOptions.apply {
             icon(icon)
             zIndex(item.zIndex)
@@ -97,4 +101,14 @@ class EventsRenderer(
             setLayerInset(1, strokeWidth, strokeWidth, strokeWidth, strokeWidth)
         }
     }
+}
+
+private fun newBitmapDescriptorFromVectorResource(context: Context, @DrawableRes resId: Int): BitmapDescriptor {
+    val vectorDrawable = ContextCompat.getDrawable(context, resId)!!.apply {
+        setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+    }
+    val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    vectorDrawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
 }

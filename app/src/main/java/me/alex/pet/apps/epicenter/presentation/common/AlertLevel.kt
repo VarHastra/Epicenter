@@ -5,16 +5,16 @@ import androidx.annotation.DrawableRes
 import me.alex.pet.apps.epicenter.R
 
 enum class AlertLevel(val value: Int, @ColorRes val colorResId: Int, @DrawableRes val markerResId: Int) {
-    LEVEL_0(0, R.color.colorAlert0, R.drawable.marker_0),
-    LEVEL_1(1, R.color.colorAlert1, R.drawable.marker_0),
-    LEVEL_2(2, R.color.colorAlert2, R.drawable.marker_2),
-    LEVEL_3(3, R.color.colorAlert3, R.drawable.marker_2),
-    LEVEL_4(4, R.color.colorAlert4, R.drawable.marker_4),
-    LEVEL_5(5, R.color.colorAlert5, R.drawable.marker_4),
-    LEVEL_6(6, R.color.colorAlert6, R.drawable.marker_6),
-    LEVEL_7(7, R.color.colorAlert7, R.drawable.marker_6),
-    LEVEL_8(8, R.color.colorAlert8, R.drawable.marker_8),
-    LEVEL_9(9, R.color.colorAlert9, R.drawable.marker_8);
+    LEVEL_0(0, R.color.colorAlert0, R.drawable.ic_marker_0),
+    LEVEL_1(1, R.color.colorAlert1, R.drawable.ic_marker_1),
+    LEVEL_2(2, R.color.colorAlert2, R.drawable.ic_marker_2),
+    LEVEL_3(3, R.color.colorAlert3, R.drawable.ic_marker_3),
+    LEVEL_4(4, R.color.colorAlert4, R.drawable.ic_marker_4),
+    LEVEL_5(5, R.color.colorAlert5, R.drawable.ic_marker_5),
+    LEVEL_6(6, R.color.colorAlert6, R.drawable.ic_marker_6),
+    LEVEL_7(7, R.color.colorAlert7, R.drawable.ic_marker_7),
+    LEVEL_8(8, R.color.colorAlert8, R.drawable.ic_marker_8),
+    LEVEL_9(9, R.color.colorAlert9, R.drawable.ic_marker_9);
 
     companion object {
         fun from(magnitude: Double): AlertLevel {

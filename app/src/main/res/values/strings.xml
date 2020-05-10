@@ -6,7 +6,7 @@
     <string name="app_notifications">Notifications</string>
     <string name="app_search">Search</string>
     <string name="app_map">Map</string>
-    <string name="app_feed">Feed</string>
+    <string name="app_feed">List</string>
 
     <string name="app_place_current_location">Current location</string>
     <string name="app_place_world">World</string>

@@ -5,19 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorSurface"
+    android:clickable="true"
     android:elevation="@dimen/elevation_bottom_sheet"
+    android:focusable="true"
     android:orientation="vertical"
     android:paddingBottom="@dimen/spacing_2x"
     app:behavior_hideable="true"
     app:behavior_peekHeight="@dimen/height_bottom_sheet_peek"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <View
-        android:layout_width="24dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/spacing_1x"
-        android:background="@drawable/shape_sheet_drag_handle" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?colorSurface"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/hideFiltersBtn"
+            android:layout_width="@dimen/size_min_touch_target"
+            android:layout_height="@dimen/size_min_touch_target"
+            android:layout_marginStart="@dimen/spacing_05x"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_action_hide_filters"
+            android:src="@drawable/ic_collapse" />
+
+        <TextView
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/spacing_05x"
+            android:layout_marginEnd="@dimen/spacing_2x"
+            android:gravity="center_vertical"
+            android:text="@string/app_filter" />
+    </LinearLayout>
 
     <TextView
         style="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -96,7 +118,6 @@
 
     <SeekBar
         android:id="@+id/numOfDaysSeekBar"
-        android:theme="@style/AppThemeOverlay.PrimaryAsSecondary"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_min_touch_target"
@@ -104,7 +125,8 @@
         android:layout_marginEnd="@dimen/spacing_2x"
         android:max="6"
         android:rotation="180"
-        android:splitTrack="true" />
+        android:splitTrack="true"
+        android:theme="@style/AppThemeOverlay.PrimaryAsSecondary" />
 
     <LinearLayout
         android:layout_width="match_parent"

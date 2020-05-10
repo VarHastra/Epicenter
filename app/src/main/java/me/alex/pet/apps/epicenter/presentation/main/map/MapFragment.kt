@@ -94,6 +94,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         numOfDaysSeekBar.onStopTrackingTouch { seekBar ->
             model.onChangeNumberOfDaysToShow(seekBar.progress + 1)
         }
+
+        hideFiltersBtn.setOnClickListener {
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_DRAGGING) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

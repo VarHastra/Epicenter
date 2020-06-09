@@ -3,7 +3,6 @@ package me.alex.pet.apps.epicenter.presentation.main.map
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.view.ViewGroup
@@ -33,14 +32,10 @@ class EventsRenderer(
 
     private val clusterBgDrawable: ShapeDrawable = ShapeDrawable(OvalShape())
 
-    private val clusterOutlineDrawable: ShapeDrawable = ShapeDrawable(OvalShape()).apply {
-        alpha = 128
-    }
-
     private val iconGenerator = IconGenerator(context).apply {
         setContentView(makeSquareTextView())
         setTextAppearance(R.style.ClusterIconTextAppearance)
-        setBackground(makeClusterBackground())
+        setBackground(clusterBgDrawable)
     }
 
     private val icons = mutableMapOf<Pair<Int, AlertLevel>, BitmapDescriptor>()
@@ -79,7 +74,6 @@ class EventsRenderer(
     private fun setClusterDrawablesColor(@ColorRes resId: Int) {
         val color = context.getColorCompat(resId)
         clusterBgDrawable.paint.color = color
-        clusterOutlineDrawable.paint.color = color
     }
 
     private fun makeSquareTextView(): SquareTextView {
@@ -91,14 +85,6 @@ class EventsRenderer(
             layoutParams = params
             id = com.google.maps.android.R.id.amu_text
             setPadding(twelveDpi, twelveDpi, twelveDpi, twelveDpi)
-        }
-    }
-
-    private fun makeClusterBackground(): LayerDrawable {
-        val density = context.resources.displayMetrics.density
-        val strokeWidth = (density * 3).toInt()
-        return LayerDrawable(arrayOf(clusterOutlineDrawable, clusterBgDrawable)).apply {
-            setLayerInset(1, strokeWidth, strokeWidth, strokeWidth, strokeWidth)
         }
     }
 }

@@ -8,7 +8,7 @@
     <string name="app_map">Map</string>
     <string name="app_feed">List</string>
 
-    <string name="app_place_current_location">Current location</string>
+    <string name="app_place_current_location">Near me</string>
     <string name="app_place_world">World</string>
 
     <string name="app_refresh">Refresh</string>

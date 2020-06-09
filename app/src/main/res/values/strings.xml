@@ -79,7 +79,7 @@
     <string name="details_location">Location</string>
     <string name="details_datetime">Date and time</string>
     <string name="details_depth">Depth</string>
-    <string name="details_dyfi">DYFI reports</string>
+    <string name="details_number_of_felt_reports">Number of felt reports</string>
     <string name="details_source_link">Source link</string>
     <string name="details_tsunami_alert">Tsunami alert</string>
     <string name="details_event_coordinates">Lat: %1$f Long: %2$f</string>

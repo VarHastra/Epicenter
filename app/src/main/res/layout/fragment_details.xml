@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_man"
-                app:title="@string/details_dyfi"
+                app:title="@string/details_number_of_felt_reports"
                 tools:text="4" />
 
             <me.alex.pet.apps.epicenter.presentation.common.views.TileView

@@ -27,7 +27,7 @@ class EventMarker(
         val latitude: Double,
         val longitude: Double,
         val zIndex: Float = 0f,
-        val alpha: Float = 1f
+        val opacity: Float = 1f
 ) : ClusterItem {
 
     private val latLng = LatLng(latitude, longitude)
@@ -65,7 +65,7 @@ fun EventMarker.toMarkerOptions(context: Context): MarkerOptions {
             .title(markerTitle)
             .snippet(markerSnippet)
             .anchor(0.5f, 0.5f)
-            .alpha(alpha)
+            .alpha(opacity)
             .zIndex(zIndex)
 }
 
@@ -86,6 +86,8 @@ class Mapper(val context: Context) {
 
     private val magnitudeFormat = DecimalFormat("0.0")
 
+    private val opacityStep = 0.08f
+
     fun map(remoteEvent: RemoteEvent): EventMarker {
         val (event, _) = remoteEvent
 
@@ -97,7 +99,7 @@ class Mapper(val context: Context) {
         val snippet = dateTimeFormatter.format(event.localDatetime)
         val alertLevel = AlertLevel.from(event.magnitude)
         val zIndex = event.magnitude.toFloat()
-        val alpha = calculateAlphaFor(event)
+        val opacity = calculateOpacityFor(event)
 
         return EventMarker(
                 event.id,
@@ -107,12 +109,12 @@ class Mapper(val context: Context) {
                 event.latitude,
                 event.longitude,
                 zIndex,
-                alpha
+                opacity
         )
     }
 
-    private fun calculateAlphaFor(event: Event): Float {
-        val days = ChronoUnit.DAYS.between(event.timestamp, Instant.now())
-        return 1.0f - 0.12f * days
+    private fun calculateOpacityFor(event: Event): Float {
+        val daysSinceEvent = ChronoUnit.DAYS.between(event.timestamp, Instant.now())
+        return 1.0f - opacityStep * daysSinceEvent
     }
 }

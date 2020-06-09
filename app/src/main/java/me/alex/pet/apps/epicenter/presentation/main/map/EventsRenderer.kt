@@ -51,7 +51,7 @@ class EventsRenderer(
         markerOptions.apply {
             icon(icon)
             zIndex(item.zIndex)
-            alpha(item.alpha)
+            alpha(item.opacity)
             anchor(0.5f, 0.5f)
         }
     }

@@ -82,7 +82,7 @@
     <string name="details_number_of_felt_reports">Number of felt reports</string>
     <string name="details_source_link">Source link</string>
     <string name="details_tsunami_alert">Tsunami alert</string>
-    <string name="details_event_coordinates">Lat: %1$f Long: %2$f</string>
+    <string name="details_event_coordinates">Lat: %1$.3f° Long: %2$.3f°</string>
     <string name="details_event_distance">Distance to your location: %s</string>
     <string name="details_event_depth_km">%s km</string>
     <string name="details_event_depth_mi">%s mi</string>

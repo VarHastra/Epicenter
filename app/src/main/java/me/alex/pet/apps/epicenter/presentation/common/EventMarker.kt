@@ -11,9 +11,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterItem
 import me.alex.pet.apps.epicenter.R
+import me.alex.pet.apps.epicenter.common.extensions.toLocalDate
 import me.alex.pet.apps.epicenter.domain.model.Event
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
-import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import org.threeten.bp.temporal.ChronoUnit
@@ -114,7 +115,8 @@ class Mapper(val context: Context) {
     }
 
     private fun calculateOpacityFor(event: Event): Float {
-        val daysSinceEvent = ChronoUnit.DAYS.between(event.timestamp, Instant.now())
+        val localEventDate = event.timestamp.toLocalDate()
+        val daysSinceEvent = ChronoUnit.DAYS.between(localEventDate, LocalDate.now())
         return 1.0f - opacityStep * daysSinceEvent
     }
 }

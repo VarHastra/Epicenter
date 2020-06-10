@@ -2,13 +2,16 @@ package me.alex.pet.apps.epicenter.presentation.details.mappers
 
 import android.content.Context
 import me.alex.pet.apps.epicenter.R
+import me.alex.pet.apps.epicenter.common.extensions.isToday
+import me.alex.pet.apps.epicenter.common.extensions.isYesterday
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
 import me.alex.pet.apps.epicenter.presentation.common.AlertLevel
 import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
 import me.alex.pet.apps.epicenter.presentation.common.UnitsLocale
 import me.alex.pet.apps.epicenter.presentation.details.EventViewBlock
-import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
+import org.threeten.bp.ZoneOffset
 import org.threeten.bp.chrono.IsoChronology
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.DateTimeFormatterBuilder
@@ -54,10 +57,17 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
                 unitsFormatter.getLocalizedDistanceString(distance?.toInt())
         )
 
-        val utcDateTimeText = dateTimeFormatter.format(event.timestamp.atZone(utcZoneId))
-        val localDateTimeText = dateTimeFormatter.format(event.timestamp.atZone(ZoneId.systemDefault()))
-        val daysAgo = ChronoUnit.DAYS.between(event.localDatetime, LocalDateTime.now()).toInt()
-        val daysAgoText = context.resources.getQuantityString(R.plurals.plurals_details_days_ago, daysAgo, daysAgo)
+        val dateTimeAtUtc0 = event.timestamp.atOffset(ZoneOffset.UTC)
+        val dateTimeAtCurrentTimezone = event.timestamp.atZone(ZoneId.systemDefault())
+        val localDateTime = dateTimeAtCurrentTimezone.toLocalDateTime()
+        val daysAgoText = when {
+            localDateTime.isToday -> context.getString(R.string.app_today)
+            localDateTime.isYesterday -> context.getString(R.string.app_yesterday)
+            else -> {
+                val daysSinceEvent = ChronoUnit.DAYS.between(localDateTime.toLocalDate(), LocalDate.now()).toInt()
+                context.resources.getQuantityString(R.plurals.plurals_details_days_ago, daysSinceEvent, daysSinceEvent)
+            }
+        }
 
         val depthText = unitsFormatter.getLocalizedDistanceString(event.depth)
 
@@ -72,8 +82,8 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
                 magnitudeText,
                 alertLevel,
                 magnitudeType,
-                utcDateTimeText,
-                localDateTimeText,
+                dateTimeFormatter.format(dateTimeAtUtc0),
+                dateTimeFormatter.format(dateTimeAtCurrentTimezone),
                 daysAgoText,
                 coordinatesText,
                 distanceText,
@@ -84,5 +94,3 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
         )
     }
 }
-
-private val utcZoneId = ZoneId.of("UTC")

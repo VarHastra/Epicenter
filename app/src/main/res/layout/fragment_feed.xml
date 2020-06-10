@@ -65,16 +65,17 @@
         </FrameLayout>
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/filtersFab"
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="@dimen/spacing_2x"
         android:layout_marginBottom="@dimen/spacing_2x"
         android:contentDescription="@string/app_action_show_filters"
-        app:srcCompat="@drawable/ic_fab_action_filter" />
+        android:text="@string/app_action_filter"
+        app:icon="@drawable/ic_fab_action_filter" />
 
     <include layout="@layout/sheet_feed" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

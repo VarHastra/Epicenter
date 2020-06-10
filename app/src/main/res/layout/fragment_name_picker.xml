@@ -43,13 +43,14 @@
         </ScrollView>
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/saveFab"
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/spacing_2x"
         android:elevation="@dimen/elevation_fab"
-        app:srcCompat="@drawable/ic_fab_action_confirm" />
+        android:text="@string/app_action_save"
+        app:icon="@drawable/ic_fab_action_confirm" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

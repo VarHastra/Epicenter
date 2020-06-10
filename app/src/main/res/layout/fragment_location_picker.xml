@@ -13,10 +13,10 @@
 
         <fragment
             android:id="@+id/locationPickerMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:fitsSystemWindows="false" />
 
         <include layout="@layout/layout_place_editor_controls" />
@@ -31,16 +31,17 @@
         android:elevation="0dp"
         android:fitsSystemWindows="true" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/nextFab"
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/spacing_3x"
         android:elevation="10dp"
+        android:text="@string/app_action_done"
+        app:icon="@drawable/ic_fab_action_next"
         app:layout_anchor="@id/bottomSheetRootView"
         app:layout_anchorGravity="end"
-        app:srcCompat="@drawable/ic_fab_action_next"
         tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

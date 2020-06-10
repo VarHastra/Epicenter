@@ -83,14 +83,15 @@
                 tools:textFirstLine="Lat: -127.3093, Lon: 40.5524"
                 tools:textSecondLine="Distance from you 1125mi" />
 
-            <me.alex.pet.apps.epicenter.presentation.common.views.TileTwolineView
+            <me.alex.pet.apps.epicenter.presentation.common.views.TileThreelineView
                 android:id="@+id/dateTimeTile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_datetime"
                 app:title="@string/details_datetime"
-                tools:textFirstLine="03/30/2019 at 12:34 pm"
-                tools:textSecondLine="2 days ago" />
+                tools:textFirstLine="03/30/2019 at 12:34 pm (GMT)"
+                tools:textSecondLine="03/30/2019 at 12:34 pm (GMT+3)"
+                tools:textThirdLine="2 days ago" />
 
             <me.alex.pet.apps.epicenter.presentation.common.views.TileView
                 android:id="@+id/depthTile"

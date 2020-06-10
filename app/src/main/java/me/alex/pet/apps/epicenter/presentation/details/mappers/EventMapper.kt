@@ -8,8 +8,12 @@ import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
 import me.alex.pet.apps.epicenter.presentation.common.UnitsLocale
 import me.alex.pet.apps.epicenter.presentation.details.EventViewBlock
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.chrono.IsoChronology
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.DateTimeFormatterBuilder
 import org.threeten.bp.format.FormatStyle
+import org.threeten.bp.format.TextStyle
 import org.threeten.bp.temporal.ChronoUnit
 import java.text.DecimalFormat
 
@@ -19,7 +23,13 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
 
     private val unitsFormatter = UnitsFormatter(context, unitsLocale)
 
-    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatterBuilder()
+            .appendLocalized(FormatStyle.SHORT, FormatStyle.SHORT)
+            .appendLiteral(" (")
+            .appendLocalizedOffset(TextStyle.SHORT)
+            .appendLiteral(")")
+            .toFormatter()
+            .withChronology(IsoChronology.INSTANCE)
 
     private val distanceString = context.getString(R.string.details_event_distance)
 
@@ -44,7 +54,8 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
                 unitsFormatter.getLocalizedDistanceString(distance?.toInt())
         )
 
-        val dateTimeText = dateTimeFormatter.format(event.localDatetime)
+        val utcDateTimeText = dateTimeFormatter.format(event.timestamp.atZone(utcZoneId))
+        val localDateTimeText = dateTimeFormatter.format(event.timestamp.atZone(ZoneId.systemDefault()))
         val daysAgo = ChronoUnit.DAYS.between(event.localDatetime, LocalDateTime.now()).toInt()
         val daysAgoText = context.resources.getQuantityString(R.plurals.plurals_details_days_ago, daysAgo, daysAgo)
 
@@ -61,7 +72,8 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
                 magnitudeText,
                 alertLevel,
                 magnitudeType,
-                dateTimeText,
+                utcDateTimeText,
+                localDateTimeText,
                 daysAgoText,
                 coordinatesText,
                 distanceText,
@@ -72,3 +84,5 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
         )
     }
 }
+
+private val utcZoneId = ZoneId.of("UTC")

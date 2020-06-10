@@ -87,8 +87,9 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
         locationTile.setFirstLineText(event.coordinates)
         locationTile.setSecondLineText(event.distanceFromUser)
 
-        dateTimeTile.setFirstLineText(event.dateTime)
-        dateTimeTile.setSecondLineText(event.daysAgo)
+        dateTimeTile.setFirstLineText(event.utcDateTime)
+        dateTimeTile.setSecondLineText(event.localDateTime)
+        dateTimeTile.setThirdLineText(event.daysAgo)
 
         depthTile.setText(event.depth)
 

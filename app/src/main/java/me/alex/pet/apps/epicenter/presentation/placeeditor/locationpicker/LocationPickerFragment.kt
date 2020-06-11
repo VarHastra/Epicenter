@@ -117,13 +117,11 @@ class LocationPickerFragment : Fragment(), OnMapReadyCallback {
 
     private fun createAreaCircleOptions(): CircleOptions? {
         val areaColor = requireContext().getColorCompat(R.color.colorSelectedArea)
-        val areaStrokeColor = requireContext().getColorCompat(R.color.colorSelectedAreaStroke)
         return CircleOptions()
                 .center(LatLng(0.0, 0.0))
                 .radius(1.0)
                 .fillColor(areaColor)
-                .strokeColor(areaStrokeColor)
-                .strokeWidth(2.dp.toFloat())
+                .strokeWidth(0f)
                 .visible(false)
     }
 

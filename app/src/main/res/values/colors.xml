@@ -14,6 +14,8 @@
     <color name="colorSurface">#FFF</color>
     <color name="colorOnSurface">#000</color>
 
+    <color name="colorSurfaceDark">#7E828E</color>
+
 
     <!-- Custom colors -->
     <color name="colorIconSheer">#1F000000</color>

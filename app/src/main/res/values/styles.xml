@@ -1,7 +1,7 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Main application theme -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="BaseAppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
@@ -14,10 +14,6 @@
         <item name="colorOnBackground">@color/colorOnBackground</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnSurface</item>
-
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-
-        <item name="android:statusBarColor">?colorSurface</item>
 
         <item name="colorAlert0">@color/colorAlert0</item>
         <item name="colorAlert1">@color/colorAlert1</item>
@@ -36,6 +32,10 @@
         <item name="colorIconDim">@color/colorIconSheer</item>
 
         <item name="colorDanger">@color/colorDanger</item>
+    </style>
+
+    <style name="AppTheme" parent="BaseAppTheme">
+        <item name="android:statusBarColor">@color/colorSurfaceDark</item>
     </style>
 
 

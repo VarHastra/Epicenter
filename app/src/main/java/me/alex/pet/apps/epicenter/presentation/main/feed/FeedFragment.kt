@@ -108,7 +108,6 @@ class FeedFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        model.onStart()
 
         toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {

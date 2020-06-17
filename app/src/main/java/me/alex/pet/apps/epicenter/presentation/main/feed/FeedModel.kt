@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.common.api.ResolvableApiException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.alex.pet.apps.epicenter.R
@@ -17,8 +18,8 @@ import me.alex.pet.apps.epicenter.common.functionaltypes.Either.Companion.succes
 import me.alex.pet.apps.epicenter.common.functionaltypes.flatMap
 import me.alex.pet.apps.epicenter.domain.interactors.LoadFeedInteractor
 import me.alex.pet.apps.epicenter.domain.interactors.LoadPlaceInteractor
-import me.alex.pet.apps.epicenter.domain.interactors.LoadPlaceNamesInteractor
 import me.alex.pet.apps.epicenter.domain.interactors.LoadSelectedPlaceNameInteractor
+import me.alex.pet.apps.epicenter.domain.interactors.ObservePlaceNames
 import me.alex.pet.apps.epicenter.domain.model.Place
 import me.alex.pet.apps.epicenter.domain.model.PlaceName
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
@@ -47,7 +48,7 @@ class FeedModel(
         private val context: Context,
         private val loadSelectedPlaceNameInteractor: LoadSelectedPlaceNameInteractor,
         private val loadFeedInteractor: LoadFeedInteractor,
-        private val loadPlaceNamesInteractor: LoadPlaceNamesInteractor,
+        private val observePlaceNames: ObservePlaceNames,
         private val loadPlaceInteractor: LoadPlaceInteractor,
         private val unitsLocaleRepository: UnitsLocaleRepository,
         private val feedStateDataSource: FeedStateDataSource
@@ -97,8 +98,6 @@ class FeedModel(
         get() = _navigationEvent
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
 
-    private var placesMightHaveChanged = false
-
     private var runningJob: Job? = null
 
 
@@ -107,33 +106,16 @@ class FeedModel(
         _minMagnitude.value = feedStateDataSource.minMagnitude
 
         viewModelScope.launch {
-            fetchPlaces()
-            fetchSelectedPlace()
-            fetchEvents(false)
-        }
-    }
-
-    fun onStart() {
-        if (placesMightHaveChanged) {
-            placesMightHaveChanged = false
-            viewModelScope.launch {
-                fetchPlaces()
+            observePlaceNames().collect { placeNames ->
+                _places.value = withContext(Dispatchers.Default) { placeNames.map { it.toView() } }
                 fetchSelectedPlace()
                 fetchEvents(false)
             }
         }
     }
 
-    private suspend fun fetchPlaces() {
-        _places.value = mapPlaceNamesToViews(loadPlaceNamesInteractor())
-    }
-
     private suspend fun fetchSelectedPlace() {
         _selectedPlace.value = loadSelectedPlaceNameInteractor()
-    }
-
-    private suspend fun mapPlaceNamesToViews(places: List<PlaceName>) = withContext(Dispatchers.Default) {
-        places.map { it.toView() }
     }
 
     fun onRefreshEvents() {
@@ -219,7 +201,6 @@ class FeedModel(
     }
 
     fun onOpenPlaceEditor() {
-        placesMightHaveChanged = true
         _navigationEvent.value = NavigationEvent(NavigationCommand.To(Destinations.Places()))
     }
 

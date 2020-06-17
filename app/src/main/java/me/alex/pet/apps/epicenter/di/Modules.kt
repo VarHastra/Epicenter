@@ -101,6 +101,8 @@ val domainModule = module {
 
     factory { LoadPlaceNamesInteractor(get()) }
 
+    factory { ObservePlaceNames(get()) }
+
     factory { LoadSelectedPlaceNameInteractor(get(), get()) }
 
     factory { UpdatePlaceInteractor(get()) }

@@ -1,6 +1,8 @@
 package me.alex.pet.apps.epicenter.data
 
 import android.content.Context
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.transform
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.functionaltypes.Either
 import me.alex.pet.apps.epicenter.data.db.PlaceDao
@@ -38,6 +40,12 @@ class PlacesDataSource(
     override suspend fun getAll(): Either<List<Place>, Failure> {
         val places = defaultPlaces + placeDao.getAll().map { it.toPlace() }
         return Either.Success(places)
+    }
+
+    override fun observeAllPlaceNames(): Flow<List<PlaceName>> {
+        return placeDao.observeAll().transform { userPlaces ->
+            emit(defaultPlaces.map { it.toPlaceName() } + userPlaces.map { it.toPlaceName() })
+        }
     }
 
     override suspend fun getAllPlaceNames(): List<PlaceName> {

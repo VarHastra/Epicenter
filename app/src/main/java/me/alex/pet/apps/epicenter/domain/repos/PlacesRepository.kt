@@ -1,5 +1,6 @@
 package me.alex.pet.apps.epicenter.domain.repos
 
+import kotlinx.coroutines.flow.Flow
 import me.alex.pet.apps.epicenter.common.functionaltypes.Either
 import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.Place
@@ -11,6 +12,8 @@ interface PlacesRepository {
     suspend fun insert(name: String, areaCenter: Coordinates, areaRadiusKm: Double)
 
     suspend fun getAll(): Either<List<Place>, Failure>
+
+    fun observeAllPlaceNames(): Flow<List<PlaceName>>
 
     suspend fun getAllPlaceNames(): List<PlaceName>
 

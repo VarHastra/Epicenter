@@ -1,6 +1,7 @@
 package me.alex.pet.apps.epicenter.data.db
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class PlaceDao {
@@ -13,6 +14,9 @@ abstract class PlaceDao {
 
     @Query("SELECT * FROM place ORDER BY `position` ASC")
     abstract fun getAll(): List<PlaceEntity>
+
+    @Query("SELECT * FROM place ORDER BY `position` ASC")
+    abstract fun observeAll(): Flow<List<PlaceEntity>>
 
     @Query("SELECT * FROM place WHERE id=:id")
     abstract fun get(id: Int): PlaceEntity?

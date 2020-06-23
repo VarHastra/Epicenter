@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterItem
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.toLocalDate
+import me.alex.pet.apps.epicenter.common.extensions.toLocalDateTime
 import me.alex.pet.apps.epicenter.domain.model.Event
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
 import org.threeten.bp.LocalDate
@@ -92,12 +93,12 @@ class Mapper(val context: Context) {
     fun map(event: RemoteEvent): EventMarker {
         val title = context.getString(
                 R.string.map_format_marker_title,
-                magnitudeFormat.format(event.magnitude),
-                event.placeName
+                magnitudeFormat.format(event.magnitude.value),
+                event.position.description
         )
-        val snippet = dateTimeFormatter.format(event.localDatetime)
-        val alertLevel = AlertLevel.from(event.magnitude)
-        val zIndex = event.magnitude.toFloat()
+        val snippet = dateTimeFormatter.format(event.timestamp.toLocalDateTime())
+        val alertLevel = AlertLevel.from(event.magnitude.value)
+        val zIndex = event.magnitude.value.toFloat()
         val opacity = calculateOpacityFor(event)
 
         return EventMarker(

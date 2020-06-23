@@ -4,6 +4,7 @@ import android.content.Context
 import me.alex.pet.apps.epicenter.R
 import me.alex.pet.apps.epicenter.common.extensions.isToday
 import me.alex.pet.apps.epicenter.common.extensions.isYesterday
+import me.alex.pet.apps.epicenter.common.extensions.toLocalDateTime
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
 import me.alex.pet.apps.epicenter.presentation.common.AlertLevel
 import me.alex.pet.apps.epicenter.presentation.common.UnitsFormatter
@@ -35,24 +36,25 @@ class EventMapper(context: Context, unitsLocale: UnitsLocale) {
     private val yesterdayString = context.getString(R.string.app_yesterday)
 
     fun map(event: RemoteEvent): EventViewBlock {
-        val magnitudeFormat = if (event.magnitude < 10) magnitudeDecimalFormat else largeMagnitudeDecimalFormat
+        val magnitudeFormat = if (event.magnitude.value < 10) magnitudeDecimalFormat else largeMagnitudeDecimalFormat
 
-        val placeName = event.placeName
+        val placeName = event.position.description
 
-        val magnitudeText = magnitudeFormat.format(event.magnitude)
-        val alertLevel = AlertLevel.from(event.magnitude)
+        val magnitudeText = magnitudeFormat.format(event.magnitude.value)
+        val alertLevel = AlertLevel.from(event.magnitude.value)
 
         val distanceText = String.format(distanceString, unitsFormatter.getLocalizedDistanceString(event.distanceToUser?.roundToInt()))
-        val depthText = String.format(depthString, unitsFormatter.getLocalizedDistanceString(event.depth))
+        val depthText = String.format(depthString, unitsFormatter.getLocalizedDistanceString(event.position.depth))
 
         val tsunamiAlert = event.tsunamiAlert
 
+        val eventLocalDateTime = event.timestamp.toLocalDateTime()
         val prettifiedDate = when {
-            event.localDatetime.isToday -> todayString
-            event.localDatetime.isYesterday -> yesterdayString
-            else -> dateFormatter.format(event.localDatetime.toLocalDate())
+            eventLocalDateTime.isToday -> todayString
+            eventLocalDateTime.isYesterday -> yesterdayString
+            else -> dateFormatter.format(eventLocalDateTime.toLocalDate())
         }
-        val prettifiedTime = timeFormatter.format(event.localDatetime.toLocalTime())
+        val prettifiedTime = timeFormatter.format(eventLocalDateTime.toLocalTime())
         val dateTimeText = "$prettifiedDate $prettifiedTime"
 
         return EventViewBlock(

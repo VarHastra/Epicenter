@@ -2,6 +2,8 @@ package me.alex.pet.apps.epicenter.data.network.usgs.model
 
 import me.alex.pet.apps.epicenter.domain.model.Coordinates
 import me.alex.pet.apps.epicenter.domain.model.Event
+import me.alex.pet.apps.epicenter.domain.model.Magnitude
+import me.alex.pet.apps.epicenter.domain.model.Position
 import org.threeten.bp.Instant
 
 class UsgsResponseMapper {
@@ -18,7 +20,7 @@ class UsgsResponseMapper {
 
         val props = feature.properties
         val placeName = props.place?.replace(distancePattern, "") ?: return null
-        val magnitude = props.mag ?: return null
+        val magnitudeValue = props.mag ?: return null
         val timestamp = props.time?.let { Instant.ofEpochMilli(it) } ?: return null
         val linkUrl = props.url ?: return null
         val feltReports = props.felt ?: 0
@@ -31,15 +33,12 @@ class UsgsResponseMapper {
 
         return Event(
                 id,
-                magnitude,
-                placeName,
+                Position(Coordinates(lat, lng), depth, placeName),
+                Magnitude(magnitudeValue, magnitudeType),
                 timestamp,
-                Coordinates(lat, lng),
                 linkUrl,
                 feltReports,
-                tsunamiAlert,
-                magnitudeType,
-                depth
+                tsunamiAlert
         )
     }
 }

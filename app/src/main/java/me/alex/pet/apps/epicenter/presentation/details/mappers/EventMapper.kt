@@ -39,11 +39,11 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
     private val coordinatesString = context.getString(R.string.details_event_coordinates)
 
     fun map(event: RemoteEvent): EventViewBlock {
-        val title = event.placeName
+        val title = event.position.description
 
-        val magnitudeText = magnitudeDecimalFormat.format(event.magnitude)
-        val magnitudeType = event.magnitudeType
-        val alertLevel = AlertLevel.from(event.magnitude)
+        val magnitudeText = magnitudeDecimalFormat.format(event.magnitude.value)
+        val magnitudeType = event.magnitude.type
+        val alertLevel = AlertLevel.from(event.magnitude.value)
 
         val coordinatesText = String.format(
                 coordinatesString,
@@ -67,11 +67,11 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
             }
         }
 
-        val depthText = unitsFormatter.getLocalizedDistanceString(event.depth)
+        val depthText = unitsFormatter.getLocalizedDistanceString(event.position.depth)
 
         val feltReports = event.feltReportsCount.toString()
 
-        val sourceLink = event.link
+        val sourceLink = event.sourceUrl
 
         val tsunamiAlert = event.tsunamiAlert
 

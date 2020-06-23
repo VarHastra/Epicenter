@@ -52,7 +52,7 @@ class UsgsResponseMapperTest {
 
         val actualEvent = responseMapper.mapToModel(stubResponse)[0]
 
-        assertThat(actualEvent.magnitude).isEqualTo(expectedMagnitude)
+        assertThat(actualEvent.magnitude.value).isEqualTo(expectedMagnitude)
     }
 
     @Test
@@ -77,7 +77,7 @@ class UsgsResponseMapperTest {
 
         val actualEvent = responseMapper.mapToModel(stubResponse)[0]
 
-        assertThat(actualEvent.placeName).isEqualTo(expectedPlaceName)
+        assertThat(actualEvent.position.description).isEqualTo(expectedPlaceName)
     }
 
     @Test
@@ -158,7 +158,7 @@ class UsgsResponseMapperTest {
 
         val actualEvent = responseMapper.mapToModel(stubResponse)[0]
 
-        assertThat(actualEvent.link).isEqualTo(expectedUrl)
+        assertThat(actualEvent.sourceUrl).isEqualTo(expectedUrl)
     }
 
     @Test
@@ -233,7 +233,7 @@ class UsgsResponseMapperTest {
 
         val actualEvent = responseMapper.mapToModel(stubResponse)[0]
 
-        assertThat(actualEvent.magnitudeType).isEqualTo(expected)
+        assertThat(actualEvent.magnitude.type).isEqualTo(expected)
     }
 
     @Test

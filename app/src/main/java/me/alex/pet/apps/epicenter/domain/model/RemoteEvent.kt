@@ -4,20 +4,17 @@ import org.threeten.bp.Instant
 
 class RemoteEvent(
         id: String,
-        magnitude: Double,
-        placeName: String,
+        position: Position,
+        magnitude: Magnitude,
         timestamp: Instant,
-        coordinates: Coordinates,
         link: String,
         feltReportsCount: Int,
         tsunamiAlert: Boolean,
-        magnitudeType: String,
-        depth: Double,
         val distanceToUser: Double?
-) : Event(id, magnitude, placeName, timestamp, coordinates, link, feltReportsCount, tsunamiAlert, magnitudeType, depth) {
+) : Event(id, position, magnitude, timestamp, link, feltReportsCount, tsunamiAlert) {
 
     override fun toString(): String {
-        return "RemoteEvent(id='$id', magnitude=$magnitude, placeName='$placeName', timestamp=$timestamp, coordinates=$coordinates, depth=$depth)"
+        return "RemoteEvent(id='$id', position=$position, magnitude=$magnitude, timestamp=$timestamp)"
     }
 
 
@@ -26,16 +23,13 @@ class RemoteEvent(
             return with(event) {
                 RemoteEvent(
                         id,
+                        position,
                         magnitude,
-                        placeName,
                         timestamp,
-                        coordinates,
-                        link,
+                        sourceUrl,
                         feltReportsCount,
                         tsunamiAlert,
-                        magnitudeType,
-                        depth,
-                        point?.distanceTo(coordinates)
+                        point?.distanceTo(position.coordinates)
                 )
             }
         }

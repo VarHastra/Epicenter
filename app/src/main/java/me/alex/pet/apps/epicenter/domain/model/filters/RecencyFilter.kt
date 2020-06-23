@@ -17,6 +17,6 @@ class RecencyFilter(daysAgo: Int) : Filter<RemoteEvent> {
 
     override fun invoke(p1: RemoteEvent): Boolean {
         val now = Instant.now()
-        return ChronoUnit.DAYS.between(p1.event.timestamp, now) <= daysAgo
+        return ChronoUnit.DAYS.between(p1.timestamp, now) <= daysAgo
     }
 }

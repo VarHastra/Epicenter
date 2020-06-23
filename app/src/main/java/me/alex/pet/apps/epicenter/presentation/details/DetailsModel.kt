@@ -59,8 +59,7 @@ class DetailsModel(
         mapper.map(remoteEvent)
     }
 
-    private suspend fun mapEventToMarker(remoteEvent: RemoteEvent): EventMarker = withContext(Dispatchers.Default) {
-        val (event, _) = remoteEvent
+    private suspend fun mapEventToMarker(event: RemoteEvent): EventMarker = withContext(Dispatchers.Default) {
         EventMarker(
                 event.id,
                 event.placeName,
@@ -82,7 +81,7 @@ class DetailsModel(
     }
 
     fun onVisitSource() {
-        val urlStr = event.value!!.event.link
+        val urlStr = event.value!!.link
         if (URLUtil.isNetworkUrl(urlStr)) {
             _visitSourceLinkEvent.value = Event(Uri.parse(urlStr))
         }

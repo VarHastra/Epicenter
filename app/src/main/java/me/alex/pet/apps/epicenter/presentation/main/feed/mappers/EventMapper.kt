@@ -34,8 +34,7 @@ class EventMapper(context: Context, unitsLocale: UnitsLocale) {
 
     private val yesterdayString = context.getString(R.string.app_yesterday)
 
-    fun map(remoteEvent: RemoteEvent): EventViewBlock {
-        val (event, distanceFromUser) = remoteEvent
+    fun map(event: RemoteEvent): EventViewBlock {
         val magnitudeFormat = if (event.magnitude < 10) magnitudeDecimalFormat else largeMagnitudeDecimalFormat
 
         val placeName = event.placeName
@@ -43,7 +42,7 @@ class EventMapper(context: Context, unitsLocale: UnitsLocale) {
         val magnitudeText = magnitudeFormat.format(event.magnitude)
         val alertLevel = AlertLevel.from(event.magnitude)
 
-        val distanceText = String.format(distanceString, unitsFormatter.getLocalizedDistanceString(distanceFromUser?.roundToInt()))
+        val distanceText = String.format(distanceString, unitsFormatter.getLocalizedDistanceString(event.distanceToUser?.roundToInt()))
         val depthText = String.format(depthString, unitsFormatter.getLocalizedDistanceString(event.depth))
 
         val tsunamiAlert = event.tsunamiAlert

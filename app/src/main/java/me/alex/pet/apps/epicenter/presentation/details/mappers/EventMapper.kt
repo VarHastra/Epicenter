@@ -38,9 +38,7 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
 
     private val coordinatesString = context.getString(R.string.details_event_coordinates)
 
-    fun map(remoteEvent: RemoteEvent): EventViewBlock {
-        val (event, distance) = remoteEvent
-
+    fun map(event: RemoteEvent): EventViewBlock {
         val title = event.placeName
 
         val magnitudeText = magnitudeDecimalFormat.format(event.magnitude)
@@ -54,7 +52,7 @@ class EventMapper(val context: Context, unitsLocale: UnitsLocale) {
         )
         val distanceText = String.format(
                 distanceString,
-                unitsFormatter.getLocalizedDistanceString(distance?.toInt())
+                unitsFormatter.getLocalizedDistanceString(event.distanceToUser?.toInt())
         )
 
         val dateTimeAtUtc0 = event.timestamp.atOffset(ZoneOffset.UTC)

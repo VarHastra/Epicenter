@@ -89,9 +89,7 @@ class Mapper(val context: Context) {
 
     private val opacityStep = 0.08f
 
-    fun map(remoteEvent: RemoteEvent): EventMarker {
-        val (event, _) = remoteEvent
-
+    fun map(event: RemoteEvent): EventMarker {
         val title = context.getString(
                 R.string.map_format_marker_title,
                 magnitudeFormat.format(event.magnitude),

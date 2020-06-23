@@ -3,7 +3,7 @@ package me.alex.pet.apps.epicenter.domain.model.filters
 import me.alex.pet.apps.epicenter.domain.model.RemoteEvent
 
 class MagnitudeFilter(private val magnitudeLevel: MagnitudeLevel) : Filter<RemoteEvent> {
-    override fun invoke(p1: RemoteEvent) = p1.event.magnitude >= magnitudeLevel.magnitudeValue
+    override fun invoke(p1: RemoteEvent) = p1.magnitude >= magnitudeLevel.magnitudeValue
 }
 
 enum class MagnitudeLevel(val value: Int, val magnitudeValue: Int) {
